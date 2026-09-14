@@ -1,0 +1,11 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/minio",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Uses the pgsty community distribution. Review its maintenance and licensing independently.",
+    "S3 on 9000 and console on 9001 are private. Do not send S3 TCP traffic to an HTTP hostname configured for the console.",
+    "Create restricted client access keys after setup. Single-node storage is not redundant; configure off-node backups."
+  ],
+  "runtime_verified": false
+}

@@ -1,0 +1,21 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/firecrawl",
+  "blockers": [
+    "firecrawl-db: immutable image/architecture verification remains incomplete for postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73",
+    "firecrawl-db: review Compose configs=[{'source': 'db-init-prerequisites', 'target': '/docker-entrypoint-initdb.d/010-prerequisites.sql'}, {'source': 'db-init-schema', 'target': '/docker-entrypoint-initdb.d/020-current-schema.sql'}, {'source': 'db-init-constraints', 'target': '/docker-entrypoint-initdb.d/030-selfhost-constraints.sql'}, {'source': 'db-init-rpcs', 'target': '/docker-entrypoint-initdb.d/040-selfhost-rpcs.sql'}]; no implicit host privileges or configuration mounts",
+    "firecrawl-db-seed: immutable image/architecture verification remains incomplete for postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73",
+    "firecrawl-db-seed: command interpolation needs an explicit environment-aware startup adapter",
+    "firecrawl-db-seed: review Compose configs=[{'source': 'db-seed', 'target': '/seed.sql'}]; no implicit host privileges or configuration mounts",
+    "firecrawl-db-seed: one-shot job must finish before dependent services start",
+    "redis: immutable image/architecture verification remains incomplete for redis:7-alpine@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf",
+    "redis: command interpolation needs an explicit environment-aware startup adapter",
+    "rabbitmq: immutable image/architecture verification remains incomplete for rabbitmq:3-management@sha256:e582c0bc7766f3342496d8485efb5a1df782b5ce3886ad017e2eaae442311f69",
+    "firecrawl: requires a successful one-shot initialization job; ordinary services restart continuously",
+    "swagger-ui: immutable image/architecture verification remains incomplete for swaggerapi/swagger-ui:v5.32.14@sha256:3d93169968848d371a6a56ca1ab18b47a8906ba461b8eba0688866354f5431d5",
+    "swagger-ui: review Compose configs=[{'source': 'firecrawl-openapi', 'target': '/tmp/openapi.json.gz.b64'}]; no implicit host privileges or configuration mounts",
+    "gateway: immutable image/architecture verification remains incomplete for nginx:1.29-alpine@sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de",
+    "gateway: review Compose configs=[{'source': 'firecrawl-gateway-nginx', 'target': '/etc/nginx/conf.d/default.conf'}]; no implicit host privileges or configuration mounts"
+  ],
+  "runtime_verified": false
+}

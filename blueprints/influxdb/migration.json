@@ -1,0 +1,10 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/influxdb",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Start influxd directly with writable data paths; no forbidden /etc volume mount is required.",
+    "Complete the first administrator, organization and bucket setup before sharing the URL. Store client API tokens securely and configure backups."
+  ],
+  "runtime_verified": false
+}

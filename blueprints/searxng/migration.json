@@ -1,0 +1,9 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/searxng",
+  "blockers": [
+    "searxng: mounted host/config asset ../files/searxng at /etc/searxng needs a supported image/config adapter",
+    "Configuration files declared upstream require explicit provisioning before the native candidate is deployable"
+  ],
+  "runtime_verified": false
+}

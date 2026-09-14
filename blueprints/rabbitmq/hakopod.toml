@@ -1,0 +1,56 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 999
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'rabbitmq:4.1-management@sha256:036dbf561d8040eaed77d0d326b44bd8fa1c9ac382d2310bd7f35970fae70613'
+port = 15672
+public_tcp = []
+public = false
+size = 'large'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/var/lib/rabbitmq'
+size_gib = 5
+storage_class = ''
+
+[[services.main.ports]]
+name = 'amqp'
+port = 5672
+target_port = 5672
+protocol = 'TCP'
+
+[services.main.env]
+RABBITMQ_DEFAULT_USER = 'hakopod'
+RABBITMQ_NODENAME = 'rabbit@localhost'
+RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS = '-rabbit disk_free_limit 1073741824'
+
+[services.main.secrets]
+[services.main.secrets.RABBITMQ_DEFAULT_PASS]
+ref = 'broker-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

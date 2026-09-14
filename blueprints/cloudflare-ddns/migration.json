@@ -1,0 +1,10 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/cloudflare-ddns",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Updates DNS to the public IPv4 observed from pod egress. Verify that it matches the server ingress address before enabling.",
+    "Host networking and IPv6 discovery are not used. Scope the token to DNS editing for the intended zones."
+  ],
+  "runtime_verified": false
+}

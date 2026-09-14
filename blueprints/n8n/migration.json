@@ -1,0 +1,11 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/n8n",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Uses the same pinned n8n 2 release across variants. Review upstream upgrade notes before importing workflows from older releases.",
+    "Complete first-owner setup before sharing. Preserve the encryption key with database backups.",
+    "Task runners are not included in this variant; configure external runners before using code tasks that require them."
+  ],
+  "runtime_verified": false
+}

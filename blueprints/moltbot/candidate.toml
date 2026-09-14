@@ -1,0 +1,79 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.moltbot-gateway]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'ghcr.io/moltbot/clawdbot:2026.1.24-1'
+port = 18789
+public_tcp = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['node', 'dist/index.js', 'gateway', '--bind', 'auto', '--port', '18789', '--allow-unconfigured']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.moltbot-gateway.mounts]]
+volume = 'moltbot-config'
+mount_path = '/home/node/.clawdbot'
+read_only = false
+sub_path = ''
+
+[[services.moltbot-gateway.mounts]]
+volume = 'moltbot-workspace'
+mount_path = '/home/node/clawd'
+read_only = false
+sub_path = ''
+
+[[services.moltbot-gateway.ports]]
+name = 'port-18790'
+port = 18790
+target_port = 18790
+protocol = 'TCP'
+
+[services.moltbot-gateway.env]
+CLAUDE_AI_SESSION_KEY = '{{config.claude-ai-session-key}}'
+CLAUDE_WEB_COOKIE = '{{config.claude-web-cookie}}'
+CLAUDE_WEB_SESSION_KEY = '{{config.claude-web-session-key}}'
+CLAWDBOT_GATEWAY_URL = 'ws://0.0.0.0:18789'
+HOME = '/home/node'
+TERM = 'xterm-256color'
+
+[services.moltbot-gateway.secrets]
+[services.moltbot-gateway.secrets.CLAWDBOT_GATEWAY_TOKEN]
+ref = 'clawdbot-gateway-token'
+
+[services.moltbot-gateway.secrets.OPENROUTER_API_KEY]
+ref = 'openrouter-api-key'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.moltbot-config]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.moltbot-workspace]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

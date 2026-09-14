@@ -1,0 +1,56 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.confluence]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'atlassian/confluence-server:8.6-ubuntu-jdk17@sha256:68885cab5b3885747b176fc990086d112e1b49f074bc6dde585819d225418972'
+port = 8090
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.confluence.mounts]]
+volume = 'confluence-data'
+mount_path = '/var/atlassian/application-data/confluence'
+read_only = false
+sub_path = ''
+
+[services.confluence.env]
+CATALINA_CONNECTOR_PROXYNAME = '{{site_host}}'
+CATALINA_CONNECTOR_SCHEME = 'http'
+CATALINA_CONNECTOR_SECURE = 'true'
+JVM_MAXIMUM_MEMORY = '4096m'
+JVM_MINIMUM_MEMORY = '2048m'
+
+[services.confluence.secrets]
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.confluence-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

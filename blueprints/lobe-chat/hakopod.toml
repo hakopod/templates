@@ -1,0 +1,47 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 10001
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'lobehub/lobe-chat:v1.26.1@sha256:3fe6b20261f973d25bcc446e7d15fd3f3caaf50185abb55daa1e46af1c01f352'
+port = 3210
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.env]
+OPENAI_PROXY_URL = 'https://api.openai.com/v1'
+
+[services.main.secrets]
+[services.main.secrets.ACCESS_CODE]
+ref = 'access-code'
+
+[services.main.secrets.OPENAI_API_KEY]
+ref = 'provider-key'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

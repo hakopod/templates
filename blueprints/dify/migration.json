@@ -1,0 +1,17 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/dify",
+  "blockers": [
+    "nginx: mounted host/config asset ../files/dify-nginx.conf at /etc/nginx/conf.d/default.conf needs a supported image/config adapter",
+    "init-permissions: one-shot job must finish before dependent services start",
+    "api: requires a successful one-shot initialization job; ordinary services restart continuously",
+    "worker: requires a successful one-shot initialization job; ordinary services restart continuously",
+    "redis: command interpolation needs an explicit environment-aware startup adapter",
+    "ssrf-proxy: mounted host/config asset ../files/dify-squid.conf at /etc/squid/squid.conf needs a supported image/config adapter",
+    "Configuration files declared upstream require explicit provisioning before the native candidate is deployable",
+    "Provision ReadWriteMany storage for shared volume dify-app-storage.",
+    "Provision ReadWriteMany storage for shared volume dify-app-storage.",
+    "Provision ReadWriteMany storage for shared volume dify-app-storage."
+  ],
+  "runtime_verified": false
+}

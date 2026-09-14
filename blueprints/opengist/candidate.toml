@@ -1,0 +1,59 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.opengist]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'ghcr.io/thomiceli/opengist:1@sha256:7edc91273ee7d10a17406da8a08c803158baaff984c39b789c1313473d068f21'
+port = 6157
+public_tcp = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.opengist.mounts]]
+volume = 'opengist-data'
+mount_path = '/opengist'
+read_only = false
+sub_path = ''
+
+[[services.opengist.ports]]
+name = 'port-2222'
+port = 2222
+target_port = 2222
+protocol = 'TCP'
+
+[services.opengist.env]
+GID = '1001'
+OG_LOG_LEVEL = 'info'
+UID = '1001'
+
+[services.opengist.secrets]
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.opengist-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

@@ -1,0 +1,51 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 10001
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+image = 'jellyfin/jellyfin:10@sha256:aefb67e6a7ff1debdd154a78a7bbb780fd0c873d8639210a7f6a2016ad2b35db'
+port = 8096
+public_tcp = []
+ports = []
+public = true
+size = 'compute'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/config'
+size_gib = 5
+storage_class = ''
+
+[[services.main.temporary_mounts]]
+mount_path = '/cache'
+size_mib = 128
+memory = false
+
+[services.main.env]
+JELLYFIN_CACHE_DIR = '/cache'
+JELLYFIN_PublishedServerUrl = 'https://catalog.example.test'
+
+[services.main.secrets]
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

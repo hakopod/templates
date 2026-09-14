@@ -1,0 +1,51 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 70
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/library/postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['postgres', '-c', 'shared_buffers=64MB', '-c', 'max_connections=50']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/var/lib/postgresql/data'
+size_gib = 5
+storage_class = ''
+
+[services.main.env]
+PGDATA = '/var/lib/postgresql/data/pgdata'
+POSTGRES_DB = 'app'
+POSTGRES_USER = 'hakopod'
+
+[services.main.secrets]
+[services.main.secrets.POSTGRES_PASSWORD]
+ref = 'database-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

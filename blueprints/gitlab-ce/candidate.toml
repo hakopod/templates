@@ -1,0 +1,64 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.gitlab]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'gitlab/gitlab-ce:19.1.2-ce.0@sha256:ed48f1d320841a393c3b8c3a9558f28117a4ebdbb35538b43a73467aabd9590a'
+port = 80
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.gitlab.mounts]]
+volume = 'gitlab-logs'
+mount_path = '/var/log/gitlab'
+read_only = false
+sub_path = ''
+
+[[services.gitlab.mounts]]
+volume = 'gitlab-data'
+mount_path = '/var/opt/gitlab'
+read_only = false
+sub_path = ''
+
+[services.gitlab.env]
+[services.gitlab.secrets]
+[services.gitlab.secrets.GITLAB_OMNIBUS_CONFIG]
+ref = 'gitlab-omnibus-config'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.gitlab-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.gitlab-logs]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

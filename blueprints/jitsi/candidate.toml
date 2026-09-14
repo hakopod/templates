@@ -1,0 +1,266 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.jicofo]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'jitsi/jicofo:unstable'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['prosody']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.jicofo.mounts]]
+volume = 'jitsijicofoconfig'
+mount_path = '/config'
+read_only = false
+sub_path = ''
+
+[services.jicofo.env]
+JICOFO_AUTH_USER = ''
+JVB_BREWERY_MUC = ''
+TZ = ''
+XMPP_AUTH_DOMAIN = ''
+XMPP_DOMAIN = ''
+XMPP_INTERNAL_MUC_DOMAIN = ''
+XMPP_MUC_DOMAIN = ''
+
+[services.jicofo.secrets]
+[services.jicofo.secrets.JICOFO_AUTH_PASSWORD]
+ref = 'jicofo-auth-password'
+
+[services.jicofo.secrets.JICOFO_COMPONENT_SECRET]
+ref = 'jicofo-component-secret'
+
+[services.jvb]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'jitsi/jvb:unstable'
+port = 10000
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['prosody']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.jvb.mounts]]
+volume = 'jitsijvbconfig'
+mount_path = '/config'
+read_only = false
+sub_path = ''
+
+[services.jvb.env]
+JVB_ADVERTISE_IPS = ''
+JVB_AUTH_USER = ''
+JVB_BREWERY_MUC = ''
+JVB_PORT = ''
+PUBLIC_URL = ''
+TZ = ''
+XMPP_AUTH_DOMAIN = ''
+XMPP_INTERNAL_MUC_DOMAIN = ''
+
+[services.jvb.secrets]
+[services.jvb.secrets.JVB_AUTH_PASSWORD]
+ref = 'jvb-auth-password'
+
+[services.prosody]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'jitsi/prosody:unstable'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.prosody.mounts]]
+volume = 'jitsiprosodyconfig'
+mount_path = '/config'
+read_only = false
+sub_path = ''
+
+[[services.prosody.mounts]]
+volume = 'jitsiprosodyplugins'
+mount_path = '/prosody-plugins-custom'
+read_only = false
+sub_path = ''
+
+[services.prosody.env]
+ENABLE_AUTH = ''
+ENABLE_GUESTS = ''
+JICOFO_AUTH_USER = ''
+JVB_AUTH_USER = ''
+JWT_APP_ID = ''
+TZ = ''
+XMPP_AUTH_DOMAIN = ''
+XMPP_DOMAIN = ''
+XMPP_GUEST_DOMAIN = ''
+XMPP_MUC_DOMAIN = ''
+XMPP_RECORDER_DOMAIN = ''
+
+[services.prosody.secrets]
+[services.prosody.secrets.JICOFO_AUTH_PASSWORD]
+ref = 'jicofo-auth-password'
+
+[services.prosody.secrets.JICOFO_COMPONENT_SECRET]
+ref = 'jicofo-component-secret'
+
+[services.prosody.secrets.JVB_AUTH_PASSWORD]
+ref = 'jvb-auth-password'
+
+[services.prosody.secrets.JWT_APP_SECRET]
+ref = 'jwt-app-secret'
+
+[services.web]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'jitsi/web:unstable'
+port = 8000
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['prosody']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.web.mounts]]
+volume = 'jitsiwebconfig'
+mount_path = '/config'
+read_only = false
+sub_path = ''
+
+[[services.web.mounts]]
+volume = 'jitsiwebtranscripts'
+mount_path = '/usr/share/jitsi-meet/transcripts'
+read_only = false
+sub_path = ''
+
+[services.web.env]
+DISABLE_HTTPS = ''
+ENABLE_AUTH = ''
+ENABLE_COLIBRI_WEBSOCKET = ''
+ENABLE_GUESTS = ''
+ENABLE_HTTP_REDIRECT = ''
+ENABLE_LETSENCRYPT = ''
+ENABLE_XMPP_WEBSOCKET = ''
+JICOFO_AUTH_USER = ''
+JVB_AUTH_USER = ''
+PUBLIC_URL = ''
+TZ = ''
+XMPP_AUTH_DOMAIN = ''
+XMPP_BOSH_URL_BASE = ''
+XMPP_DOMAIN = ''
+XMPP_GUEST_DOMAIN = ''
+XMPP_MUC_DOMAIN = ''
+XMPP_RECORDER_DOMAIN = ''
+
+[services.web.secrets]
+[services.web.secrets.JICOFO_AUTH_PASSWORD]
+ref = 'jicofo-auth-password'
+
+[services.web.secrets.JVB_AUTH_PASSWORD]
+ref = 'jvb-auth-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.jitsijicofoconfig]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.jitsijvbconfig]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.jitsiprosodyconfig]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.jitsiprosodyplugins]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.jitsiwebconfig]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.jitsiwebtranscripts]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

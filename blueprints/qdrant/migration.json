@@ -1,0 +1,10 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/qdrant",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Authenticated HTTP and gRPC are private; use permitted private networking for clients.",
+    "Single node; configure snapshots and backups separately."
+  ],
+  "runtime_verified": false
+}

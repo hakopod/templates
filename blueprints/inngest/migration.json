@@ -1,0 +1,9 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/inngest",
+  "blockers": [
+    "inngest: command interpolation needs an explicit environment-aware startup adapter",
+    "redis: review Compose sysctls=['net.core.somaxconn=1024']; no implicit host privileges or configuration mounts"
+  ],
+  "runtime_verified": false
+}

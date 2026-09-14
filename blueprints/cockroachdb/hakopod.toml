@@ -1,0 +1,52 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/cockroachdb/cockroach:v25.4.16@sha256:d505f1e479cd4a4305acdfa3abf435298469058d6745cf5dde56b0a239da22fa'
+port = 26257
+public_tcp = []
+ports = []
+public = false
+size = 'large'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['/bin/sh', '-ec']
+args = ["umask 077\nmkdir -p /tmp/hakopod-certs\nprintf '%s' \"$COCKROACH_CA\" > /tmp/hakopod-certs/ca.crt\nprintf '%s' \"$COCKROACH_NODE_CERT\" > /tmp/hakopod-certs/node.crt\nprintf '%s' \"$COCKROACH_NODE_KEY\" > /tmp/hakopod-certs/node.key\nexec /cockroach/cockroach start-single-node --certs-dir=/tmp/hakopod-certs --listen-addr=0.0.0.0:26257 --advertise-addr=main:26257 --http-addr=127.0.0.1:8080 --store=/cockroach/cockroach-data --cache=128MiB --max-sql-memory=128MiB"]
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/cockroach/cockroach-data'
+size_gib = 5
+storage_class = ''
+
+[services.main.secrets]
+[services.main.secrets.COCKROACH_CA]
+ref = 'database-ca'
+
+[services.main.secrets.COCKROACH_NODE_CERT]
+ref = 'database-node-cert'
+
+[services.main.secrets.COCKROACH_NODE_KEY]
+ref = 'database-node-key'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

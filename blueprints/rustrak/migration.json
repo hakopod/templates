@@ -1,0 +1,10 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/rustrak",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "SQLite data persists at /data. Back up the data and session secret together.",
+    "Supply administrator as email:password using a strong password; this is a compound credential, not an ordinary environment variable."
+  ],
+  "runtime_verified": false
+}

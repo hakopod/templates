@@ -1,0 +1,11 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/cloudflared",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Uses pod networking, not the host network. Configure tunnel origins using reachable private service DNS.",
+    "Attach this service to an explicitly permitted virtual network for cross-application origins. localhost refers to this container.",
+    "Create and configure the tunnel in your own Cloudflare account; image updates follow application deployments."
+  ],
+  "runtime_verified": false
+}

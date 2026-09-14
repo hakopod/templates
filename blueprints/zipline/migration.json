@@ -1,0 +1,9 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/zipline",
+  "blockers": [
+    "zipline: mounted host/config asset ../files/uploads at /zipline/uploads needs a supported image/config adapter",
+    "zipline: mounted host/config asset ../files/public at /zipline/public needs a supported image/config adapter"
+  ],
+  "runtime_verified": false
+}

@@ -1,0 +1,11 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/n8n-runner-postgres-ollama",
+  "blockers": [
+    "Non-root startup, writable paths and dependency readiness require runtime acceptance before enabling this preset",
+    "Provision ReadWriteMany storage for shared volume ollama-storage.",
+    "Provision ReadWriteMany storage for shared volume ollama-storage.",
+    "Provision ReadWriteMany storage for shared volume ollama-storage."
+  ],
+  "runtime_verified": false
+}

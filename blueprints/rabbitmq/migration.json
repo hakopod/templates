@@ -1,0 +1,10 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/rabbitmq",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Only the management UI can use HTTP ingress. AMQP remains private TCP on 5672.",
+    "Single persistent node with a stable node name. Allocate at least 2 GiB free disk and configure backups."
+  ],
+  "runtime_verified": false
+}

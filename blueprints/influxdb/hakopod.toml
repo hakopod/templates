@@ -1,0 +1,48 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 10001
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'influxdb:2.7.10@sha256:b4cd4b71bc8528c5cb6b9dede79091a234f9f565a3177b8fc4c2cc835bf5c142'
+port = 8086
+public_tcp = []
+ports = []
+public = false
+size = 'large'
+replicas = 1
+update_strategy = ''
+healthcheck = '/health'
+command = ['influxd']
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/data'
+size_gib = 5
+storage_class = ''
+
+[services.main.env]
+INFLUXD_BOLT_PATH = '/data/influxd.bolt'
+INFLUXD_ENGINE_PATH = '/data/engine'
+INFLUXD_SQLITE_PATH = '/data/influxd.sqlite'
+
+[services.main.secrets]
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

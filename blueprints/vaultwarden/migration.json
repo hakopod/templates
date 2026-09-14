@@ -1,0 +1,10 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/vaultwarden",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Public signups are disabled. Use /admin with the configured token to invite users.",
+    "Configure SMTP in Vaultwarden if email invitations are needed. Back up its database and attachments."
+  ],
+  "runtime_verified": false
+}

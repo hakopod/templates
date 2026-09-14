@@ -1,0 +1,11 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/prometheus",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Private endpoint with the image\u2019s built-in self-scrape configuration. No cluster credentials or automatic host scraping are granted.",
+    "Bake reviewed scrape targets into a derivative image and attach permitted virtual networks before monitoring other applications.",
+    "Seven-day / 2 GB retention; allocate sufficient disk and configure remote storage separately."
+  ],
+  "runtime_verified": false
+}

@@ -1,0 +1,52 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.databasus]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'databasus/databasus:latest@sha256:3c814cdb4de830232c0fa8b3e0dfbe3ae39f685e7e8bd3effdf3b989c9e5d74d'
+port = 4005
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.databasus.mounts]]
+volume = 'databasus-data'
+mount_path = '/databasus-data'
+read_only = false
+sub_path = ''
+
+[services.databasus.env]
+TZ = 'UTC'
+
+[services.databasus.secrets]
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.databasus-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

@@ -1,0 +1,44 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 65534
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'prom/prometheus:latest@sha256:5ce7540c3c00ef4ab0c9d2c995c6a5b9c421f44b4a115d97a2c7af3b1c21cbb0'
+port = 9090
+public_tcp = []
+ports = []
+public = false
+size = 'large'
+replicas = 1
+update_strategy = ''
+healthcheck = '/-/ready'
+command = []
+args = ['--config.file=/etc/prometheus/prometheus.yml', '--storage.tsdb.path=/prometheus', '--storage.tsdb.retention.time=7d', '--storage.tsdb.retention.size=2GB', '--web.console.libraries=/usr/share/prometheus/console_libraries', '--web.console.templates=/usr/share/prometheus/consoles']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/prometheus'
+size_gib = 5
+storage_class = ''
+
+[services.main.env]
+[services.main.secrets]
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

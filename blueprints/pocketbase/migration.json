@@ -1,0 +1,10 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/pocketbase",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Uses the third-party adrianmusante container distribution; review that image separately from PocketBase.",
+    "Administrator upsert runs on startup. Changing the secret resets the configured administrator password. Back up persistent data."
+  ],
+  "runtime_verified": false
+}

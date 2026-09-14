@@ -1,0 +1,10 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/lobe-chat",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Uses the client-storage Lobe Chat variant. Chat data lives in users\u2019 browsers; this is not the server-database edition.",
+    "OpenAI provider credentials and a unique access code replace upstream sample credentials."
+  ],
+  "runtime_verified": false
+}

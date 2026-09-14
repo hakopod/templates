@@ -1,0 +1,10 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/vault",
+  "blockers": [
+    "The upstream blueprint runs Vault in development mode with an in-memory root token. Replace it with persistent storage, TLS, and an operator-owned init/unseal procedure; do not use it as production Vault.",
+    "vault: command interpolation needs an explicit environment-aware startup adapter",
+    "vault: review Compose cap_add=['IPC_LOCK']; no implicit host privileges or configuration mounts"
+  ],
+  "runtime_verified": false
+}

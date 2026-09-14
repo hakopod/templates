@@ -1,0 +1,8 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/moltbot",
+  "blockers": [
+    "moltbot-gateway: immutable image/architecture verification remains incomplete for ghcr.io/moltbot/clawdbot:2026.1.24-1"
+  ],
+  "runtime_verified": false
+}

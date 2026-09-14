@@ -1,0 +1,46 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 1000
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = true
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'favonia/cloudflare-ddns:1@sha256:61013368c8f95981c0bb8bf56d962078d8b4e95724a554fa2dabb20d6e478097'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'small'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.env]
+DOMAINS = '{{config.domains}}'
+IP6_PROVIDER = 'none'
+PROXIED = 'false'
+
+[services.main.secrets]
+[services.main.secrets.CLOUDFLARE_API_TOKEN]
+ref = 'dns-token'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

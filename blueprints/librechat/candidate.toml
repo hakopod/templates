@@ -1,0 +1,287 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.librechat]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'ghcr.io/danny-avila/librechat-dev:latest@sha256:54d98dc7fd0f07dfea1ccb4a42bbc417e798f5b896deb83e04c398ee26885d0e'
+port = 3080
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['mongodb', 'rag-api']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.librechat.mounts]]
+volume = 'librechat-data'
+mount_path = '/app/client/public/images'
+read_only = false
+sub_path = ''
+
+[[services.librechat.mounts]]
+volume = 'librechat-data'
+mount_path = '/app/uploads'
+read_only = false
+sub_path = ''
+
+[[services.librechat.mounts]]
+volume = 'librechat-data'
+mount_path = '/app/logs'
+read_only = false
+sub_path = ''
+
+[services.librechat.env]
+ALLOW_EMAIL_LOGIN = 'true'
+ALLOW_REGISTRATION = 'false'
+ALLOW_SOCIAL_LOGIN = 'false'
+APP_TITLE = 'LibreChat'
+CREDS_IV = 'e2341419ec3dd3d19b13a1a87fafcbfb'
+CREDS_KEY = 'f34be427ebb29de8d88c107a71546019685ed8b241d8f2ed00c3df97ad2566f0'
+CUSTOM_FOOTER = 'Made with ❤️ by LibreChat'
+DOMAIN_CLIENT = 'https://{{site_host}}'
+DOMAIN_SERVER = 'https://{{site_host}}'
+ENDPOINTS = 'google,openAI,assistants,azureOpenAI,anthropic'
+GOOGLE_KEY = ''
+HOST = '0.0.0.0'
+MEILI_HOST = 'http://meilisearch:7700'
+MEILI_MASTER_KEY = '{{config.password}}'
+MEILI_NO_ANALYTICS = 'true'
+MONGO_URI = 'mongodb://mongodb:27017/LibreChat'
+NO_INDEX = 'true'
+OPENROUTER_KEY = ''
+PORT = '3080'
+RAG_API_URL = 'http://rag_api:8000'
+RAG_PORT = '8000'
+SEARCH = 'true'
+
+[services.librechat.secrets]
+[services.librechat.secrets.ANTHROPIC_API_KEY]
+ref = 'anthropic-api-key'
+
+[services.librechat.secrets.JWT_REFRESH_SECRET]
+ref = 'jwt-refresh-secret'
+
+[services.librechat.secrets.JWT_SECRET]
+ref = 'jwt-secret'
+
+[services.librechat.secrets.OPENAI_API_KEY]
+ref = 'openai-api-key'
+
+[services.meilisearch]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'getmeili/meilisearch:v1.12.3@sha256:4acfcbbb9e089aa1aac838cfda3fba7f07aaaef044c23da8acbe0ab741400dac'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.meilisearch.mounts]]
+volume = 'meili-data'
+mount_path = '/meili_data'
+read_only = false
+sub_path = ''
+
+[services.meilisearch.env]
+MEILI_HOST = 'http://meilisearch:7700'
+MEILI_MASTER_KEY = '{{config.password}}'
+MEILI_NO_ANALYTICS = 'true'
+
+[services.meilisearch.secrets]
+[services.mongodb]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'mongo@sha256:81a1c8842a09589fc8d5f285266f3340bf4abdf66700ba22988f14cc9b2b3118'
+port = 27017
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['mongod', '--noauth']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.mongodb.mounts]]
+volume = 'mongo-data'
+mount_path = '/data/db'
+read_only = false
+sub_path = ''
+
+[services.mongodb.env]
+[services.mongodb.secrets]
+[services.rag-api]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ghcr.io/danny-avila/librechat-rag-api-dev-lite:latest@sha256:f9f34c8ed6884b0ff9b17387e6174fed737dba29f21622ecb75604d82bc47bf8'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['vectordb']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.rag-api.env]
+CHUNK_OVERLAP = '100'
+CHUNK_SIZE = '1500'
+COLLECTION_NAME = 'librechat_collection'
+CONSOLE_JSON = 'false'
+DB_HOST = 'vectordb'
+DEBUG_PGVECTOR_QUERIES = 'false'
+DEBUG_RAG_API = 'false'
+EMBEDDINGS_MODEL = 'text-embedding-3-small'
+EMBEDDINGS_PROVIDER = 'openai'
+GOOGLE_KEY = ''
+POSTGRES_DB = 'librechat_db'
+POSTGRES_USER = 'librechat_user'
+RAG_PORT = '8000'
+VECTOR_DB_TYPE = 'pgvector'
+
+[services.rag-api.secrets]
+[services.rag-api.secrets.JWT_SECRET]
+ref = 'jwt-secret'
+
+[services.rag-api.secrets.OPENAI_API_KEY]
+ref = 'openai-api-key'
+
+[services.rag-api.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.rag-api.secrets.RAG_GOOGLE_API_KEY]
+ref = 'rag-google-api-key'
+
+[services.rag-api.secrets.RAG_OPENAI_API_KEY]
+ref = 'rag-openai-api-key'
+
+[services.vectordb]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'pgvector/pgvector:0.8.0-pg15-trixie@sha256:8809cfffff0082cf260c9ac752f1dd1afc77f6f0a55c4e6411321e78efc3d9a5'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.vectordb.mounts]]
+volume = 'postgres-data'
+mount_path = '/var/lib/postgresql/data'
+read_only = false
+sub_path = ''
+
+[services.vectordb.env]
+POSTGRES_DB = 'librechat_db'
+POSTGRES_USER = 'librechat_user'
+
+[services.vectordb.secrets]
+[services.vectordb.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.librechat-data]
+size_gib = 5
+storage_class = 'administrator-rwx'
+access_mode = 'ReadWriteMany'
+
+[volumes.meili-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.mongo-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.postgres-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

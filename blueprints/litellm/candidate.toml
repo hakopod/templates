@@ -1,0 +1,131 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.litellm]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ghcr.io/berriai/litellm:main-latest@sha256:a79320760af8df488074ab3fbc830883856c7f952976aad00f039d3a43ffe4b2'
+port = 4000
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['litellm-db']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.litellm.env]
+AZURE_API_BASE = ''
+AZURE_API_VERSION = ''
+LITELLM_MASTER_KEY = '{{config.password}}'
+OPENAI_BASE_URL = ''
+OR_APP_NAME = 'LiteLLM Example app'
+OR_SITE_URL = ''
+STORE_MODEL_IN_DB = 'True'
+UI_USERNAME = '{{config.username}}'
+
+[services.litellm.secrets]
+[services.litellm.secrets.ANTHROPIC_API_KEY]
+ref = 'anthropic-api-key'
+
+[services.litellm.secrets.AZURE_API_KEY]
+ref = 'azure-api-key'
+
+[services.litellm.secrets.COHERE_API_KEY]
+ref = 'cohere-api-key'
+
+[services.litellm.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.litellm.secrets.INFINITY_API_KEY]
+ref = 'infinity-api-key'
+
+[services.litellm.secrets.INFISICAL_TOKEN]
+ref = 'infisical-token'
+
+[services.litellm.secrets.NOVITA_API_KEY]
+ref = 'novita-api-key'
+
+[services.litellm.secrets.OPENAI_API_KEY]
+ref = 'openai-api-key'
+
+[services.litellm.secrets.OR_API_KEY]
+ref = 'or-api-key'
+
+[services.litellm.secrets.REPLICATE_API_KEY]
+ref = 'replicate-api-key'
+
+[services.litellm.secrets.REPLICATE_API_TOKEN]
+ref = 'replicate-api-token'
+
+[services.litellm.secrets.UI_PASSWORD]
+ref = 'ui-password'
+
+[services.litellm-db]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.litellm-db.mounts]]
+volume = 'litellm-db'
+mount_path = '/var/lib/postgresql/data'
+read_only = false
+sub_path = ''
+
+[services.litellm-db.env]
+POSTGRES_DB = 'litellm'
+POSTGRES_USER = 'litellm'
+
+[services.litellm-db.secrets]
+[services.litellm-db.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.litellm-db]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

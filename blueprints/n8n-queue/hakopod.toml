@@ -1,0 +1,211 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.db]
+architecture = ''
+run_as_user = 70
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/library/postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['postgres', '-c', 'shared_buffers=64MB', '-c', 'max_connections=50']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.db.volume]
+mount_path = '/var/lib/postgresql/data'
+size_gib = 5
+storage_class = ''
+
+[services.db.env]
+PGDATA = '/var/lib/postgresql/data/pgdata'
+POSTGRES_DB = 'app'
+POSTGRES_USER = 'hakopod'
+
+[services.db.secrets]
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = 'database-password'
+
+[services.main]
+architecture = ''
+run_as_user = 1000
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'n8nio/n8n:2.30.4@sha256:d1606a508b1e426de07a98fa10f3758ef474b17590c6f181a0dd38c999f819d0'
+port = 5678
+public_tcp = []
+ports = []
+public = true
+size = 'compute'
+replicas = 1
+update_strategy = ''
+healthcheck = '/healthz'
+command = []
+args = []
+depends_on = ['db', 'redis']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/home/node/.n8n'
+size_gib = 5
+storage_class = ''
+
+[services.main.env]
+DB_POSTGRESDB_DATABASE = 'app'
+DB_POSTGRESDB_HOST = 'db'
+DB_POSTGRESDB_PORT = '5432'
+DB_POSTGRESDB_USER = 'hakopod'
+DB_TYPE = 'postgresdb'
+EXECUTIONS_MODE = 'queue'
+GENERIC_TIMEZONE = '{{config.timezone}}'
+N8N_EDITOR_BASE_URL = 'https://catalog.example.test/'
+N8N_HOST = '{{site_host}}'
+N8N_PORT = '5678'
+N8N_PROTOCOL = 'https'
+N8N_PROXY_HOPS = '1'
+N8N_SECURE_COOKIE = 'true'
+NODE_ENV = 'production'
+OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS = 'true'
+QUEUE_BULL_REDIS_HOST = 'redis'
+QUEUE_BULL_REDIS_PORT = '6379'
+QUEUE_HEALTH_CHECK_ACTIVE = 'true'
+WEBHOOK_URL = 'https://catalog.example.test/'
+
+[services.main.secrets]
+[services.main.secrets.DB_POSTGRESDB_PASSWORD]
+ref = 'database-password'
+
+[services.main.secrets.N8N_ENCRYPTION_KEY]
+ref = 'encryption-key'
+
+[services.main.secrets.QUEUE_BULL_REDIS_PASSWORD]
+ref = 'redis-password'
+
+[services.redis]
+architecture = ''
+run_as_user = 999
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/library/redis:8.6.6-alpine@sha256:75934ddb37bfaebe3b4082ba673cac39f66495244134f33dd0a502ce03cdcd36'
+port = 6379
+public_tcp = []
+ports = []
+public = false
+size = 'small'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['sh', '-ec']
+args = ['exec redis-server --appendonly yes --maxmemory 64mb --maxmemory-policy noeviction --requirepass "$REDIS_PASSWORD"']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.redis.volume]
+mount_path = '/data'
+size_gib = 5
+storage_class = ''
+
+[services.redis.secrets]
+[services.redis.secrets.REDIS_PASSWORD]
+ref = 'redis-password'
+
+[services.worker]
+architecture = ''
+run_as_user = 1000
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'n8nio/n8n:2.30.4@sha256:d1606a508b1e426de07a98fa10f3758ef474b17590c6f181a0dd38c999f819d0'
+port = 5678
+public_tcp = []
+ports = []
+public = false
+size = 'compute'
+replicas = 1
+update_strategy = ''
+healthcheck = '/healthz'
+command = []
+args = ['worker', '--concurrency=2']
+depends_on = ['main']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.worker.env]
+DB_POSTGRESDB_DATABASE = 'app'
+DB_POSTGRESDB_HOST = 'db'
+DB_POSTGRESDB_PORT = '5432'
+DB_POSTGRESDB_USER = 'hakopod'
+DB_TYPE = 'postgresdb'
+EXECUTIONS_MODE = 'queue'
+GENERIC_TIMEZONE = '{{config.timezone}}'
+N8N_EDITOR_BASE_URL = 'https://catalog.example.test/'
+N8N_HOST = '{{site_host}}'
+N8N_PORT = '5678'
+N8N_PROTOCOL = 'https'
+N8N_PROXY_HOPS = '1'
+N8N_SECURE_COOKIE = 'true'
+NODE_ENV = 'production'
+OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS = 'true'
+QUEUE_BULL_REDIS_HOST = 'redis'
+QUEUE_BULL_REDIS_PORT = '6379'
+QUEUE_HEALTH_CHECK_ACTIVE = 'true'
+WEBHOOK_URL = 'https://catalog.example.test/'
+
+[services.worker.secrets]
+[services.worker.secrets.DB_POSTGRESDB_PASSWORD]
+ref = 'database-password'
+
+[services.worker.secrets.N8N_ENCRYPTION_KEY]
+ref = 'encryption-key'
+
+[services.worker.secrets.QUEUE_BULL_REDIS_PASSWORD]
+ref = 'redis-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

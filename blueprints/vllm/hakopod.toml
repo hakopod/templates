@@ -1,0 +1,53 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/vllm/vllm-openai:v0.29.0@sha256:c2914767605584b6d8f45686b82de173ecc99e781897aa3d0a66dacd72c51ae1'
+port = 8000
+public_tcp = []
+ports = []
+public = true
+size = 'gpu'
+replicas = 1
+update_strategy = ''
+healthcheck = '/health'
+command = []
+args = ['Qwen/Qwen3-0.6B', '--revision', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', '--download-dir', '/model-cache', '--host', '0.0.0.0', '--port', '8000', '--max-model-len', '4096', '--gpu-memory-utilization', '0.85']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/model-cache'
+size_gib = 30
+storage_class = ''
+
+[services.main.gpu]
+count = 1
+
+[services.main.env]
+HF_HOME = '/model-cache'
+HOME = '/tmp'
+
+[services.main.secrets]
+[services.main.secrets.VLLM_API_KEY]
+ref = 'inference-api-key'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

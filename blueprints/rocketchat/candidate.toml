@@ -1,0 +1,101 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.mongodb]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'docker.io/bitnami/mongodb:5.0'
+port = 27017
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.mongodb.mounts]]
+volume = 'mongodb-data'
+mount_path = '/bitnami/mongodb'
+read_only = false
+sub_path = ''
+
+[services.mongodb.env]
+MONGODB_ADVERTISED_HOSTNAME = 'mongodb'
+MONGODB_ENABLE_JOURNAL = 'true'
+MONGODB_INITIAL_PRIMARY_HOST = 'mongodb'
+MONGODB_INITIAL_PRIMARY_PORT_NUMBER = '27017'
+MONGODB_PORT_NUMBER = '27017'
+MONGODB_REPLICA_SET_MODE = 'primary'
+MONGODB_REPLICA_SET_NAME = 'rs0'
+
+[services.mongodb.secrets]
+[services.mongodb.secrets.ALLOW_EMPTY_PASSWORD]
+ref = 'allow-empty-password'
+
+[services.rocketchat]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'registry.rocket.chat/rocketchat/rocket.chat:6.9.2'
+port = 3000
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['mongodb']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.rocketchat.env]
+DEPLOY_METHOD = 'docker'
+DEPLOY_PLATFORM = ''
+MONGO_OPLOG_URL = 'mongodb://mongodb:27017/local?replicaSet=rs0'
+MONGO_URL = 'mongodb://mongodb:27017/rocketchat?replicaSet=rs0'
+PORT = '3000'
+ROOT_URL = 'http://${ROCKETCHAT_HOST:3000}'
+
+[services.rocketchat.secrets]
+[services.rocketchat.secrets.REG_TOKEN]
+ref = 'reg-token'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.mongodb-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

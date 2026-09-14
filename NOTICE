@@ -1,0 +1,10 @@
+Hakopod template catalog
+Copyright 2026 Hakopod contributors
+
+Adapted blueprints and upstream logo assets originate from Dokploy/templates,
+commit 830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933.
+Copyright 2024 Dokploy and Carlos Ortiz. Their MIT notice is in LICENSE-Dokploy.
+Application names and logos remain trademarks of their respective owners.
+Application/container licenses are separate from this catalog's license.
+Registry digest metadata was collected on 2026-09-14; mutable image tags are not
+promises of ongoing compatibility or a substitute for runtime testing.

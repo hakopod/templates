@@ -1,0 +1,445 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.firecrawl]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ghcr.io/firecrawl/firecrawl:2.11.230@sha256:7c5bf28dd3397be9a5bfb103adeef9adefbad352d223011da1bab606a0044416'
+port = 3002
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['node', 'dist/src/harness.js', '--start-docker']
+depends_on = ['firecrawl-db-seed', 'nuq-postgres', 'redis', 'rabbitmq', 'playwright-service']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.firecrawl.env]
+ALLOW_LOCAL_WEBHOOKS = 'false'
+BROWSER_POOL_SIZE = '5'
+BULL_AUTH_KEY = '{{config.hash}}'
+CRAWL_CONCURRENT_REQUESTS = '10'
+DISABLE_ENGPICKER = 'true'
+ENV = 'local'
+EXTRACT_WORKER_PORT = '3004'
+HARNESS_STARTUP_TIMEOUT_MS = '120000'
+HOST = '0.0.0.0'
+LOGGING_LEVEL = 'INFO'
+MAX_CONCURRENT_JOBS = '5'
+MODEL_EMBEDDING_NAME = ''
+MODEL_NAME = ''
+NUM_WORKERS_PER_QUEUE = '8'
+OLLAMA_BASE_URL = ''
+OPENAI_BASE_URL = ''
+PLAYWRIGHT_MICROSERVICE_URL = 'http://playwright-service:3000/scrape'
+PORT = '3002'
+POSTGRES_DB = 'postgres'
+POSTGRES_HOST = 'nuq-postgres'
+POSTGRES_PORT = '5432'
+POSTGRES_USER = 'postgres'
+PROXY_SERVER = ''
+PROXY_USERNAME = ''
+SEARXNG_CATEGORIES = ''
+SEARXNG_ENDPOINT = ''
+SEARXNG_ENGINES = ''
+SELF_HOSTED_WEBHOOK_URL = ''
+SLACK_WEBHOOK_URL = ''
+USE_DB_AUTHENTICATION = 'true'
+WORKER_PORT = '3005'
+
+[services.firecrawl.secrets]
+[services.firecrawl.secrets.DATABASE_REPLICA_URL]
+ref = 'database-replica-url'
+
+[services.firecrawl.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.firecrawl.secrets.LLAMAPARSE_API_KEY]
+ref = 'llamaparse-api-key'
+
+[services.firecrawl.secrets.NUQ_DATABASE_URL]
+ref = 'nuq-database-url'
+
+[services.firecrawl.secrets.NUQ_DATABASE_URL_LISTEN]
+ref = 'nuq-database-url-listen'
+
+[services.firecrawl.secrets.NUQ_RABBITMQ_URL]
+ref = 'nuq-rabbitmq-url'
+
+[services.firecrawl.secrets.OPENAI_API_KEY]
+ref = 'openai-api-key'
+
+[services.firecrawl.secrets.OPENROUTER_API_KEY]
+ref = 'openrouter-api-key'
+
+[services.firecrawl.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.firecrawl.secrets.PROXY_PASSWORD]
+ref = 'proxy-password'
+
+[services.firecrawl.secrets.REDIS_RATE_LIMIT_URL]
+ref = 'redis-rate-limit-url'
+
+[services.firecrawl.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.firecrawl.secrets.SEARCHAPI_API_KEY]
+ref = 'searchapi-api-key'
+
+[services.firecrawl.secrets.SELF_HOSTED_WEBHOOK_HMAC_SECRET]
+ref = 'self-hosted-webhook-hmac-secret'
+
+[services.firecrawl-db]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.firecrawl-db.mounts]]
+volume = 'firecrawl-db-data'
+mount_path = '/var/lib/postgresql/data'
+read_only = false
+sub_path = ''
+
+[services.firecrawl-db.env]
+POSTGRES_DB = 'firecrawl'
+POSTGRES_USER = 'postgres'
+
+[services.firecrawl-db.secrets]
+[services.firecrawl-db.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.firecrawl-db-seed]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['/bin/sh', '-ec', 'psql -v org_id="$${FIRECRAWL_ORG_ID}" -v team_id="$${FIRECRAWL_TEAM_ID}" -v api_key="$${FIRECRAWL_API_KEY}" -f /seed.sql']
+depends_on = ['firecrawl-db']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.firecrawl-db-seed.env]
+FIRECRAWL_ORG_ID = '{{config.uuid}}'
+FIRECRAWL_TEAM_ID = '{{config.uuid}}'
+PGDATABASE = 'firecrawl'
+PGHOST = 'firecrawl-db'
+PGPORT = '5432'
+PGUSER = 'postgres'
+
+[services.firecrawl-db-seed.secrets]
+[services.firecrawl-db-seed.secrets.FIRECRAWL_API_KEY]
+ref = 'firecrawl-api-key'
+
+[services.firecrawl-db-seed.secrets.PGPASSWORD]
+ref = 'pgpassword'
+
+[services.gateway]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'nginx:1.29-alpine@sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de'
+port = 8080
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['firecrawl', 'swagger-ui']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.gateway.env]
+[services.gateway.secrets]
+[services.nuq-postgres]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'ghcr.io/firecrawl/nuq-postgres@sha256:aed86f62858f29bd971abddcdeb301c12888098d2cf5d33c1ba42b053bc460f6'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.nuq-postgres.mounts]]
+volume = 'nuq-postgres-data'
+mount_path = '/var/lib/postgresql/data'
+read_only = false
+sub_path = ''
+
+[services.nuq-postgres.env]
+POSTGRES_DB = 'postgres'
+POSTGRES_USER = 'postgres'
+
+[services.nuq-postgres.secrets]
+[services.nuq-postgres.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.playwright-service]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ghcr.io/firecrawl/playwright-service@sha256:468009bae00911d40d7120d58489a1d529362c22c45585cb9076094fe61b0025'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.playwright-service.env]
+ALLOW_LOCAL_WEBHOOKS = 'false'
+BLOCK_MEDIA = 'true'
+MAX_CONCURRENT_PAGES = '10'
+PORT = '3000'
+PROXY_SERVER = ''
+PROXY_USERNAME = ''
+
+[services.playwright-service.secrets]
+[services.playwright-service.secrets.PROXY_PASSWORD]
+ref = 'proxy-password'
+
+[services.rabbitmq]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'rabbitmq:3-management@sha256:e582c0bc7766f3342496d8485efb5a1df782b5ce3886ad017e2eaae442311f69'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.rabbitmq.mounts]]
+volume = 'rabbitmq-data'
+mount_path = '/var/lib/rabbitmq'
+read_only = false
+sub_path = ''
+
+[services.rabbitmq.env]
+RABBITMQ_DEFAULT_USER = 'firecrawl'
+
+[services.rabbitmq.secrets]
+[services.rabbitmq.secrets.RABBITMQ_DEFAULT_PASS]
+ref = 'rabbitmq-default-pass'
+
+[services.redis]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'redis:7-alpine@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf'
+port = 6379
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['/bin/sh', '-ec', 'exec redis-server --bind 0.0.0.0 --appendonly yes --requirepass "$${REDIS_PASSWORD}"']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.redis.mounts]]
+volume = 'redis-data'
+mount_path = '/data'
+read_only = false
+sub_path = ''
+
+[services.redis.env]
+[services.redis.secrets]
+[services.redis.secrets.REDIS_PASSWORD]
+ref = 'redis-password'
+
+[services.swagger-ui]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'swaggerapi/swagger-ui:v5.32.14@sha256:3d93169968848d371a6a56ca1ab18b47a8906ba461b8eba0688866354f5431d5'
+port = 8080
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['/bin/sh', '-ec', "base64 -d /tmp/openapi.json.gz.b64 | gzip -dc > /usr/share/nginx/html/openapi.json; exec /docker-entrypoint.sh nginx -g 'daemon off;'"]
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.swagger-ui.env]
+DEEP_LINKING = 'true'
+DISPLAY_OPERATION_ID = 'false'
+DISPLAY_REQUEST_DURATION = 'true'
+DOC_EXPANSION = 'none'
+PERSIST_AUTHORIZATION = 'true'
+SWAGGER_JSON_URL = '/openapi.json'
+TRY_IT_OUT_ENABLED = 'true'
+
+[services.swagger-ui.secrets]
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.firecrawl-db-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.nuq-postgres-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.rabbitmq-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.redis-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

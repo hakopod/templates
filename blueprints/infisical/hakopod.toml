@@ -1,0 +1,134 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.db]
+architecture = ''
+run_as_user = 70
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/library/postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['postgres', '-c', 'shared_buffers=64MB', '-c', 'max_connections=50']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.db.volume]
+mount_path = '/var/lib/postgresql/data'
+size_gib = 5
+storage_class = ''
+
+[services.db.env]
+PGDATA = '/var/lib/postgresql/data/pgdata'
+POSTGRES_DB = 'app'
+POSTGRES_USER = 'hakopod'
+
+[services.db.secrets]
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = 'database-password'
+
+[services.main]
+architecture = ''
+run_as_user = 1001
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/infisical/infisical:v0.165.10@sha256:204bd63c7a281d9157752ce0bf8d506e7380cac5a0665324eeab8d580b069266'
+port = 8080
+public_tcp = []
+ports = []
+public = true
+size = 'compute'
+replicas = 1
+update_strategy = ''
+healthcheck = '/api/status'
+command = []
+args = []
+depends_on = ['db', 'redis']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.env]
+NODE_OPTIONS = '--max-old-space-size=1024'
+SITE_URL = 'https://catalog.example.test'
+TELEMETRY_ENABLED = 'false'
+
+[services.main.secrets]
+[services.main.secrets.AUTH_SECRET]
+ref = 'auth-secret'
+
+[services.main.secrets.DB_CONNECTION_URI]
+ref = 'database-url'
+
+[services.main.secrets.ENCRYPTION_KEY]
+ref = 'encryption-key'
+
+[services.main.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.redis]
+architecture = ''
+run_as_user = 999
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/library/redis:8.6.6-alpine@sha256:75934ddb37bfaebe3b4082ba673cac39f66495244134f33dd0a502ce03cdcd36'
+port = 6379
+public_tcp = []
+ports = []
+public = false
+size = 'small'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['sh', '-ec']
+args = ['exec redis-server --appendonly yes --maxmemory 64mb --maxmemory-policy noeviction --requirepass "$REDIS_PASSWORD"']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.redis.volume]
+mount_path = '/data'
+size_gib = 5
+storage_class = ''
+
+[services.redis.secrets]
+[services.redis.secrets.REDIS_PASSWORD]
+ref = 'redis-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

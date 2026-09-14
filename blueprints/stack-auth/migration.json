@@ -1,0 +1,8 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/stack-auth",
+  "blockers": [
+    "stack-auth: upstream declares multiple public ports; map HTTP endpoints explicitly without treating private protocols as HTTP"
+  ],
+  "runtime_verified": false
+}

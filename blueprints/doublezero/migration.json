@@ -1,0 +1,10 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/doublezero",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Provide least-privilege AWS SES/SQS credentials and complete sender/domain verification in AWS.",
+    "Uses an explicit persistent SQLite path. This is an SES dashboard; it does not expose an SMTP listener."
+  ],
+  "runtime_verified": false
+}

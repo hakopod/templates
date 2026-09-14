@@ -1,0 +1,47 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 1000
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ghcr.io/browserless/chromium:latest@sha256:ae07025606e03c9b263620aaf4d09c52728f71a104ac7d471a68c23dec72c05f'
+port = 3000
+public_tcp = []
+ports = []
+public = true
+size = 'large'
+replicas = 1
+update_strategy = ''
+healthcheck = '/docs'
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.env]
+CONCURRENT = '1'
+HOME = '/tmp'
+QUEUED = '5'
+TIMEOUT = '60000'
+
+[services.main.secrets]
+[services.main.secrets.TOKEN]
+ref = 'browser-token'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

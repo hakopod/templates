@@ -1,0 +1,154 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.inngest]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'inngest/inngest:v1.12.1@sha256:b72614904c1173be402c763374f302a7215ccbacc34ff6bb64d4ac84311f1ef3'
+port = 8288
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['inngest', 'start', '--host', '0.0.0.0', '--port', '8288', '--event-key', '${INNGEST_EVENT_KEY}', '--signing-key', '${INNGEST_SIGNING_KEY}', '--postgres-uri', '${INNGEST_POSTGRES_URI}', '--redis-uri', '${INNGEST_REDIS_URI}', '--poll-interval', '${INNGEST_POLL_INTERVAL:-60}', '--queue-workers', '${INNGEST_QUEUE_WORKERS:-100}']
+depends_on = ['postgres', 'redis']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.inngest.mounts]]
+volume = 'inngest-data'
+mount_path = '/home/inngest/.inngest'
+read_only = false
+sub_path = ''
+
+[services.inngest.env]
+INNGEST_EVENT_KEY = '{{config.jwt}}'
+INNGEST_HOST = '0.0.0.0'
+INNGEST_JSON = 'true'
+INNGEST_LOG_LEVEL = 'info'
+INNGEST_POLL_INTERVAL = '60'
+INNGEST_PORT = '8288'
+INNGEST_QUEUE_WORKERS = '100'
+INNGEST_REDIS_URI = 'redis://redis:6379'
+INNGEST_RETRY_INTERVAL = '1'
+INNGEST_SIGNING_KEY = '{{config.jwt}}'
+INNGEST_TICK = '150'
+INNGEST_VERBOSE = 'false'
+
+[services.inngest.secrets]
+[services.inngest.secrets.INNGEST_POSTGRES_URI]
+ref = 'inngest-postgres-uri'
+
+[services.postgres]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.postgres.mounts]]
+volume = 'postgres-data'
+mount_path = '/var/lib/postgresql/data'
+read_only = false
+sub_path = ''
+
+[services.postgres.env]
+PGUSER = 'inngest'
+POSTGRES_DB = 'inngest'
+POSTGRES_INITDB_ARGS = '--encoding=UTF-8 --lc-collate=C --lc-ctype=C'
+POSTGRES_USER = 'inngest'
+
+[services.postgres.secrets]
+[services.postgres.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.redis]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'redis:7-alpine@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf'
+port = 6379
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['redis-server', '--appendonly', 'yes', '--maxmemory', '512mb', '--maxmemory-policy', 'allkeys-lru', '--save', '60', '1000']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.redis.mounts]]
+volume = 'redis-data'
+mount_path = '/data'
+read_only = false
+sub_path = ''
+
+[services.redis.env]
+[services.redis.secrets]
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.inngest-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.postgres-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.redis-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

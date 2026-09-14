@@ -1,0 +1,64 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ghcr.io/open-webui/open-webui:v0.11.3-slim@sha256:bb3633af77b35d97783affc9cd8097d8a6dc89fedd5a410ce9a50d85556a870c'
+port = 8080
+public_tcp = []
+ports = []
+public = true
+size = 'compute'
+replicas = 1
+update_strategy = ''
+healthcheck = '/health'
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/app/backend/data'
+size_gib = 5
+storage_class = ''
+
+[services.main.env]
+ANONYMIZED_TELEMETRY = 'false'
+AUDIO_STT_ENGINE = 'openai'
+DATA_DIR = '/app/backend/data'
+DEFAULT_MODELS = 'gpt-4o-mini'
+DEFAULT_USER_ROLE = 'pending'
+DO_NOT_TRACK = 'true'
+ENABLE_OLLAMA_API = 'false'
+ENABLE_OPENAI_API = 'true'
+HF_HUB_OFFLINE = '1'
+HOME = '/tmp'
+OPENAI_API_BASE_URL = 'https://api.openai.com/v1'
+RAG_EMBEDDING_ENGINE = 'openai'
+WEBUI_URL = 'https://catalog.example.test'
+
+[services.main.secrets]
+[services.main.secrets.OPENAI_API_KEY]
+ref = 'provider-key'
+
+[services.main.secrets.WEBUI_SECRET_KEY]
+ref = 'session-secret'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

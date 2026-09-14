@@ -1,0 +1,46 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 999
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/library/redis:8.6.6-alpine@sha256:75934ddb37bfaebe3b4082ba673cac39f66495244134f33dd0a502ce03cdcd36'
+port = 6379
+public_tcp = []
+ports = []
+public = false
+size = 'small'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['sh', '-ec']
+args = ['exec redis-server --appendonly yes --maxmemory 64mb --maxmemory-policy noeviction --requirepass "$REDIS_PASSWORD"']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/data'
+size_gib = 5
+storage_class = ''
+
+[services.main.secrets]
+[services.main.secrets.REDIS_PASSWORD]
+ref = 'database-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

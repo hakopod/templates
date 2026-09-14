@@ -1,0 +1,10 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/casdoor",
+  "blockers": [
+    "casdoor: mounted host/config asset ../files/app.conf at /conf/app.conf needs a supported image/config adapter",
+    "casdoor: mounted host/config asset ../files/init_data.json at /init_data.json needs a supported image/config adapter",
+    "Configuration files declared upstream require explicit provisioning before the native candidate is deployable"
+  ],
+  "runtime_verified": false
+}

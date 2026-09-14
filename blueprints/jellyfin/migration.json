@@ -1,0 +1,10 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/jellyfin",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "CPU transcoding only; no host media mounts, hardware devices or discovery broadcast.",
+    "After deployment, attach a permitted persistent media volume and add its path in Jellyfin. Complete administrator setup before sharing."
+  ],
+  "runtime_verified": false
+}

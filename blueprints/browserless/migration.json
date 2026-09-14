@@ -1,0 +1,10 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/browserless",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Clients must send browser-token. Two concurrent browsers and a bounded queue are configured.",
+    "Do not expose unauthenticated browsing; pages and downloads run within the restricted container."
+  ],
+  "runtime_verified": false
+}

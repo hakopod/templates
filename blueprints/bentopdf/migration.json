@@ -1,0 +1,10 @@
+{
+  "status": "adapted",
+  "source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/bentopdf",
+  "upstream_commit": "830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933",
+  "adaptations": [
+    "Uses the current non-root image on port 8080; the upstream Compose port 80 is outdated.",
+    "PDF processing runs in the browser; review browser memory limits for large files."
+  ],
+  "runtime_verified": false
+}

@@ -1,0 +1,227 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.clickhouse]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'clickhouse/clickhouse-server:latest@sha256:d73903d1b61dfe825fc3810542f252966f33d3fd8efb3b3edcbbafb46b524b04'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.clickhouse.mounts]]
+volume = 'clickhouse-data'
+mount_path = '/var/lib/clickhouse'
+read_only = false
+sub_path = ''
+
+[services.clickhouse.env]
+CLICKHOUSE_DB = 'uptimekit'
+CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT = '1'
+CLICKHOUSE_USER = 'default'
+
+[services.clickhouse.secrets]
+[services.clickhouse.secrets.CLICKHOUSE_PASSWORD]
+ref = 'clickhouse-password'
+
+[services.dash]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ghcr.io/uptimekit/dash:latest@sha256:e7adcbed53a49b1f7b616a384fc63da069433c7772f7a05398ee5e9c0b78318e'
+port = 3000
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db', 'redis']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.dash.env]
+CLICKHOUSE_URL = 'http://clickhouse:8123'
+CLICKHOUSE_USER = 'default'
+
+[services.dash.secrets]
+[services.dash.secrets.CLICKHOUSE_PASSWORD]
+ref = 'clickhouse-password'
+
+[services.dash.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.dash.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.db]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'postgres:18-alpine@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.db.mounts]]
+volume = 'db-data'
+mount_path = '/var/lib/postgresql'
+read_only = false
+sub_path = ''
+
+[services.db.env]
+POSTGRES_DB = 'uptimekit'
+POSTGRES_USER = 'postgres'
+
+[services.db.secrets]
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.redis]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'redis:8.0-alpine@sha256:5f61955be8ab2ccee9372b84ae4d4da2e2b156f87281e3f218544055e7ee04d4'
+port = 6379
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.redis.mounts]]
+volume = 'redis-data'
+mount_path = '/data'
+read_only = false
+sub_path = ''
+
+[services.redis.env]
+[services.redis.secrets]
+[services.status-page]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ghcr.io/uptimekit/status-page:latest@sha256:1ffc1ce1227716acafc2f0fd97e9a9b13e42daffee34e93fe0a951e4c3196f0f'
+port = 3001
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db', 'redis', 'clickhouse', 'dash']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.status-page.env]
+CLICKHOUSE_URL = 'http://clickhouse:8123'
+CLICKHOUSE_USER = 'default'
+
+[services.status-page.secrets]
+[services.status-page.secrets.CLICKHOUSE_PASSWORD]
+ref = 'clickhouse-password'
+
+[services.status-page.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.status-page.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.clickhouse-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.db-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.redis-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

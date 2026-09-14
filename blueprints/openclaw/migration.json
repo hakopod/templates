@@ -1,0 +1,8 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/openclaw",
+  "blockers": [
+    "browser: review Compose shm_size=2g; no implicit host privileges or configuration mounts"
+  ],
+  "runtime_verified": false
+}

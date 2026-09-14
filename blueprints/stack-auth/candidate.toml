@@ -1,0 +1,108 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.stack-auth]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'stackauth/server:latest@sha256:51daaa4a49fcccc3c2371d8e1aac3ae33819f35618f57d1c55bfff4699344914'
+port = 8102
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['stack-auth-db']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.stack-auth.env]
+NEXT_PUBLIC_STACK_API_URL = 'http://{{site_host}}'
+NEXT_PUBLIC_STACK_DASHBOARD_URL = 'http://{{site_host}}'
+POSTGRES_DB = 'stackframe'
+POSTGRES_USER = 'postgres'
+STACK_EMAIL_HOST = '{{config.stack-email-host}}'
+STACK_RUN_MIGRATIONS = 'True'
+STACK_RUN_SEED_SCRIPT = 'True'
+STACK_SEED_INTERNAL_PROJECT_ALLOW_LOCALHOST = 'True'
+STACK_SEED_INTERNAL_PROJECT_SIGN_UP_ENABLED = 'True'
+
+[services.stack-auth.secrets]
+[services.stack-auth.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.stack-auth.secrets.STACK_DATABASE_CONNECTION_STRING]
+ref = 'stack-database-connection-string'
+
+[services.stack-auth.secrets.STACK_DIRECT_DATABASE_CONNECTION_STRING]
+ref = 'stack-direct-database-connection-string'
+
+[services.stack-auth.secrets.STACK_SERVER_SECRET]
+ref = 'stack-server-secret'
+
+[services.stack-auth-db]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'postgres:17@sha256:67f41722b7a8cbdb868a44a4995c846eddfdc2973bccb291ce937dce88ad5675'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.stack-auth-db.mounts]]
+volume = 'stack-auth-db-data'
+mount_path = '/var/lib/postgresql/data'
+read_only = false
+sub_path = ''
+
+[services.stack-auth-db.env]
+POSTGRES_DB = 'stackframe'
+POSTGRES_USER = 'postgres'
+
+[services.stack-auth-db.secrets]
+[services.stack-auth-db.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.stack-auth-db-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

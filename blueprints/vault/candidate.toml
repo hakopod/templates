@@ -1,0 +1,55 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.vault]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'hashicorp/vault:2.0.3@sha256:a296a888b118615dc01d5f1a6846e6d4a7277946caaed5b447008fff5fe06b54'
+port = 8200
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['server', '-dev', '-dev-root-token-id=${VAULT_DEV_ROOT_TOKEN_ID}', '-dev-listen-address=${VAULT_DEV_LISTEN_ADDRESS}']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.vault.mounts]]
+volume = 'vault-data'
+mount_path = '/vault/file'
+read_only = false
+sub_path = ''
+
+[services.vault.env]
+VAULT_DEV_LISTEN_ADDRESS = '0.0.0.0:8200'
+
+[services.vault.secrets]
+[services.vault.secrets.VAULT_DEV_ROOT_TOKEN_ID]
+ref = 'vault-dev-root-token-id'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.vault-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

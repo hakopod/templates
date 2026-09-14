@@ -1,0 +1,72 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 1000
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/flowiseai/flowise:3.1.4@sha256:3922767afb52a5777759fd8b28a3c9eee864daea96018a791f2429eae2a76571'
+port = 3000
+public_tcp = []
+ports = []
+public = true
+size = 'compute'
+replicas = 1
+update_strategy = ''
+healthcheck = '/api/v1/ping'
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/data'
+size_gib = 5
+storage_class = ''
+
+[services.main.env]
+APP_URL = 'https://catalog.example.test'
+BLOB_STORAGE_PATH = '/data/storage'
+DATABASE_PATH = '/data'
+DATABASE_TYPE = 'sqlite'
+DISABLE_FLOWISE_TELEMETRY = 'true'
+FLOWISE_FILE_SIZE_LIMIT = '10mb'
+HOME = '/data'
+LOG_PATH = '/data/logs'
+NODE_OPTIONS = '--max-old-space-size=1024'
+PORT = '3000'
+SECRETKEY_PATH = '/data'
+SECURE_COOKIES = 'true'
+
+[services.main.secrets]
+[services.main.secrets.EXPRESS_SESSION_SECRET]
+ref = 'session-secret'
+
+[services.main.secrets.FLOWISE_SECRETKEY_OVERWRITE]
+ref = 'credential-encryption-key'
+
+[services.main.secrets.JWT_AUTH_TOKEN_SECRET]
+ref = 'token-signing-secret'
+
+[services.main.secrets.JWT_REFRESH_TOKEN_SECRET]
+ref = 'token-refresh-secret'
+
+[services.main.secrets.TOKEN_HASH_SECRET]
+ref = 'token-hash-secret'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

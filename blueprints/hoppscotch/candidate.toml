@@ -1,0 +1,147 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.hoppscotch]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'hoppscotch/hoppscotch:latest@sha256:d50725df661ff58fcd205f062ec163dd470a3a1a07585b78b3ba4c9c1a538f05'
+port = 80
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['postgres', 'migrate']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.hoppscotch.mounts]]
+volume = 'hoppscotch-data'
+mount_path = '/app/data'
+read_only = false
+sub_path = ''
+
+[services.hoppscotch.env]
+ENABLE_SUBPATH_BASED_ACCESS = 'true'
+HOPP_AIO_ALTERNATE_PORT = '80'
+VITE_ADMIN_URL = 'https://{{site_host}}/admin'
+VITE_APP_PRIVACY_POLICY_LINK = 'https://docs.hoppscotch.io/support/privacy'
+VITE_APP_TOS_LINK = 'https://docs.hoppscotch.io/support/terms'
+VITE_BACKEND_API_URL = 'https://{{site_host}}/backend/v1'
+VITE_BACKEND_GQL_URL = 'https://{{site_host}}/backend/graphql'
+VITE_BACKEND_WS_URL = 'wss://{{site_host}}/backend/graphql'
+VITE_BASE_URL = 'https://{{site_host}}'
+VITE_SHORTCODE_BASE_URL = 'https://{{site_host}}'
+WHITELISTED_ORIGINS = 'https://{{site_host}},http://{{site_host}},app://hoppscotch'
+
+[services.hoppscotch.secrets]
+[services.hoppscotch.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.hoppscotch.secrets.DATA_ENCRYPTION_KEY]
+ref = 'data-encryption-key'
+
+[services.migrate]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'hoppscotch/hoppscotch:latest@sha256:d50725df661ff58fcd205f062ec163dd470a3a1a07585b78b3ba4c9c1a538f05'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['/bin/sh', '-c']
+args = ["echo \"Running database migrations...\"\npnpm dlx prisma migrate deploy && echo \"Migration complete!\"\n"]
+depends_on = ['postgres']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.migrate.env]
+[services.migrate.secrets]
+[services.migrate.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.postgres]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'postgres:16@sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.postgres.mounts]]
+volume = 'hoppscotch-postgres'
+mount_path = '/var/lib/postgresql/data'
+read_only = false
+sub_path = ''
+
+[services.postgres.env]
+POSTGRES_DB = 'hoppscotch'
+POSTGRES_USER = 'hoppscotch'
+
+[services.postgres.secrets]
+[services.postgres.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.hoppscotch-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.hoppscotch-postgres]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

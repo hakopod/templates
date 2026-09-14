@@ -1,0 +1,97 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.certmate]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'fabriziosalmi/certmate:2.21.3@sha256:26ddcbfb89807e4e5620528a689403b49bba132dc504ab45f4cf2b7516ceb0dd'
+port = 8000
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.certmate.mounts]]
+volume = 'certmate-certificates'
+mount_path = '/app/certificates'
+read_only = false
+sub_path = ''
+
+[[services.certmate.mounts]]
+volume = 'certmate-data'
+mount_path = '/app/data'
+read_only = false
+sub_path = ''
+
+[[services.certmate.mounts]]
+volume = 'certmate-logs'
+mount_path = '/app/logs'
+read_only = false
+sub_path = ''
+
+[[services.certmate.mounts]]
+volume = 'certmate-backups'
+mount_path = '/app/backups'
+read_only = false
+sub_path = ''
+
+[services.certmate.env]
+BEHIND_PROXY = 'true'
+FLASK_ENV = 'production'
+LETSENCRYPT_EMAIL = ''
+LOG_LEVEL = 'INFO'
+
+[services.certmate.secrets]
+[services.certmate.secrets.API_BEARER_TOKEN]
+ref = 'api-bearer-token'
+
+[services.certmate.secrets.CLOUDFLARE_TOKEN]
+ref = 'cloudflare-token'
+
+[services.certmate.secrets.SECRET_KEY]
+ref = 'secret-key'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.certmate-backups]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.certmate-certificates]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.certmate-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.certmate-logs]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

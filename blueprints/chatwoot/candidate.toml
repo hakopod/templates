@@ -1,0 +1,228 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.chatwoot]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'chatwoot/chatwoot:v4.12.1@sha256:fdc544a7fc265cb24391cab068426f94a7ed60eadc116b3271ec5416873ab88e'
+port = 3000
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['docker/entrypoints/rails.sh']
+args = ['sh', '-c', 'bundle exec rails db:chatwoot_prepare && bundle exec rails s -p 3000 -b 0.0.0.0']
+depends_on = ['postgres', 'redis']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.chatwoot.mounts]]
+volume = 'chatwoot-storage'
+mount_path = '/app/storage'
+read_only = false
+sub_path = ''
+
+[services.chatwoot.env]
+ACTIVE_STORAGE_SERVICE = 'local'
+DEFAULT_LOCALE = 'en'
+ENABLE_ACCOUNT_SIGNUP = 'false'
+FORCE_SSL = 'false'
+FRONTEND_URL = 'http://{{site_host}}'
+INSTALLATION_ENV = 'docker'
+LOG_LEVEL = 'info'
+NODE_ENV = 'production'
+POSTGRES_DATABASE = 'chatwoot'
+POSTGRES_HOST = 'postgres'
+POSTGRES_PORT = '5432'
+POSTGRES_USERNAME = 'postgres'
+RAILS_ENV = 'production'
+RAILS_LOG_TO_STDOUT = 'true'
+
+[services.chatwoot.secrets]
+[services.chatwoot.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.chatwoot.secrets.REDIS_PASSWORD]
+ref = 'redis-password'
+
+[services.chatwoot.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.chatwoot.secrets.SECRET_KEY_BASE]
+ref = 'secret-key-base'
+
+[services.chatwoot-worker]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'chatwoot/chatwoot:v4.12.1@sha256:fdc544a7fc265cb24391cab068426f94a7ed60eadc116b3271ec5416873ab88e'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
+depends_on = ['postgres', 'redis']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.chatwoot-worker.mounts]]
+volume = 'chatwoot-storage'
+mount_path = '/app/storage'
+read_only = false
+sub_path = ''
+
+[services.chatwoot-worker.env]
+ACTIVE_STORAGE_SERVICE = 'local'
+DEFAULT_LOCALE = 'en'
+ENABLE_ACCOUNT_SIGNUP = 'false'
+FORCE_SSL = 'false'
+FRONTEND_URL = 'http://{{site_host}}'
+INSTALLATION_ENV = 'docker'
+LOG_LEVEL = 'info'
+NODE_ENV = 'production'
+POSTGRES_DATABASE = 'chatwoot'
+POSTGRES_HOST = 'postgres'
+POSTGRES_PORT = '5432'
+POSTGRES_USERNAME = 'postgres'
+RAILS_ENV = 'production'
+RAILS_LOG_TO_STDOUT = 'true'
+
+[services.chatwoot-worker.secrets]
+[services.chatwoot-worker.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.chatwoot-worker.secrets.REDIS_PASSWORD]
+ref = 'redis-password'
+
+[services.chatwoot-worker.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.chatwoot-worker.secrets.SECRET_KEY_BASE]
+ref = 'secret-key-base'
+
+[services.postgres]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'pgvector/pgvector:pg16@sha256:ccc6e83d6e35e931dc7c5def2022729d5a6c370318d099181995567ff1fb4d6b'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.postgres.mounts]]
+volume = 'chatwoot-postgres-data'
+mount_path = '/var/lib/postgresql/data'
+read_only = false
+sub_path = ''
+
+[services.postgres.env]
+POSTGRES_DB = 'chatwoot'
+POSTGRES_USER = 'postgres'
+
+[services.postgres.secrets]
+[services.postgres.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.redis]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'redis:alpine@sha256:becdda6c7f4b3fb42e42fd7f120bbf5c54c4caaaf16f26da24e4563d2c1f0576'
+port = 6379
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['sh', '-c', 'redis-server --requirepass "$$REDIS_PASSWORD"']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.redis.mounts]]
+volume = 'chatwoot-redis-data'
+mount_path = '/data'
+read_only = false
+sub_path = ''
+
+[services.redis.env]
+[services.redis.secrets]
+[services.redis.secrets.REDIS_PASSWORD]
+ref = 'redis-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.chatwoot-postgres-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.chatwoot-redis-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.chatwoot-storage]
+size_gib = 5
+storage_class = 'administrator-rwx'
+access_mode = 'ReadWriteMany'

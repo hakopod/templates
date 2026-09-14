@@ -1,0 +1,8 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/elastic-search",
+  "blockers": [
+    "Non-root startup, writable paths and dependency readiness require runtime acceptance before enabling this preset"
+  ],
+  "runtime_verified": false
+}

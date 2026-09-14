@@ -1,0 +1,52 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 10001
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'qdrant/qdrant:latest@sha256:12364fe851b9f17356fc88189fc06d1b521262e04659ec7345975b00c9246a10'
+port = 6333
+public_tcp = []
+public = false
+size = 'large'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/qdrant/storage'
+size_gib = 5
+storage_class = ''
+
+[[services.main.ports]]
+name = 'grpc'
+port = 6334
+target_port = 6334
+protocol = 'TCP'
+
+[services.main.env]
+[services.main.secrets]
+[services.main.secrets.QDRANT__SERVICE__API_KEY]
+ref = 'api-key'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

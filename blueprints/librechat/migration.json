@@ -1,0 +1,12 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/librechat",
+  "blockers": [
+    "librechat: mounted host/config asset ../files/librechat.yaml at /app/librechat.yaml needs a supported image/config adapter",
+    "Configuration files declared upstream require explicit provisioning before the native candidate is deployable",
+    "Provision ReadWriteMany storage for shared volume librechat-data.",
+    "Provision ReadWriteMany storage for shared volume librechat-data.",
+    "Provision ReadWriteMany storage for shared volume librechat-data."
+  ],
+  "runtime_verified": false
+}

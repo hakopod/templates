@@ -1,0 +1,46 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 999
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/valkey/valkey:9.1.2-alpine@sha256:a0dbf4c1d5708782907c10e2c72deff317518518b5288a58416981d9db95d30b'
+port = 6379
+public_tcp = []
+ports = []
+public = false
+size = 'small'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['sh', '-ec']
+args = ['exec valkey-server --appendonly yes --maxmemory 64mb --maxmemory-policy noeviction --requirepass "$VALKEY_PASSWORD"']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/data'
+size_gib = 5
+storage_class = ''
+
+[services.main.secrets]
+[services.main.secrets.VALKEY_PASSWORD]
+ref = 'database-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

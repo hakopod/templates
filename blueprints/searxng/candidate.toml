@@ -1,0 +1,90 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.searxng]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'searxng/searxng:latest@sha256:e0e0557627cc3e46cc82d8c23bb3a3a74eb203ae42f73142db555551af336096'
+port = 8080
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.searxng.mounts]]
+volume = 'searxng-data'
+mount_path = '/var/cache/searxng'
+read_only = false
+sub_path = ''
+
+[services.searxng.env]
+[services.searxng.secrets]
+[services.valkey]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'valkey/valkey:8-alpine@sha256:d2e18f3410b6f616de1417f570fa55261af2898b9c5b2cfb6781ce2373ea43d1'
+port = 6379
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['valkey-server', '--save', '30', '1', '--loglevel', 'warning']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.valkey.mounts]]
+volume = 'valkey-data'
+mount_path = '/data'
+read_only = false
+sub_path = ''
+
+[services.valkey.env]
+[services.valkey.secrets]
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.searxng-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.valkey-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

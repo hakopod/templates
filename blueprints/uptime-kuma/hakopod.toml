@@ -1,0 +1,45 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/louislam/uptime-kuma:2.5.4@sha256:917318f9d7be5257f43ba412c766a473be336eb451d70744f3b482d0c3997c0e'
+port = 3001
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = '/'
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/app/data'
+size_gib = 5
+storage_class = ''
+
+[services.main.env]
+NODE_OPTIONS = '--max-old-space-size=256'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

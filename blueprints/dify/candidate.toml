@@ -1,0 +1,655 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.api]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'langgenius/dify-api:1.15.0@sha256:c1712c50f27c9dfd31c5be77a9a03f30c464fc6983287eefd4a6a98376c70c24'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['init-permissions', 'db', 'redis']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.api.mounts]]
+volume = 'dify-app-storage'
+mount_path = '/app/api/storage'
+read_only = false
+sub_path = ''
+
+[services.api.env]
+APP_API_URL = 'https://{{site_host}}'
+APP_WEB_URL = 'https://{{site_host}}'
+CODE_EXECUTION_ENDPOINT = 'http://sandbox:8194'
+CONSOLE_API_URL = 'https://{{site_host}}'
+CONSOLE_CORS_ALLOW_ORIGINS = '*'
+CONSOLE_WEB_URL = 'https://{{site_host}}'
+DB_DATABASE = 'dify'
+DB_HOST = 'db'
+DB_PORT = '5432'
+DB_USERNAME = 'postgres'
+DEPLOY_ENV = 'PRODUCTION'
+ENABLE_COLLABORATION_MODE = 'false'
+ENDPOINT_URL_TEMPLATE = 'https://{{site_host}}/e/{hook_id}'
+FILES_URL = 'https://{{site_host}}'
+INTERNAL_FILES_URL = 'http://api:5001'
+LOG_LEVEL = 'INFO'
+MARKETPLACE_API_URL = 'https://marketplace.dify.ai'
+MARKETPLACE_ENABLED = 'true'
+MIGRATION_ENABLED = 'true'
+MODE = 'api'
+OPENDAL_FS_ROOT = 'storage'
+OPENDAL_SCHEME = 'fs'
+PGVECTOR_DATABASE = 'dify'
+PGVECTOR_HOST = 'db'
+PGVECTOR_MAX_CONNECTION = '5'
+PGVECTOR_MIN_CONNECTION = '1'
+PGVECTOR_PORT = '5432'
+PGVECTOR_USER = 'postgres'
+PLUGIN_DAEMON_KEY = '{{config.base64}}'
+PLUGIN_DAEMON_URL = 'http://plugin_daemon:5002'
+PLUGIN_MAX_PACKAGE_SIZE = '52428800'
+PLUGIN_REMOTE_INSTALL_HOST = 'localhost'
+PLUGIN_REMOTE_INSTALL_PORT = '5003'
+REDIS_DB = '0'
+REDIS_HOST = 'redis'
+REDIS_PORT = '6379'
+SERVICE_API_URL = 'https://{{site_host}}'
+SSRF_PROXY_HTTPS_URL = 'http://ssrf_proxy:3128'
+SSRF_PROXY_HTTP_URL = 'http://ssrf_proxy:3128'
+STORAGE_TYPE = 'opendal'
+TRIGGER_URL = 'https://{{site_host}}'
+VECTOR_STORE = 'pgvector'
+WEB_API_CORS_ALLOW_ORIGINS = '*'
+
+[services.api.secrets]
+[services.api.secrets.CELERY_BROKER_URL]
+ref = 'celery-broker-url'
+
+[services.api.secrets.CODE_EXECUTION_API_KEY]
+ref = 'code-execution-api-key'
+
+[services.api.secrets.DB_PASSWORD]
+ref = 'db-password'
+
+[services.api.secrets.INNER_API_KEY_FOR_PLUGIN]
+ref = 'inner-api-key-for-plugin'
+
+[services.api.secrets.PGVECTOR_PASSWORD]
+ref = 'pgvector-password'
+
+[services.api.secrets.REDIS_PASSWORD]
+ref = 'redis-password'
+
+[services.api.secrets.SECRET_KEY]
+ref = 'secret-key'
+
+[services.db]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'pgvector/pgvector:pg16@sha256:ccc6e83d6e35e931dc7c5def2022729d5a6c370318d099181995567ff1fb4d6b'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.db.mounts]]
+volume = 'dify-db-data'
+mount_path = '/var/lib/postgresql/data'
+read_only = false
+sub_path = ''
+
+[services.db.env]
+PGDATA = '/var/lib/postgresql/data/pgdata'
+POSTGRES_DB = 'dify'
+POSTGRES_USER = 'postgres'
+
+[services.db.secrets]
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.init-permissions]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'busybox:1.36@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['sh', '-c', "FLAG_FILE=\"/app/api/storage/.init_permissions\"\nif [ -f \"$$FLAG_FILE\" ]; then\n  echo \"Permissions already initialized.\"\n  exit 0\nfi\necho \"Initializing permissions for /app/api/storage\"\nchown -R 1001:1001 /app/api/storage && touch \"$$FLAG_FILE\"\n"]
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.init-permissions.mounts]]
+volume = 'dify-app-storage'
+mount_path = '/app/api/storage'
+read_only = false
+sub_path = ''
+
+[services.init-permissions.env]
+[services.init-permissions.secrets]
+[services.nginx]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10'
+port = 80
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['api', 'web', 'plugin-daemon']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.nginx.env]
+[services.nginx.secrets]
+[services.plugin-daemon]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'langgenius/dify-plugin-daemon:0.6.3-local@sha256:3c694329357bc580b28bdec59321a981acd3279f8f69d1a3fb59a47cf7f770c3'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db', 'redis']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.plugin-daemon.mounts]]
+volume = 'dify-plugin-storage'
+mount_path = '/app/storage'
+read_only = false
+sub_path = ''
+
+[services.plugin-daemon.env]
+DB_DATABASE = 'dify_plugin'
+DB_HOST = 'db'
+DB_PORT = '5432'
+DB_SSL_MODE = 'disable'
+DB_USERNAME = 'postgres'
+DIFY_INNER_API_URL = 'http://api:5001'
+FORCE_VERIFYING_SIGNATURE = 'true'
+MAX_PLUGIN_PACKAGE_SIZE = '52428800'
+PLUGIN_INSTALLED_PATH = 'plugin'
+PLUGIN_MAX_EXECUTION_TIMEOUT = '600'
+PLUGIN_MEDIA_CACHE_PATH = 'assets'
+PLUGIN_PACKAGE_CACHE_PATH = 'plugin_packages'
+PLUGIN_REMOTE_INSTALLING_HOST = '0.0.0.0'
+PLUGIN_REMOTE_INSTALLING_PORT = '5003'
+PLUGIN_STORAGE_LOCAL_ROOT = '/app/storage'
+PLUGIN_STORAGE_TYPE = 'local'
+PLUGIN_WORKING_PATH = '/app/storage/cwd'
+PYTHON_ENV_INIT_TIMEOUT = '120'
+REDIS_HOST = 'redis'
+REDIS_PORT = '6379'
+SERVER_KEY = '{{config.base64}}'
+SERVER_PORT = '5002'
+
+[services.plugin-daemon.secrets]
+[services.plugin-daemon.secrets.DB_PASSWORD]
+ref = 'db-password'
+
+[services.plugin-daemon.secrets.DIFY_INNER_API_KEY]
+ref = 'dify-inner-api-key'
+
+[services.plugin-daemon.secrets.REDIS_PASSWORD]
+ref = 'redis-password'
+
+[services.redis]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'redis:6-alpine@sha256:d0c875bdacfb5c4d2c2d9124de3f53cee1dc9ceff8936bd459fabc135cb33015'
+port = 6379
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['redis-server', '--requirepass', '${REDIS_PASSWORD}']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.redis.mounts]]
+volume = 'dify-redis-data'
+mount_path = '/data'
+read_only = false
+sub_path = ''
+
+[services.redis.env]
+[services.redis.secrets]
+[services.redis.secrets.REDISCLI_AUTH]
+ref = 'rediscli-auth'
+
+[services.sandbox]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'langgenius/dify-sandbox:0.2.15@sha256:750e1111426ef31a9217b81c98cccfb750f17b182af3221102e420afa9f0928e'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.sandbox.mounts]]
+volume = 'dify-sandbox-deps'
+mount_path = '/dependencies'
+read_only = false
+sub_path = ''
+
+[services.sandbox.env]
+ENABLE_NETWORK = 'true'
+GIN_MODE = 'release'
+HTTPS_PROXY = 'http://ssrf_proxy:3128'
+HTTP_PROXY = 'http://ssrf_proxy:3128'
+SANDBOX_PORT = '8194'
+WORKER_TIMEOUT = '15'
+
+[services.sandbox.secrets]
+[services.sandbox.secrets.API_KEY]
+ref = 'api-key'
+
+[services.ssrf-proxy]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ubuntu/squid:latest@sha256:6a097f68bae708cedbabd6188d68c7e2e7a38cedd05a176e1cc0ba29e3bbe029'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.ssrf-proxy.env]
+[services.ssrf-proxy.secrets]
+[services.web]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'langgenius/dify-web:1.15.0@sha256:4f526395772321f0130eeb335339317dfefeb9207b4187306f2d12e2fc6ec106'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.web.env]
+APP_API_URL = 'https://{{site_host}}'
+CONSOLE_API_URL = 'https://{{site_host}}'
+ENABLE_COLLABORATION_MODE = 'false'
+MARKETPLACE_API_URL = 'https://marketplace.dify.ai'
+MARKETPLACE_URL = 'https://marketplace.dify.ai'
+NEXT_TELEMETRY_DISABLED = '1'
+SERVER_CONSOLE_API_URL = 'http://api:5001'
+
+[services.web.secrets]
+[services.worker]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'langgenius/dify-api:1.15.0@sha256:c1712c50f27c9dfd31c5be77a9a03f30c464fc6983287eefd4a6a98376c70c24'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['init-permissions', 'db', 'redis']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.worker.mounts]]
+volume = 'dify-app-storage'
+mount_path = '/app/api/storage'
+read_only = false
+sub_path = ''
+
+[services.worker.env]
+APP_API_URL = 'https://{{site_host}}'
+APP_WEB_URL = 'https://{{site_host}}'
+CODE_EXECUTION_ENDPOINT = 'http://sandbox:8194'
+CONSOLE_API_URL = 'https://{{site_host}}'
+CONSOLE_CORS_ALLOW_ORIGINS = '*'
+CONSOLE_WEB_URL = 'https://{{site_host}}'
+DB_DATABASE = 'dify'
+DB_HOST = 'db'
+DB_PORT = '5432'
+DB_USERNAME = 'postgres'
+DEPLOY_ENV = 'PRODUCTION'
+ENABLE_COLLABORATION_MODE = 'false'
+ENDPOINT_URL_TEMPLATE = 'https://{{site_host}}/e/{hook_id}'
+FILES_URL = 'https://{{site_host}}'
+INTERNAL_FILES_URL = 'http://api:5001'
+LOG_LEVEL = 'INFO'
+MARKETPLACE_API_URL = 'https://marketplace.dify.ai'
+MARKETPLACE_ENABLED = 'true'
+MIGRATION_ENABLED = 'true'
+MODE = 'worker'
+OPENDAL_FS_ROOT = 'storage'
+OPENDAL_SCHEME = 'fs'
+PGVECTOR_DATABASE = 'dify'
+PGVECTOR_HOST = 'db'
+PGVECTOR_MAX_CONNECTION = '5'
+PGVECTOR_MIN_CONNECTION = '1'
+PGVECTOR_PORT = '5432'
+PGVECTOR_USER = 'postgres'
+PLUGIN_DAEMON_KEY = '{{config.base64}}'
+PLUGIN_DAEMON_URL = 'http://plugin_daemon:5002'
+PLUGIN_MAX_PACKAGE_SIZE = '52428800'
+PLUGIN_REMOTE_INSTALL_HOST = 'localhost'
+PLUGIN_REMOTE_INSTALL_PORT = '5003'
+REDIS_DB = '0'
+REDIS_HOST = 'redis'
+REDIS_PORT = '6379'
+SERVICE_API_URL = 'https://{{site_host}}'
+SSRF_PROXY_HTTPS_URL = 'http://ssrf_proxy:3128'
+SSRF_PROXY_HTTP_URL = 'http://ssrf_proxy:3128'
+STORAGE_TYPE = 'opendal'
+TRIGGER_URL = 'https://{{site_host}}'
+VECTOR_STORE = 'pgvector'
+WEB_API_CORS_ALLOW_ORIGINS = '*'
+
+[services.worker.secrets]
+[services.worker.secrets.CELERY_BROKER_URL]
+ref = 'celery-broker-url'
+
+[services.worker.secrets.CODE_EXECUTION_API_KEY]
+ref = 'code-execution-api-key'
+
+[services.worker.secrets.DB_PASSWORD]
+ref = 'db-password'
+
+[services.worker.secrets.INNER_API_KEY_FOR_PLUGIN]
+ref = 'inner-api-key-for-plugin'
+
+[services.worker.secrets.PGVECTOR_PASSWORD]
+ref = 'pgvector-password'
+
+[services.worker.secrets.REDIS_PASSWORD]
+ref = 'redis-password'
+
+[services.worker.secrets.SECRET_KEY]
+ref = 'secret-key'
+
+[services.worker-beat]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'langgenius/dify-api:1.15.0@sha256:c1712c50f27c9dfd31c5be77a9a03f30c464fc6983287eefd4a6a98376c70c24'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db', 'redis']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.worker-beat.env]
+APP_API_URL = 'https://{{site_host}}'
+APP_WEB_URL = 'https://{{site_host}}'
+CODE_EXECUTION_ENDPOINT = 'http://sandbox:8194'
+CONSOLE_API_URL = 'https://{{site_host}}'
+CONSOLE_CORS_ALLOW_ORIGINS = '*'
+CONSOLE_WEB_URL = 'https://{{site_host}}'
+DB_DATABASE = 'dify'
+DB_HOST = 'db'
+DB_PORT = '5432'
+DB_USERNAME = 'postgres'
+DEPLOY_ENV = 'PRODUCTION'
+ENABLE_COLLABORATION_MODE = 'false'
+ENDPOINT_URL_TEMPLATE = 'https://{{site_host}}/e/{hook_id}'
+FILES_URL = 'https://{{site_host}}'
+INTERNAL_FILES_URL = 'http://api:5001'
+LOG_LEVEL = 'INFO'
+MARKETPLACE_API_URL = 'https://marketplace.dify.ai'
+MARKETPLACE_ENABLED = 'true'
+MIGRATION_ENABLED = 'true'
+MODE = 'beat'
+OPENDAL_FS_ROOT = 'storage'
+OPENDAL_SCHEME = 'fs'
+PGVECTOR_DATABASE = 'dify'
+PGVECTOR_HOST = 'db'
+PGVECTOR_MAX_CONNECTION = '5'
+PGVECTOR_MIN_CONNECTION = '1'
+PGVECTOR_PORT = '5432'
+PGVECTOR_USER = 'postgres'
+PLUGIN_DAEMON_KEY = '{{config.base64}}'
+PLUGIN_DAEMON_URL = 'http://plugin_daemon:5002'
+PLUGIN_MAX_PACKAGE_SIZE = '52428800'
+PLUGIN_REMOTE_INSTALL_HOST = 'localhost'
+PLUGIN_REMOTE_INSTALL_PORT = '5003'
+REDIS_DB = '0'
+REDIS_HOST = 'redis'
+REDIS_PORT = '6379'
+SERVICE_API_URL = 'https://{{site_host}}'
+SSRF_PROXY_HTTPS_URL = 'http://ssrf_proxy:3128'
+SSRF_PROXY_HTTP_URL = 'http://ssrf_proxy:3128'
+STORAGE_TYPE = 'opendal'
+TRIGGER_URL = 'https://{{site_host}}'
+VECTOR_STORE = 'pgvector'
+WEB_API_CORS_ALLOW_ORIGINS = '*'
+
+[services.worker-beat.secrets]
+[services.worker-beat.secrets.CELERY_BROKER_URL]
+ref = 'celery-broker-url'
+
+[services.worker-beat.secrets.CODE_EXECUTION_API_KEY]
+ref = 'code-execution-api-key'
+
+[services.worker-beat.secrets.DB_PASSWORD]
+ref = 'db-password'
+
+[services.worker-beat.secrets.INNER_API_KEY_FOR_PLUGIN]
+ref = 'inner-api-key-for-plugin'
+
+[services.worker-beat.secrets.PGVECTOR_PASSWORD]
+ref = 'pgvector-password'
+
+[services.worker-beat.secrets.REDIS_PASSWORD]
+ref = 'redis-password'
+
+[services.worker-beat.secrets.SECRET_KEY]
+ref = 'secret-key'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.dify-app-storage]
+size_gib = 5
+storage_class = 'administrator-rwx'
+access_mode = 'ReadWriteMany'
+
+[volumes.dify-db-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.dify-plugin-storage]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.dify-redis-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.dify-sandbox-deps]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

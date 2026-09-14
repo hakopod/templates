@@ -1,0 +1,348 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.init-ollama]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'ollama/ollama:latest@sha256:684d8674b4315fa18f4f0e973a118ec2652ed96f67563277839985175858e0ba'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['/bin/sh']
+args = ['-c', 'sleep 3; ollama pull llama3.2:latest; ollama pull gemma3:latest']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.init-ollama.mounts]]
+volume = 'ollama-storage'
+mount_path = '/home/node/.ollama'
+read_only = false
+sub_path = ''
+
+[services.init-ollama.env]
+OLLAMA_HOST = 'ollama:11434'
+
+[services.init-ollama.secrets]
+[services.n8n]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'n8nio/n8n:latest@sha256:a8c95f75c6fdf65f5f2b7a7b354744eaa1c62bb911b5c00af6499c3f38e4cd32'
+port = 5678
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['postgres', 'redis']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.n8n.mounts]]
+volume = 'n8n-data'
+mount_path = '/home/node/.n8n'
+read_only = false
+sub_path = ''
+
+[services.n8n.env]
+DB_POSTGRESDB_HOST = 'postgres'
+DB_POSTGRESDB_USER = '{{config.username}}'
+DB_TYPE = 'postgresdb'
+EXECUTIONS_DATA_MAX_AGE = '7'
+EXECUTIONS_DATA_PRUNE = 'true'
+EXECUTIONS_MODE = 'queue'
+GENERIC_TIMEZONE = 'Europe/Berlin'
+N8N_BLOCK_ENV_ACCESS_IN_NODE = 'true'
+N8N_DIAGNOSTICS_ENABLED = 'false'
+N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS = 'true'
+N8N_HIRING_BANNER_ENABLED = 'false'
+N8N_HOST = '{{site_host}}'
+N8N_NATIVE_PYTHON_RUNNER = 'true'
+N8N_PERSONALIZATION_ENABLED = 'true'
+N8N_PORT = '5678'
+N8N_PROTOCOL = 'https'
+N8N_PROXY_HOPS = '0'
+N8N_RUNNERS_BROKER_LISTEN_ADDRESS = '0.0.0.0'
+N8N_RUNNERS_ENABLED = 'true'
+N8N_RUNNERS_MAX_CONCURRENCY = '50'
+N8N_RUNNERS_MODE = 'external'
+N8N_SECURE_COOKIE = 'true'
+N8N_TEMPLATES_ENABLED = 'true'
+NODE_ENV = 'production'
+OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS = 'true'
+OLLAMA_HOST = 'http://ollama:11434'
+QUEUE_BULL_REDIS_HOST = 'redis'
+QUEUE_BULL_REDIS_PORT = '6379'
+WEBHOOK_URL = 'https://{{site_host}}/'
+
+[services.n8n.secrets]
+[services.n8n.secrets.DB_POSTGRESDB_PASSWORD]
+ref = 'db-postgresdb-password'
+
+[services.n8n.secrets.N8N_ENCRYPTION_KEY]
+ref = 'n8n-encryption-key'
+
+[services.n8n.secrets.N8N_RUNNERS_AUTH_TOKEN]
+ref = 'n8n-runners-auth-token'
+
+[services.n8n.secrets.N8N_USER_MANAGEMENT_JWT_SECRET]
+ref = 'n8n-user-management-jwt-secret'
+
+[services.n8n-runner]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'n8nio/runners:nightly@sha256:92134fc086cc0e49440662fc814ff8b0eef255d4472b0f21118c70dc43c75f9b'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['n8n']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.n8n-runner.env]
+GENERIC_TIMEZONE = 'Europe/Berlin'
+N8N_RUNNERS_MAX_CONCURRENCY = '50'
+N8N_RUNNERS_TASK_BROKER_URI = 'http://n8n:5679'
+
+[services.n8n-runner.secrets]
+[services.n8n-runner.secrets.N8N_ENCRYPTION_KEY]
+ref = 'n8n-encryption-key'
+
+[services.n8n-runner.secrets.N8N_RUNNERS_AUTH_TOKEN]
+ref = 'n8n-runners-auth-token'
+
+[services.n8n-worker]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.n8n.io/n8nio/n8n:latest@sha256:a8c95f75c6fdf65f5f2b7a7b354744eaa1c62bb911b5c00af6499c3f38e4cd32'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['worker']
+depends_on = ['n8n', 'redis']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.n8n-worker.env]
+DB_POSTGRESDB_HOST = 'postgres'
+DB_POSTGRESDB_USER = '{{config.username}}'
+DB_TYPE = 'postgresdb'
+EXECUTIONS_MODE = 'queue'
+GENERIC_TIMEZONE = 'Europe/Berlin'
+N8N_BLOCK_ENV_ACCESS_IN_NODE = 'true'
+N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS = 'true'
+N8N_HOST = '{{site_host}}'
+N8N_PORT = '5678'
+N8N_PROTOCOL = 'https'
+N8N_PROXY_HOPS = '0'
+N8N_SECURE_COOKIE = 'true'
+NODE_ENV = 'production'
+QUEUE_BULL_REDIS_HOST = 'redis'
+QUEUE_BULL_REDIS_PORT = '6379'
+WEBHOOK_URL = 'https://{{site_host}}/'
+
+[services.n8n-worker.secrets]
+[services.n8n-worker.secrets.DB_POSTGRESDB_PASSWORD]
+ref = 'db-postgresdb-password'
+
+[services.n8n-worker.secrets.N8N_ENCRYPTION_KEY]
+ref = 'n8n-encryption-key'
+
+[services.ollama]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'ollama/ollama:latest@sha256:684d8674b4315fa18f4f0e973a118ec2652ed96f67563277839985175858e0ba'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.ollama.mounts]]
+volume = 'ollama-storage'
+mount_path = '/home/node/.ollama'
+read_only = false
+sub_path = ''
+
+[services.ollama.env]
+[services.ollama.secrets]
+[services.postgres]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.postgres.mounts]]
+volume = 'postgres-storage'
+mount_path = '/var/lib/postgresql/data'
+read_only = false
+sub_path = ''
+
+[services.postgres.env]
+POSTGRES_DB = 'n8n'
+POSTGRES_USER = '{{config.username}}'
+
+[services.postgres.secrets]
+[services.postgres.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.redis]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'redis:7-alpine@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf'
+port = 6379
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['redis-server', '--appendonly', 'yes']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.redis.mounts]]
+volume = 'redis-storage'
+mount_path = '/data'
+read_only = false
+sub_path = ''
+
+[services.redis.env]
+[services.redis.secrets]
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.n8n-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.ollama-storage]
+size_gib = 5
+storage_class = 'administrator-rwx'
+access_mode = 'ReadWriteMany'
+
+[volumes.postgres-storage]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.redis-storage]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

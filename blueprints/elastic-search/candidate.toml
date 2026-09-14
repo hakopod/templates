@@ -1,0 +1,84 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.elasticsearch]
+architecture = ''
+run_as_user = 1000
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'docker.elastic.co/elasticsearch/elasticsearch:8.10.2@sha256:d118fc05cfa714a4577731384ec8b08fe7e70c203a6949b0581e0f6ebe54b0af'
+port = 9200
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['-Ediscovery.type=single-node', '-Expack.security.enabled=false', '-Ebootstrap.memory_lock=true']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.elasticsearch.mounts]]
+volume = 'es-data'
+mount_path = '/usr/share/elasticsearch/data'
+read_only = false
+sub_path = ''
+
+[services.elasticsearch.env]
+ES_JAVA_OPTS = '-Xms512m -Xmx512m'
+
+[services.elasticsearch.secrets]
+[services.kibana]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.elastic.co/kibana/kibana:8.10.2@sha256:f50ef19b7dfabe30111a0244a769a1c6fa80549acf8d10bb3df73844818b2236'
+port = 5601
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['elasticsearch']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.kibana.env]
+ELASTICSEARCH_HOSTS = 'http://elasticsearch:9200'
+
+[services.kibana.secrets]
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.es-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

@@ -1,0 +1,202 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.browser]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'coollabsio/openclaw-browser:latest@sha256:c5f8a9d812992429be2c5a0b6b8f5d70d63e81cc1b381c5475e067a91e0d3179'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.browser.mounts]]
+volume = 'browser-data'
+mount_path = '/config'
+read_only = false
+sub_path = ''
+
+[services.browser.env]
+CHROME_CLI = '--remote-debugging-port=9222'
+PGID = '1000'
+PUID = '1000'
+TZ = 'Etc/UTC'
+
+[services.browser.secrets]
+[services.openclaw]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'coollabsio/openclaw:2026.2.6@sha256:a43ffaca3cc802ec28c16afa37c9d4cd28a9040ddd84aa386467bd09740e3dee'
+port = 8080
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['browser']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.openclaw.mounts]]
+volume = 'openclaw-data'
+mount_path = '/data'
+read_only = false
+sub_path = ''
+
+[services.openclaw.env]
+AUTH_USERNAME = 'dokploy'
+AWS_REGION = 'us-east-1'
+BEDROCK_PROVIDER_FILTER = 'anthropic'
+BROWSER_CDP_URL = 'http://browser:9223'
+BROWSER_DEFAULT_PROFILE = 'openclaw'
+BROWSER_EVALUATE_ENABLED = 'true'
+BROWSER_REMOTE_HANDSHAKE_TIMEOUT_MS = '3000'
+BROWSER_REMOTE_TIMEOUT_MS = '1500'
+BROWSER_SNAPSHOT_MODE = 'efficient'
+HOOKS_ENABLED = 'false'
+HOOKS_PATH = '/hooks'
+KIMI_BASE_URL = 'https://api.moonshot.ai/anthropic'
+MOONSHOT_BASE_URL = 'https://api.moonshot.ai/v1'
+OLLAMA_BASE_URL = '{{config.ollama-base-url}}'
+OPENCLAW_DOCKER_APT_PACKAGES = '$OPENCLAW_DOCKER_APT_PACKAGES'
+OPENCLAW_GATEWAY_BIND = 'lan'
+OPENCLAW_GATEWAY_PORT = '18789'
+OPENCLAW_PRIMARY_MODEL = '{{config.openclaw-primary-model}}'
+OPENCLAW_STATE_DIR = '/data/.openclaw'
+OPENCLAW_WORKSPACE_DIR = '/data/workspace'
+PORT = '8080'
+WHATSAPP_ENABLED = '$WHATSAPP_ENABLED'
+
+[services.openclaw.secrets]
+[services.openclaw.secrets.AI_GATEWAY_API_KEY]
+ref = 'ai-gateway-api-key'
+
+[services.openclaw.secrets.ANTHROPIC_API_KEY]
+ref = 'anthropic-api-key'
+
+[services.openclaw.secrets.AUTH_PASSWORD]
+ref = 'auth-password'
+
+[services.openclaw.secrets.AWS_ACCESS_KEY_ID]
+ref = 'aws-access-key-id'
+
+[services.openclaw.secrets.AWS_SECRET_ACCESS_KEY]
+ref = 'aws-secret-access-key'
+
+[services.openclaw.secrets.AWS_SESSION_TOKEN]
+ref = 'aws-session-token'
+
+[services.openclaw.secrets.CEREBRAS_API_KEY]
+ref = 'cerebras-api-key'
+
+[services.openclaw.secrets.COPILOT_GITHUB_TOKEN]
+ref = 'copilot-github-token'
+
+[services.openclaw.secrets.DEEPGRAM_API_KEY]
+ref = 'deepgram-api-key'
+
+[services.openclaw.secrets.DISCORD_BOT_TOKEN]
+ref = 'discord-bot-token'
+
+[services.openclaw.secrets.GEMINI_API_KEY]
+ref = 'gemini-api-key'
+
+[services.openclaw.secrets.GROQ_API_KEY]
+ref = 'groq-api-key'
+
+[services.openclaw.secrets.KIMI_API_KEY]
+ref = 'kimi-api-key'
+
+[services.openclaw.secrets.MINIMAX_API_KEY]
+ref = 'minimax-api-key'
+
+[services.openclaw.secrets.MISTRAL_API_KEY]
+ref = 'mistral-api-key'
+
+[services.openclaw.secrets.MOONSHOT_API_KEY]
+ref = 'moonshot-api-key'
+
+[services.openclaw.secrets.OPENAI_API_KEY]
+ref = 'openai-api-key'
+
+[services.openclaw.secrets.OPENCLAW_GATEWAY_TOKEN]
+ref = 'openclaw-gateway-token'
+
+[services.openclaw.secrets.OPENCODE_API_KEY]
+ref = 'opencode-api-key'
+
+[services.openclaw.secrets.OPENROUTER_API_KEY]
+ref = 'openrouter-api-key'
+
+[services.openclaw.secrets.SLACK_APP_TOKEN]
+ref = 'slack-app-token'
+
+[services.openclaw.secrets.SLACK_BOT_TOKEN]
+ref = 'slack-bot-token'
+
+[services.openclaw.secrets.SYNTHETIC_API_KEY]
+ref = 'synthetic-api-key'
+
+[services.openclaw.secrets.TELEGRAM_BOT_TOKEN]
+ref = 'telegram-bot-token'
+
+[services.openclaw.secrets.VENICE_API_KEY]
+ref = 'venice-api-key'
+
+[services.openclaw.secrets.XAI_API_KEY]
+ref = 'xai-api-key'
+
+[services.openclaw.secrets.XIAOMI_API_KEY]
+ref = 'xiaomi-api-key'
+
+[services.openclaw.secrets.ZAI_API_KEY]
+ref = 'zai-api-key'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.browser-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.openclaw-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

@@ -1,0 +1,53 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 999
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/library/mysql:8.4.11@sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a'
+port = 3306
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['--socket=/tmp/mysql.sock', '--pid-file=/tmp/mysql.pid', '--innodb-buffer-pool-size=32M', '--innodb-log-buffer-size=4M', '--max-connections=12', '--performance-schema=OFF', '--key-buffer-size=8M', '--temptable-max-ram=16M', '--mysqlx=0']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/var/lib/mysql'
+size_gib = 5
+storage_class = ''
+
+[services.main.env]
+MYSQL_DATABASE = 'app'
+MYSQL_USER = 'hakopod'
+
+[services.main.secrets]
+[services.main.secrets.MYSQL_PASSWORD]
+ref = 'database-password'
+
+[services.main.secrets.MYSQL_ROOT_PASSWORD]
+ref = 'database-root-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

@@ -1,0 +1,1379 @@
+[
+  {
+    "reference": "adrianmusante/pocketbase:latest",
+    "digest": "sha256:8017b8d26ad63104b9ed5209f542ed40a4179aab17c00a67a8d6bbd76fc29954",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "alpine:3.21",
+    "digest": "sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "atlassian/confluence-server:8.6-ubuntu-jdk17",
+    "digest": "sha256:68885cab5b3885747b176fc990086d112e1b49f074bc6dde585819d225418972",
+    "platforms": [],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "bentopdf/bentopdf:latest",
+    "digest": "sha256:4eb4ec8f5030faf87c29a73d3d5a2781f28a597cf440c3ab111eb96aee550871",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "busybox:1.36",
+    "digest": "sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "caddy:2.10-alpine",
+    "digest": "sha256:4c6e91c6ed0e2fa03efd5b44747b625fec79bc9cd06ac5235a779726618e530d",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "casbin/casdoor:latest",
+    "digest": "sha256:8511c0757ac3f4bd3e8fde1faee2388cf9d63e244a2cb0f9818082e513b11dd7",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "chatwoot/chatwoot:v4.12.1",
+    "digest": "sha256:fdc544a7fc265cb24391cab068426f94a7ed60eadc116b3271ec5416873ab88e",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "clickhouse/clickhouse-server:26.6.1.1193",
+    "digest": "sha256:1d1f6508eba2dccce2cee9913907c5f7766327debc57a6b1991f2c9e3176c163",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "clickhouse/clickhouse-server:latest",
+    "digest": "sha256:d73903d1b61dfe825fc3810542f252966f33d3fd8efb3b3edcbbafb46b524b04",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "cloudflare/cloudflared:latest",
+    "digest": "sha256:b269e8abd07a5bf6f3f4be65d5050b2174eca89c56a0241a8ff32a16aec454e4",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "coollabsio/openclaw-browser:latest",
+    "digest": "sha256:c5f8a9d812992429be2c5a0b6b8f5d70d63e81cc1b381c5475e067a91e0d3179",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/coollabsio/openclaw-browser/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "coollabsio/openclaw:2026.2.6",
+    "digest": "sha256:a43ffaca3cc802ec28c16afa37c9d4cd28a9040ddd84aa386467bd09740e3dee",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/coollabsio/openclaw/tags/2026.2.6",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "darthsim/imgproxy:v3.8.0",
+    "digest": "sha256:0facd355d50f3be665ebe674486f2b2e9cdaebd3f74404acd9b7fece2f661435",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/darthsim/imgproxy/tags/v3.8.0",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "databasus/databasus:latest",
+    "digest": "sha256:3c814cdb4de830232c0fa8b3e0dfbe3ae39f685e7e8bd3effdf3b989c9e5d74d",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/databasus/databasus/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "docker.elastic.co/elasticsearch/elasticsearch:8.10.2",
+    "digest": "sha256:d118fc05cfa714a4577731384ec8b08fe7e70c203a6949b0581e0f6ebe54b0af",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "docker.elastic.co/kibana/kibana:8.10.2",
+    "digest": "sha256:f50ef19b7dfabe30111a0244a769a1c6fa80549acf8d10bb3df73844818b2236",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "docker.io/redpandadata/redpanda:v25.1.9",
+    "digest": "sha256:8f7e9e4c1422baaa1a5e2a6c6c668cfe05442cb3cb476542c7dff61725e6fe31",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/redpandadata/redpanda/tags/v25.1.9",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "docker.n8n.io/n8nio/n8n:1.104.0",
+    "digest": "sha256:1df5e1cbc1f0b92d67d00ed2f293200628801d481a88083f510b7367352d59aa",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/n8nio/n8n/tags/1.104.0",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "docker.n8n.io/n8nio/n8n:latest",
+    "digest": "sha256:a8c95f75c6fdf65f5f2b7a7b354744eaa1c62bb911b5c00af6499c3f38e4cd32",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/n8nio/n8n/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "evershop/evershop:latest",
+    "digest": "sha256:d0823576f91b621e07b1fd913b326f8f463374615dc5301fd67b951123dd6967",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/evershop/evershop/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "fabriziosalmi/certmate:2.21.3",
+    "digest": "sha256:26ddcbfb89807e4e5620528a689403b49bba132dc504ab45f4cf2b7516ceb0dd",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/fabriziosalmi/certmate/tags/2.21.3",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "favonia/cloudflare-ddns:1",
+    "digest": "sha256:61013368c8f95981c0bb8bf56d962078d8b4e95724a554fa2dabb20d6e478097",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/favonia/cloudflare-ddns/tags/1",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "getmeili/meilisearch:v1.12.3",
+    "digest": "sha256:4acfcbbb9e089aa1aac838cfda3fba7f07aaaef044c23da8acbe0ab741400dac",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/getmeili/meilisearch/tags/v1.12.3",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/berriai/litellm:main-latest",
+    "digest": "sha256:a79320760af8df488074ab3fbc830883856c7f952976aad00f039d3a43ffe4b2",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/browserless/chromium:latest",
+    "digest": "sha256:ae07025606e03c9b263620aaf4d09c52728f71a104ac7d471a68c23dec72c05f",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/danny-avila/librechat-dev:latest",
+    "digest": "sha256:54d98dc7fd0f07dfea1ccb4a42bbc417e798f5b896deb83e04c398ee26885d0e",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/danny-avila/librechat-rag-api-dev-lite:latest",
+    "digest": "sha256:f9f34c8ed6884b0ff9b17387e6174fed737dba29f21622ecb75604d82bc47bf8",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/diced/zipline:v4",
+    "digest": "sha256:2340b4cb2094165af3e9b036be5ec445f8fcbf49067ab8ade2135809e37e610d",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/firecrawl/firecrawl:2.11.230@sha256:7c5bf28dd3397be9a5bfb103adeef9adefbad352d223011da1bab606a0044416",
+    "digest": "sha256:7c5bf28dd3397be9a5bfb103adeef9adefbad352d223011da1bab606a0044416",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/firecrawl/nuq-postgres@sha256:aed86f62858f29bd971abddcdeb301c12888098d2cf5d33c1ba42b053bc460f6",
+    "digest": "sha256:aed86f62858f29bd971abddcdeb301c12888098d2cf5d33c1ba42b053bc460f6",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/firecrawl/playwright-service@sha256:468009bae00911d40d7120d58489a1d529362c22c45585cb9076094fe61b0025",
+    "digest": "sha256:468009bae00911d40d7120d58489a1d529362c22c45585cb9076094fe61b0025",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/posthog/posthog/capture:master",
+    "digest": "sha256:9b166761f1e282880a76fb4f3e66afad9ba954fe383581dc5e0074a729c5c99e",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/posthog/posthog/feature-flags:master",
+    "digest": "sha256:b18bbe7ee20276cf0395cc649fe9d90c2c7d0ef836dd30c8789b3a09de73a8cc",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/posthog/posthog/hypercache-server:master",
+    "digest": "sha256:f247133dfff4073a65df38eb04589683c6f43cf1f4f41272152a5d2d5b07ebcd",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/posthog/posthog/livestream:master",
+    "digest": "sha256:6926f340b72d609e43cee5aa8b75a85cfdc77d182e610dafafdd81d3b2ab53f5",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/stackblitz-labs/bolt.diy:latest",
+    "digest": "sha256:d17815094224fdc4a1ab9dab2f6fe0a283c683e1df1bb5035f0cc9cd4bd00c42",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/thomiceli/opengist:1",
+    "digest": "sha256:7edc91273ee7d10a17406da8a08c803158baaff984c39b789c1313473d068f21",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/uptimekit/dash:latest",
+    "digest": "sha256:e7adcbed53a49b1f7b616a384fc63da069433c7772f7a05398ee5e9c0b78318e",
+    "platforms": [
+      "amd64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/uptimekit/status-page:latest",
+    "digest": "sha256:1ffc1ce1227716acafc2f0fd97e9a9b13e42daffee34e93fe0a951e4c3196f0f",
+    "platforms": [
+      "amd64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "gitlab/gitlab-ce:19.1.2-ce.0",
+    "digest": "sha256:ed48f1d320841a393c3b8c3a9558f28117a4ebdbb35538b43a73467aabd9590a",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/gitlab/gitlab-ce/tags/19.1.2-ce.0",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "glitchtip/glitchtip:6.1.0",
+    "digest": "sha256:d208887f9c69eb6da9c3c676e974bcc7dbe103d7733938320ee1015eaa924bfb",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "grafana/grafana-enterprise:12.4",
+    "digest": "sha256:5d8703d9bd77353afe4c26040bfc1b18b7b3291ed1d3487aed10386a154ac727",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "grafana/grafana:12.4",
+    "digest": "sha256:c132a683b2430fff9115a29b2a79c8ab97540cdcc90846e3c81878c778ca3596",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/grafana/grafana/tags/12.4",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "hashicorp/vault:2.0.3",
+    "digest": "sha256:a296a888b118615dc01d5f1a6846e6d4a7277946caaed5b447008fff5fe06b54",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "hoppscotch/hoppscotch:latest",
+    "digest": "sha256:d50725df661ff58fcd205f062ec163dd470a3a1a07585b78b3ba4c9c1a538f05",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/hoppscotch/hoppscotch/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "influxdb:2.7.10",
+    "digest": "sha256:b4cd4b71bc8528c5cb6b9dede79091a234f9f565a3177b8fc4c2cc835bf5c142",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/influxdb/tags/2.7.10",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "inngest/inngest:v1.12.1",
+    "digest": "sha256:b72614904c1173be402c763374f302a7215ccbacc34ff6bb64d4ac84311f1ef3",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/inngest/inngest/tags/v1.12.1",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "jellyfin/jellyfin:10",
+    "digest": "sha256:aefb67e6a7ff1debdd154a78a7bbb780fd0c873d8639210a7f6a2016ad2b35db",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "jenkins/jenkins:latest",
+    "digest": "sha256:1446dbeea31e0b6c28a22e45984f5e0dee19ac0e2203b99c6c74fba7a8db7808",
+    "platforms": [
+      "amd64",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "kong:2.8.1",
+    "digest": "sha256:1b53405d8680a09d6f44494b7990bf7da2ea43f84a258c59717d4539abf09f6d",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/kong/tags/2.8.1",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "langflowai/langflow:latest",
+    "digest": "sha256:3e3cac657435f292fb5da653e8eb05b330460a99f1420e169f29413ba9d11164",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "langgenius/dify-api:1.15.0",
+    "digest": "sha256:c1712c50f27c9dfd31c5be77a9a03f30c464fc6983287eefd4a6a98376c70c24",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/langgenius/dify-api/tags/1.15.0",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "langgenius/dify-plugin-daemon:0.6.3-local",
+    "digest": "sha256:3c694329357bc580b28bdec59321a981acd3279f8f69d1a3fb59a47cf7f770c3",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/langgenius/dify-plugin-daemon/tags/0.6.3-local",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "langgenius/dify-sandbox:0.2.15",
+    "digest": "sha256:750e1111426ef31a9217b81c98cccfb750f17b182af3221102e420afa9f0928e",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/langgenius/dify-sandbox/tags/0.2.15",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "langgenius/dify-web:1.15.0",
+    "digest": "sha256:4f526395772321f0130eeb335339317dfefeb9207b4187306f2d12e2fc6ec106",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/langgenius/dify-web/tags/1.15.0",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "liltechnomancer/double-zero:0.2.1",
+    "digest": "sha256:b0d9c2bd3d442f797b50c194d8c96537d997e4000468f33d84f914c2f8c67a7b",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/liltechnomancer/double-zero/tags/0.2.1",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "lobehub/lobe-chat:v1.26.1",
+    "digest": "sha256:3fe6b20261f973d25bcc446e7d15fd3f3caaf50185abb55daa1e46af1c01f352",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/lobehub/lobe-chat/tags/v1.26.1",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "mariadb:11",
+    "digest": "sha256:2d2f4095530294735a857cfe22bb101e19b0849b416911c796ec4aa81b164a62",
+    "platforms": [
+      "amd64",
+      "arm64",
+      "ppc64le",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/mariadb/tags/11",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "mongo",
+    "digest": "sha256:81a1c8842a09589fc8d5f285266f3340bf4abdf66700ba22988f14cc9b2b3118",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/mongo/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "mongo:7-jammy",
+    "digest": "sha256:52ba5332636758f2375228827d5cf7460e25c02063ba19c243e5d262cf4e7924",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/mongo/tags/7-jammy",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "mysql:8.4",
+    "digest": "sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/mysql/tags/8.4",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "n8nio/n8n:2.30.4",
+    "digest": "sha256:d1606a508b1e426de07a98fa10f3758ef474b17590c6f181a0dd38c999f819d0",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/n8nio/n8n/tags/2.30.4",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "n8nio/n8n:latest",
+    "digest": "sha256:a8c95f75c6fdf65f5f2b7a7b354744eaa1c62bb911b5c00af6499c3f38e4cd32",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/n8nio/n8n/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "n8nio/runners:nightly",
+    "digest": "sha256:92134fc086cc0e49440662fc814ff8b0eef255d4472b0f21118c70dc43c75f9b",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/n8nio/runners/tags/nightly",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "nginx:1.27-alpine",
+    "digest": "sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/nginx/tags/1.27-alpine",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "nginx:latest",
+    "digest": "sha256:05b8cb60c354a44ab824ea6e7dc69b46d50762cdbe728a347a5b656e6fb3d7c4",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/nginx/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "nginxinc/nginx-unprivileged:stable-alpine",
+    "digest": "sha256:adf5042a17f4ecdd200c595fa9ffd1be37efb18f89a830bd1a00e4ab4d59d42c",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/nginxinc/nginx-unprivileged/tags/stable-alpine",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ollama/ollama:latest",
+    "digest": "sha256:684d8674b4315fa18f4f0e973a118ec2652ed96f67563277839985175858e0ba",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "passbolt/passbolt:latest-ce",
+    "digest": "sha256:e16ff8720fd721861435518e0a8926f2d41895cca335ba5cd5ba168ae41ae9a9",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/passbolt/passbolt/tags/latest-ce",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "pgsty/minio:RELEASE.2026-06-18T00-00-00Z",
+    "digest": "sha256:dacff8306a6e0a734518533992dbdcca26bc1ca47f77cf47cb9945725f92b29b",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/pgsty/minio/tags/RELEASE.2026-06-18T00-00-00Z",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "pgvector/pgvector:0.8.0-pg15-trixie",
+    "digest": "sha256:8809cfffff0082cf260c9ac752f1dd1afc77f6f0a55c4e6411321e78efc3d9a5",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/pgvector/pgvector/tags/0.8.0-pg15-trixie",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "pgvector/pgvector:pg16",
+    "digest": "sha256:ccc6e83d6e35e931dc7c5def2022729d5a6c370318d099181995567ff1fb4d6b",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/pgvector/pgvector/tags/pg16",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "postgres:13",
+    "digest": "sha256:4689940c683801b4ab839ab3b0a0a3555a5fe425371422310944e89eca7d8068",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/postgres/tags/13",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "postgres:15",
+    "digest": "sha256:9b1d34adbce1dd07ee6e94b4a2cf698884b89bd44a6c9c12f5da8f3acbfe4957",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/postgres/tags/15",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "postgres:15.12-alpine",
+    "digest": "sha256:ef9d1517df69c4d27dbb9ddcec14f431a2442628603f4e9daa429b92ae6c3cd1",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/postgres/tags/15.12-alpine",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "postgres:16",
+    "digest": "sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/postgres/tags/16",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "postgres:16-alpine",
+    "digest": "sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/postgres/tags/16-alpine",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "postgres:17",
+    "digest": "sha256:67f41722b7a8cbdb868a44a4995c846eddfdc2973bccb291ce937dce88ad5675",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/postgres/tags/17",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "postgres:17-alpine",
+    "digest": "sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/postgres/tags/17-alpine",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "postgres:18",
+    "digest": "sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/postgres/tags/18",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "postgres:18-alpine",
+    "digest": "sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/postgres/tags/18-alpine",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "postgrest/postgrest:v12.2.11",
+    "digest": "sha256:ee1044a08215efa291a36ab4f773989c8c8bb7e7bbd4435d12739d9b2f7a2e09",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/postgrest/postgrest/tags/v12.2.11",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "prom/prometheus:latest",
+    "digest": "sha256:5ce7540c3c00ef4ab0c9d2c995c6a5b9c421f44b4a115d97a2c7af3b1c21cbb0",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/prom/prometheus/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "qdrant/qdrant:latest",
+    "digest": "sha256:12364fe851b9f17356fc88189fc06d1b521262e04659ec7345975b00c9246a10",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/qdrant/qdrant/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "rabbitmq:4.1-management",
+    "digest": "sha256:036dbf561d8040eaed77d0d326b44bd8fa1c9ac382d2310bd7f35970fae70613",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/rabbitmq/tags/4.1-management",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "redis:6-alpine",
+    "digest": "sha256:d0c875bdacfb5c4d2c2d9124de3f53cee1dc9ceff8936bd459fabc135cb33015",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/redis/tags/6-alpine",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "redis:7-alpine",
+    "digest": "sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/redis/tags/7-alpine",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "redis:7.2-alpine",
+    "digest": "sha256:ccd6aa8d45ff3f033d6fa15b8cc1a50579f65c89f38cf9bb607a954c4f2128ed",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/redis/tags/7.2-alpine",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "redis:8.0-alpine",
+    "digest": "sha256:5f61955be8ab2ccee9372b84ae4d4da2e2b156f87281e3f218544055e7ee04d4",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/redis/tags/8.0-alpine",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "redis:alpine",
+    "digest": "sha256:becdda6c7f4b3fb42e42fd7f120bbf5c54c4caaaf16f26da24e4563d2c1f0576",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/redis/tags/alpine",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "rustrak/rustrak-server:latest",
+    "digest": "sha256:71c776b1c816a4ecdf668fed44a0fadf37ecb0d7c86f97262cd28b27b13e9dd4",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/rustrak/rustrak-server/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "rustrak/rustrak-server:postgres",
+    "digest": "sha256:81409cb5df81eee108189614bdd8f2cd58f473254273fa77d2402e68a85a3e00",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/rustrak/rustrak-server/tags/postgres",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "rustrak/rustrak-ui:latest",
+    "digest": "sha256:ed6ae5c2d58eb65dec602059067bf979ea6014754b4d72d428ed2afb8a3570ed",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/rustrak/rustrak-ui/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "searxng/searxng:latest",
+    "digest": "sha256:e0e0557627cc3e46cc82d8c23bb3a3a74eb203ae42f73142db555551af336096",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "stackauth/server:latest",
+    "digest": "sha256:51daaa4a49fcccc3c2371d8e1aac3ae33819f35618f57d1c55bfff4699344914",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/stackauth/server/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "supabase/edge-runtime:v1.67.4",
+    "digest": "sha256:358930e39ff36e0130c3afe3808a5c8f8322f7ff9c42624406dacce859ed0e24",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/supabase/edge-runtime/tags/v1.67.4",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "supabase/gotrue:v2.171.0",
+    "digest": "sha256:884f1a203a6a999251492d3d7092a4077b714ef210650a85f338a84385093ea4",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/supabase/gotrue/tags/v2.171.0",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "supabase/logflare:1.12.0",
+    "digest": "sha256:84d0cda731e1fe43c24531003660c7f5e82c460b80b48493041701381ec0eeee",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/supabase/logflare/tags/1.12.0",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "supabase/postgres-meta:v0.88.9",
+    "digest": "sha256:a298c83ab60aa91af9eced2b255f24b0034f487b5393ddc363fa0bca078da0fb",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/supabase/postgres-meta/tags/v0.88.9",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "supabase/postgres:15.8.1.060",
+    "digest": "sha256:0e2279598bc0224fb5960c3a61eb23270cd60119427f3a7bdec86ba282600dcc",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/supabase/postgres/tags/15.8.1.060",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "supabase/realtime:v2.34.47",
+    "digest": "sha256:4d2460cb6eb081b7cfec0e6b0af57f547497f60cf897621555303992d299f6e8",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/supabase/realtime/tags/v2.34.47",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "supabase/storage-api:v1.22.7",
+    "digest": "sha256:a6fd2e8c69ddb7bf837495919dacf890a7bd532b06c436904255d7d3d2549a57",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/supabase/storage-api/tags/v1.22.7",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "supabase/studio:2025.04.21-sha-173cc56",
+    "digest": "sha256:95cef30b11d488865a6760defef903397ca1d64c90a76e76eb7af084fd23c987",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/supabase/studio/tags/2025.04.21-sha-173cc56",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "supabase/supavisor:2.5.1",
+    "digest": "sha256:d41621d44d728740c886bc90016df019351b4ecea54ce138340f02fedd57af3a",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/supabase/supavisor/tags/2.5.1",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "timberio/vector:0.28.1-alpine",
+    "digest": "sha256:4bc04aca94a44f04b427a490f346e7397ef7ce61fe589d718f744f7d92cb5c80",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/timberio/vector/tags/0.28.1-alpine",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "timescale/timescaledb:2.26.4-pg17",
+    "digest": "sha256:dfbf3c54f03e01d9a6fe7eeb736b513064a849606ca5acd7edcf51fdcab76a5e",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/timescale/timescaledb/tags/2.26.4-pg17",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ubuntu/squid:latest",
+    "digest": "sha256:6a097f68bae708cedbabd6188d68c7e2e7a38cedd05a176e1cc0ba29e3bbe029",
+    "platforms": [
+      "amd64",
+      "arm64",
+      "ppc64le",
+      "s390x"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "valkey/valkey:8-alpine",
+    "digest": "sha256:d2e18f3410b6f616de1417f570fa55261af2898b9c5b2cfb6781ce2373ea43d1",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "valkey/valkey:8.1.4",
+    "digest": "sha256:81db6d39e1bba3b3ff32bd3a1b19a6d69690f94a3954ec131277b9a26b95b3aa",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "valkey/valkey:9",
+    "digest": "sha256:c123e3715db63d06d4ad6964884037aa0d5d4d703939b9929954112889708e1d",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "vaultwarden/server:1.36.0",
+    "digest": "sha256:d626d04934cd1192ad8ced1adb975099fca78cec33ab467d2d3c923cde7f3b0c",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "wordpress:latest",
+    "digest": "sha256:5a93c470ae8220fddf71f6ebe3bc94e615ddc2ae4d9810f795b830fb11c41a17",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/wordpress/tags/latest",
+    "image_config_inspected": false,
+    "checked_at": "2026-09-14"
+  }
+]

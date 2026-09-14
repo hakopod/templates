@@ -1,0 +1,105 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.wordpress]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'wordpress:latest@sha256:5a93c470ae8220fddf71f6ebe3bc94e615ddc2ae4d9810f795b830fb11c41a17'
+port = 80
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['bash', '-c', "if [ -n \"$$WP_DOMAIN\" ]; then\n  (\n    for i in $$(seq 1 60); do\n      TRAEFIK_IP=\"$$(getent hosts dokploy-traefik | awk '{print $$1; exit}')\"\n      if [ -n \"$$TRAEFIK_IP\" ]; then\n        grep -q \"[[:space:]]$$WP_DOMAIN\\$$\" /etc/hosts || echo \"$$TRAEFIK_IP $$WP_DOMAIN\" >> /etc/hosts\n        break\n      fi\n      sleep 2\n    done\n  ) &\nfi\nexec docker-entrypoint.sh apache2-foreground\n"]
+depends_on = ['wp-db']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.wordpress.mounts]]
+volume = 'wp-app'
+mount_path = '/var/www/html'
+read_only = false
+sub_path = ''
+
+[services.wordpress.env]
+WORDPRESS_CONFIG_EXTRA = "define('WP_MEMORY_LIMIT', '256M');\ndefine('DISALLOW_FILE_EDIT', true);\n"
+WORDPRESS_DB_HOST = 'wp_db'
+WORDPRESS_DB_NAME = '$DB_NAME'
+WORDPRESS_DB_USER = 'root'
+WORDPRESS_DEBUG = '0'
+WP_DOMAIN = '{{site_host}}'
+
+[services.wordpress.secrets]
+[services.wordpress.secrets.WORDPRESS_DB_PASSWORD]
+ref = 'wordpress-db-password'
+
+[services.wp-db]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'mysql:8.4@sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a'
+port = 3306
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.wp-db.mounts]]
+volume = 'wp-data'
+mount_path = '/var/lib/mysql'
+read_only = false
+sub_path = ''
+
+[services.wp-db.env]
+MYSQL_DATABASE = '$DB_NAME'
+
+[services.wp-db.secrets]
+[services.wp-db.secrets.MYSQL_ROOT_PASSWORD]
+ref = 'mysql-root-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.wp-app]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.wp-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

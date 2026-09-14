@@ -1,0 +1,59 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 10001
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'liltechnomancer/double-zero:0.2.1@sha256:b0d9c2bd3d442f797b50c194d8c96537d997e4000468f33d84f914c2f8c67a7b'
+port = 4000
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/var/lib/doublezero/data'
+size_gib = 5
+storage_class = ''
+
+[services.main.env]
+AWS_REGION = '{{config.aws-region}}'
+DATABASE_PATH = '/var/lib/doublezero/data/00.db'
+PHX_HOST = '{{site_host}}'
+SQS_URL = '{{config.sqs-url}}'
+SYSTEM_EMAIL = '{{config.system-email}}'
+
+[services.main.secrets]
+[services.main.secrets.AWS_ACCESS_KEY_ID]
+ref = 'aws-access-key-id'
+
+[services.main.secrets.AWS_SECRET_ACCESS_KEY]
+ref = 'aws-secret-access-key'
+
+[services.main.secrets.SECRET_KEY_BASE]
+ref = 'secret-key-base'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

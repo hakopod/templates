@@ -1,0 +1,52 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 10001
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'vaultwarden/server:1.36.0@sha256:d626d04934cd1192ad8ced1adb975099fca78cec33ab467d2d3c923cde7f3b0c'
+port = 8080
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = '/alive'
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/data'
+size_gib = 5
+storage_class = ''
+
+[services.main.env]
+DOMAIN = 'https://catalog.example.test'
+INVITATIONS_ALLOWED = 'true'
+ROCKET_PORT = '8080'
+SIGNUPS_ALLOWED = 'false'
+
+[services.main.secrets]
+[services.main.secrets.ADMIN_TOKEN]
+ref = 'admin-token'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

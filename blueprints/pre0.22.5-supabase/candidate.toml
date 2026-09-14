@@ -1,0 +1,621 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.analytics]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'supabase/logflare:1.12.0@sha256:84d0cda731e1fe43c24531003660c7f5e82c460b80b48493041701381ec0eeee'
+port = 4000
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.analytics.env]
+DB_DATABASE = '_supabase'
+DB_HOSTNAME = 'db'
+DB_PORT = '5432'
+DB_SCHEMA = '_analytics'
+DB_USERNAME = 'supabase_admin'
+LOGFLARE_FEATURE_FLAG_OVERRIDE = 'multibackend=true'
+LOGFLARE_MIN_CLUSTER_SIZE = '1'
+LOGFLARE_NODE_HOST = '127.0.0.1'
+LOGFLARE_SINGLE_TENANT = 'true'
+LOGFLARE_SUPABASE_MODE = 'true'
+POSTGRES_BACKEND_SCHEMA = '_analytics'
+
+[services.analytics.secrets]
+[services.analytics.secrets.DB_PASSWORD]
+ref = 'db-password'
+
+[services.analytics.secrets.LOGFLARE_API_KEY]
+ref = 'logflare-api-key'
+
+[services.analytics.secrets.POSTGRES_BACKEND_URL]
+ref = 'postgres-backend-url'
+
+[services.auth]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'supabase/gotrue:v2.171.0@sha256:884f1a203a6a999251492d3d7092a4077b714ef210650a85f338a84385093ea4'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db', 'analytics']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.auth.env]
+API_EXTERNAL_URL = 'http://{{site_host}}'
+GOTRUE_API_HOST = '0.0.0.0'
+GOTRUE_API_PORT = '9999'
+GOTRUE_DB_DRIVER = 'postgres'
+GOTRUE_DISABLE_SIGNUP = 'false'
+GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED = 'false'
+GOTRUE_EXTERNAL_EMAIL_ENABLED = 'true'
+GOTRUE_EXTERNAL_PHONE_ENABLED = 'true'
+GOTRUE_JWT_ADMIN_ROLES = 'service_role'
+GOTRUE_JWT_AUD = 'authenticated'
+GOTRUE_JWT_DEFAULT_GROUP_NAME = 'authenticated'
+GOTRUE_JWT_EXP = '3600'
+GOTRUE_MAILER_AUTOCONFIRM = 'false'
+GOTRUE_MAILER_EXTERNAL_HOSTS = 'kong,{{site_host}}'
+GOTRUE_MAILER_URLPATHS_CONFIRMATION = '"/auth/v1/verify"'
+GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE = '"/auth/v1/verify"'
+GOTRUE_MAILER_URLPATHS_INVITE = '"/auth/v1/verify"'
+GOTRUE_MAILER_URLPATHS_RECOVERY = '"/auth/v1/verify"'
+GOTRUE_SITE_URL = 'http://localhost:3000'
+GOTRUE_SMS_AUTOCONFIRM = 'true'
+GOTRUE_SMTP_ADMIN_EMAIL = 'admin@example.com'
+GOTRUE_SMTP_HOST = 'supabase-mail'
+GOTRUE_SMTP_PASS = 'fake_mail_password'
+GOTRUE_SMTP_PORT = '2500'
+GOTRUE_SMTP_SENDER_NAME = 'fake_sender'
+GOTRUE_SMTP_USER = 'fake_mail_user'
+GOTRUE_URI_ALLOW_LIST = 'http://{{site_host}}/*,http://localhost:3000/*'
+
+[services.auth.secrets]
+[services.auth.secrets.GOTRUE_DB_DATABASE_URL]
+ref = 'gotrue-db-database-url'
+
+[services.auth.secrets.GOTRUE_JWT_SECRET]
+ref = 'gotrue-jwt-secret'
+
+[services.db]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'supabase/postgres:15.8.1.060@sha256:0e2279598bc0224fb5960c3a61eb23270cd60119427f3a7bdec86ba282600dcc'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['postgres', '-c', 'config_file=/etc/postgresql/postgresql.conf', '-c', 'log_min_messages=fatal']
+depends_on = ['vector']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.db.env]
+JWT_EXP = '3600'
+PGDATABASE = 'postgres'
+PGPORT = '5432'
+POSTGRES_DB = 'postgres'
+POSTGRES_HOST = '/var/run/postgresql'
+POSTGRES_PORT = '5432'
+
+[services.db.secrets]
+[services.db.secrets.JWT_SECRET]
+ref = 'jwt-secret'
+
+[services.db.secrets.PGPASSWORD]
+ref = 'pgpassword'
+
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.functions]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'supabase/edge-runtime:v1.67.4@sha256:358930e39ff36e0130c3afe3808a5c8f8322f7ff9c42624406dacce859ed0e24'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['start', '--main-service', '/home/deno/functions/main']
+depends_on = ['analytics']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.functions.env]
+SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE'
+SUPABASE_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q'
+SUPABASE_URL = 'http://kong:8000'
+VERIFY_JWT = 'false'
+
+[services.functions.secrets]
+[services.functions.secrets.JWT_SECRET]
+ref = 'jwt-secret'
+
+[services.functions.secrets.SUPABASE_DB_URL]
+ref = 'supabase-db-url'
+
+[services.imgproxy]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'darthsim/imgproxy:v3.8.0@sha256:0facd355d50f3be665ebe674486f2b2e9cdaebd3f74404acd9b7fece2f661435'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.imgproxy.env]
+IMGPROXY_BIND = ':5001'
+IMGPROXY_ENABLE_WEBP_DETECTION = 'true'
+IMGPROXY_LOCAL_FILESYSTEM_ROOT = '/'
+IMGPROXY_USE_ETAG = 'true'
+
+[services.imgproxy.secrets]
+[services.kong]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'kong:2.8.1@sha256:1b53405d8680a09d6f44494b7990bf7da2ea43f84a258c59717d4539abf09f6d'
+port = 8000
+public_tcp = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['bash', '-c', 'eval "echo \"$$(cat ~/temp.yml)\"" > ~/kong.yml && /docker-entrypoint.sh kong docker-start']
+args = []
+depends_on = ['analytics']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.kong.ports]]
+name = 'port-8443'
+port = 8443
+target_port = 8443
+protocol = 'TCP'
+
+[services.kong.env]
+DASHBOARD_USERNAME = 'supabase'
+KONG_DATABASE = 'off'
+KONG_DECLARATIVE_CONFIG = '/home/kong/kong.yml'
+KONG_DNS_ORDER = 'LAST,A,CNAME'
+KONG_NGINX_PROXY_PROXY_BUFFERS = '64 160k'
+KONG_NGINX_PROXY_PROXY_BUFFER_SIZE = '160k'
+KONG_PLUGINS = 'request-transformer,cors,key-auth,acl,basic-auth'
+SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE'
+SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q'
+
+[services.kong.secrets]
+[services.kong.secrets.DASHBOARD_PASSWORD]
+ref = 'dashboard-password'
+
+[services.meta]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'supabase/postgres-meta:v0.88.9@sha256:a298c83ab60aa91af9eced2b255f24b0034f487b5393ddc363fa0bca078da0fb'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db', 'analytics']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.meta.env]
+PG_META_DB_HOST = 'db'
+PG_META_DB_NAME = 'postgres'
+PG_META_DB_PORT = '5432'
+PG_META_DB_USER = 'supabase_admin'
+PG_META_PORT = '8080'
+
+[services.meta.secrets]
+[services.meta.secrets.PG_META_DB_PASSWORD]
+ref = 'pg-meta-db-password'
+
+[services.realtime]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'supabase/realtime:v2.34.47@sha256:4d2460cb6eb081b7cfec0e6b0af57f547497f60cf897621555303992d299f6e8'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db', 'analytics']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.realtime.env]
+APP_NAME = 'realtime'
+DB_AFTER_CONNECT_QUERY = 'SET search_path TO _realtime'
+DB_ENC_KEY = 'supabaserealtime'
+DB_HOST = 'db'
+DB_NAME = 'postgres'
+DB_PORT = '5432'
+DB_USER = 'supabase_admin'
+DNS_NODES = "''"
+ERL_AFLAGS = '-proto_dist inet_tcp'
+PORT = '4000'
+RLIMIT_NOFILE = '10000'
+RUN_JANITOR = 'true'
+SEED_SELF_HOST = 'true'
+
+[services.realtime.secrets]
+[services.realtime.secrets.API_JWT_SECRET]
+ref = 'api-jwt-secret'
+
+[services.realtime.secrets.DB_PASSWORD]
+ref = 'db-password'
+
+[services.realtime.secrets.SECRET_KEY_BASE]
+ref = 'secret-key-base'
+
+[services.rest]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'postgrest/postgrest:v12.2.11@sha256:ee1044a08215efa291a36ab4f773989c8c8bb7e7bbd4435d12739d9b2f7a2e09'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['postgrest']
+depends_on = ['db', 'analytics']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.rest.env]
+PGRST_APP_SETTINGS_JWT_EXP = '3600'
+PGRST_DB_ANON_ROLE = 'anon'
+PGRST_DB_SCHEMAS = 'public,storage,graphql_public'
+PGRST_DB_USE_LEGACY_GUCS = 'false'
+
+[services.rest.secrets]
+[services.rest.secrets.PGRST_APP_SETTINGS_JWT_SECRET]
+ref = 'pgrst-app-settings-jwt-secret'
+
+[services.rest.secrets.PGRST_DB_URI]
+ref = 'pgrst-db-uri'
+
+[services.rest.secrets.PGRST_JWT_SECRET]
+ref = 'pgrst-jwt-secret'
+
+[services.storage]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'supabase/storage-api:v1.22.7@sha256:a6fd2e8c69ddb7bf837495919dacf890a7bd532b06c436904255d7d3d2549a57'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db', 'rest', 'imgproxy']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.storage.env]
+ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE'
+ENABLE_IMAGE_TRANSFORMATION = 'true'
+FILE_SIZE_LIMIT = '52428800'
+FILE_STORAGE_BACKEND_PATH = '/var/lib/storage'
+GLOBAL_S3_BUCKET = 'stub'
+IMGPROXY_URL = 'http://imgproxy:5001'
+POSTGREST_URL = 'http://rest:3000'
+REGION = 'stub'
+SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q'
+STORAGE_BACKEND = 'file'
+TENANT_ID = 'stub'
+
+[services.storage.secrets]
+[services.storage.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.storage.secrets.PGRST_JWT_SECRET]
+ref = 'pgrst-jwt-secret'
+
+[services.studio]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'supabase/studio:2025.04.21-sha-173cc56@sha256:95cef30b11d488865a6760defef903397ca1d64c90a76e76eb7af084fd23c987'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['analytics']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.studio.env]
+DEFAULT_ORGANIZATION_NAME = 'Default Organization'
+DEFAULT_PROJECT_NAME = 'Default Project'
+LOGFLARE_URL = 'http://analytics:4000'
+NEXT_ANALYTICS_BACKEND_PROVIDER = 'postgres'
+NEXT_PUBLIC_ENABLE_LOGS = 'true'
+STUDIO_PG_META_URL = 'http://meta:8080'
+SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE'
+SUPABASE_PUBLIC_URL = 'http://{{site_host}}'
+SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q'
+SUPABASE_URL = 'http://{{site_host}}'
+
+[services.studio.secrets]
+[services.studio.secrets.AUTH_JWT_SECRET]
+ref = 'auth-jwt-secret'
+
+[services.studio.secrets.LOGFLARE_API_KEY]
+ref = 'logflare-api-key'
+
+[services.studio.secrets.OPENAI_API_KEY]
+ref = 'openai-api-key'
+
+[services.studio.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.supavisor]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'supabase/supavisor:2.5.1@sha256:d41621d44d728740c886bc90016df019351b4ecea54ce138340f02fedd57af3a'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['/bin/sh', '-c', '/app/bin/migrate && /app/bin/supavisor eval "$$(cat /etc/pooler/pooler.exs)" && /app/bin/server']
+depends_on = ['db', 'analytics']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.supavisor.env]
+CLUSTER_POSTGRES = 'true'
+ERL_AFLAGS = '-proto_dist inet_tcp'
+POOLER_DEFAULT_POOL_SIZE = '20'
+POOLER_MAX_CLIENT_CONN = '100'
+POOLER_POOL_MODE = 'transaction'
+POOLER_TENANT_ID = 'your-tenant-id'
+PORT = '4000'
+POSTGRES_DB = 'postgres'
+POSTGRES_PORT = '5432'
+REGION = 'local'
+VAULT_ENC_KEY = 'your-encryption-key-32-chars-min'
+
+[services.supavisor.secrets]
+[services.supavisor.secrets.API_JWT_SECRET]
+ref = 'api-jwt-secret'
+
+[services.supavisor.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.supavisor.secrets.METRICS_JWT_SECRET]
+ref = 'metrics-jwt-secret'
+
+[services.supavisor.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.supavisor.secrets.SECRET_KEY_BASE]
+ref = 'secret-key-base'
+
+[services.vector]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'timberio/vector:0.28.1-alpine@sha256:4bc04aca94a44f04b427a490f346e7397ef7ce61fe589d718f744f7d92cb5c80'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['--config', '/etc/vector/vector.yml']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.vector.env]
+[services.vector.secrets]
+[services.vector.secrets.LOGFLARE_API_KEY]
+ref = 'logflare-api-key'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

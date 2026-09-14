@@ -1,0 +1,1059 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.capture]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ghcr.io/posthog/posthog/capture:master@sha256:9b166761f1e282880a76fb4f3e66afad9ba954fe383581dc5e0074a729c5c99e'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['kafka', 'redis7']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.capture.env]
+ADDRESS = '0.0.0.0:3000'
+CAPTURE_MODE = 'events'
+CAPTURE_V1_SINKS = 'msk'
+CAPTURE_V1_SINK_MSK_KAFKA_HOSTS = 'kafka:9092'
+CAPTURE_V1_SINK_MSK_KAFKA_TOPIC_CLIENT_INGESTION_WARNING = 'ingestion-clientwarnings-main-1'
+CAPTURE_V1_SINK_MSK_KAFKA_TOPIC_DLQ = 'events_plugin_ingestion_dlq'
+CAPTURE_V1_SINK_MSK_KAFKA_TOPIC_EXCEPTION = 'ingestion-errortracking-main'
+CAPTURE_V1_SINK_MSK_KAFKA_TOPIC_HEATMAP = 'heatmaps_ingestion'
+CAPTURE_V1_SINK_MSK_KAFKA_TOPIC_HISTORICAL = 'events_plugin_ingestion_historical'
+CAPTURE_V1_SINK_MSK_KAFKA_TOPIC_MAIN = 'events_plugin_ingestion'
+CAPTURE_V1_SINK_MSK_KAFKA_TOPIC_OVERFLOW = 'events_plugin_ingestion_overflow'
+KAFKA_HOSTS = 'kafka:9092'
+KAFKA_TOPIC = 'events_plugin_ingestion'
+RUST_LOG = 'info,rdkafka=warn'
+
+[services.capture.secrets]
+[services.capture.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.clickhouse]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'clickhouse/clickhouse-server:26.6.1.1193@sha256:1d1f6508eba2dccce2cee9913907c5f7766327debc57a6b1991f2c9e3176c163'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['/bin/bash']
+args = ['-c', "set -e\ncp /assets/clickhouse/config.xml /etc/clickhouse-server/config.xml\ncp /assets/clickhouse/config.d/default.xml /etc/clickhouse-server/config.d/default.xml\ncp /assets/clickhouse/users.xml /etc/clickhouse-server/users.xml\ncp /assets/clickhouse/user_defined_function.xml /etc/clickhouse-server/user_defined_function.xml\nmkdir -p /var/lib/clickhouse/format_schemas /var/lib/clickhouse/user_scripts\ncp -r /assets/idl/. /var/lib/clickhouse/format_schemas/\ncp -r /assets/user_scripts/. /var/lib/clickhouse/user_scripts/\nchmod -R 755 /var/lib/clickhouse/user_scripts\nchown -R clickhouse:clickhouse /var/lib/clickhouse/format_schemas /var/lib/clickhouse/user_scripts || true\n# Materialize system log tables (system.crash_log is required by the\n# custom_metrics ClickHouse migration), mirroring upstream init-db.sh\n(\n  i=0\n  while [ $$i -lt 90 ]; do\n    if clickhouse-client --query \"SELECT 1\" >/dev/null 2>&1; then\n      clickhouse-client --query \"SYSTEM FLUSH LOGS\" && echo \"system logs flushed\" && break\n    fi\n    sleep 2\n    i=$$((i+1))\n  done\n) &\nexec /entrypoint.sh\n"]
+depends_on = ['init-assets', 'zookeeper', 'kafka']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.clickhouse.mounts]]
+volume = 'posthog-assets'
+mount_path = '/assets'
+read_only = true
+sub_path = ''
+
+[[services.clickhouse.mounts]]
+volume = 'clickhouse-data'
+mount_path = '/var/lib/clickhouse'
+read_only = false
+sub_path = ''
+
+[services.clickhouse.env]
+CLICKHOUSE_SKIP_USER_SETUP = '1'
+KAFKA_HOSTS = 'kafka:9092'
+
+[services.clickhouse.secrets]
+[services.db]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'postgres:15.12-alpine@sha256:ef9d1517df69c4d27dbb9ddcec14f431a2442628603f4e9daa429b92ae6c3cd1'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.db.mounts]]
+volume = 'postgres-data'
+mount_path = '/var/lib/postgresql/data'
+read_only = false
+sub_path = ''
+
+[services.db.env]
+POSTGRES_DB = 'posthog'
+POSTGRES_USER = 'posthog'
+
+[services.db.secrets]
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = 'postgres-password'
+
+[services.feature-flags]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'ghcr.io/posthog/posthog/feature-flags:master@sha256:b18bbe7ee20276cf0395cc649fe9d90c2c7d0ef836dd30c8789b3a09de73a8cc'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db', 'redis7', 'init-assets']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.feature-flags.mounts]]
+volume = 'geoip-data'
+mount_path = '/share'
+read_only = true
+sub_path = ''
+
+[services.feature-flags.env]
+ADDRESS = '0.0.0.0:3001'
+COOKIELESS_REDIS_HOST = 'redis7'
+COOKIELESS_REDIS_PORT = '6379'
+MAXMIND_DB_PATH = '/share/GeoLite2-City.mmdb'
+RUST_LOG = 'info'
+
+[services.feature-flags.secrets]
+[services.feature-flags.secrets.PERSONS_READ_DATABASE_URL]
+ref = 'persons-read-database-url'
+
+[services.feature-flags.secrets.PERSONS_WRITE_DATABASE_URL]
+ref = 'persons-write-database-url'
+
+[services.feature-flags.secrets.READ_DATABASE_URL]
+ref = 'read-database-url'
+
+[services.feature-flags.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.feature-flags.secrets.WRITE_DATABASE_URL]
+ref = 'write-database-url'
+
+[services.hypercache-server]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ghcr.io/posthog/posthog/hypercache-server:master@sha256:f247133dfff4073a65df38eb04589683c6f43cf1f4f41272152a5d2d5b07ebcd'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['redis7']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.hypercache-server.env]
+ADDRESS = '0.0.0.0:3002'
+RUST_LOG = 'info'
+
+[services.hypercache-server.secrets]
+[services.hypercache-server.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.ingestion-general]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'posthog/posthog-node:sha-82ea668'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db', 'redis7', 'kafka', 'clickhouse', 'kafka-init', 'init-assets']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.ingestion-general.mounts]]
+volume = 'geoip-data'
+mount_path = '/share'
+read_only = true
+sub_path = ''
+
+[services.ingestion-general.env]
+CDP_REDIS_HOST = 'redis7'
+CLICKHOUSE_DATABASE = 'posthog'
+CLICKHOUSE_HOST = 'clickhouse'
+CLICKHOUSE_SECURE = 'false'
+CLICKHOUSE_VERIFY = 'false'
+COOKIELESS_REDIS_HOST = 'redis7'
+COOKIELESS_REDIS_PORT = '6379'
+KAFKA_HOSTS = 'kafka:9092'
+LOGS_REDIS_HOST = 'redis7'
+LOGS_REDIS_TLS = 'false'
+PLUGIN_SERVER_MODE = 'ingestion-v2-combined'
+TRACES_REDIS_HOST = 'redis7'
+TRACES_REDIS_TLS = 'false'
+
+[services.ingestion-general.secrets]
+[services.ingestion-general.secrets.BEHAVIORAL_COHORTS_DATABASE_URL]
+ref = 'behavioral-cohorts-database-url'
+
+[services.ingestion-general.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.ingestion-general.secrets.ENCRYPTION_SALT_KEYS]
+ref = 'encryption-salt-keys'
+
+[services.ingestion-general.secrets.PERSONS_DATABASE_URL]
+ref = 'persons-database-url'
+
+[services.ingestion-general.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.ingestion-sessionreplay]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'posthog/posthog-node:sha-82ea668'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db', 'redis7', 'kafka', 'kafka-init', 'objectstorage']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.ingestion-sessionreplay.env]
+KAFKA_HOSTS = 'kafka:9092'
+PLUGIN_SERVER_MODE = 'recordings-blob-ingestion-v2'
+SESSION_RECORDING_V2_S3_ENDPOINT = 'http://objectstorage:19000'
+SESSION_RECORDING_V2_S3_TIMEOUT_MS = '120000'
+
+[services.ingestion-sessionreplay.secrets]
+[services.ingestion-sessionreplay.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.ingestion-sessionreplay.secrets.ENCRYPTION_SALT_KEYS]
+ref = 'encryption-salt-keys'
+
+[services.ingestion-sessionreplay.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.ingestion-sessionreplay.secrets.SESSION_RECORDING_V2_S3_ACCESS_KEY_ID]
+ref = 'session-recording-v2-s3-access-key-id'
+
+[services.ingestion-sessionreplay.secrets.SESSION_RECORDING_V2_S3_SECRET_ACCESS_KEY]
+ref = 'session-recording-v2-s3-secret-access-ke'
+
+[services.init-assets]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'alpine:3.21@sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['/bin/sh']
+args = ['-c', "set -e\napk add --no-cache git curl brotli >/dev/null\nif [ ! -f /assets/.ok-${POSTHOG_VERSION} ]; then\n  echo \"Fetching PostHog repo assets @ ${POSTHOG_VERSION}\"\n  rm -rf /tmp/ph && mkdir -p /tmp/ph && cd /tmp/ph\n  git init -q .\n  git remote add origin https://github.com/PostHog/posthog.git\n  git sparse-checkout set --no-cone /docker/clickhouse/ /posthog/idl/ /posthog/user_scripts/\n  git -c protocol.version=2 fetch -q --depth 1 --filter=blob:none origin ${POSTHOG_VERSION}\n  git checkout -q FETCH_HEAD\n  rm -rf /assets/clickhouse /assets/idl /assets/user_scripts /assets/.ok-*\n  cp -r docker/clickhouse /assets/clickhouse\n  cp -r posthog/idl /assets/idl\n  cp -r posthog/user_scripts /assets/user_scripts\n  touch /assets/.ok-${POSTHOG_VERSION}\n  echo \"Repo assets ready\"\nfi\nif [ ! -s /share/GeoLite2-City.mmdb ]; then\n  echo \"Downloading GeoLite2 database\"\n  curl -sL --http1.1 https://mmdbcdn.posthog.net/ | brotli --decompress --output=/share/GeoLite2-City.mmdb\n  chmod 644 /share/GeoLite2-City.mmdb\nfi\necho \"init-assets done\"\n"]
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.init-assets.mounts]]
+volume = 'posthog-assets'
+mount_path = '/assets'
+read_only = false
+sub_path = ''
+
+[[services.init-assets.mounts]]
+volume = 'geoip-data'
+mount_path = '/share'
+read_only = false
+sub_path = ''
+
+[services.init-assets.env]
+[services.init-assets.secrets]
+[services.kafka]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'docker.io/redpandadata/redpanda:v25.1.9@sha256:8f7e9e4c1422baaa1a5e2a6c6c668cfe05442cb3cb476542c7dff61725e6fe31'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['redpanda', 'start', '--kafka-addr internal://0.0.0.0:9092', '--advertise-kafka-addr internal://kafka:9092', '--rpc-addr kafka:33145', '--advertise-rpc-addr kafka:33145', '--mode dev-container', '--smp 1', '--memory 1G', '--reserve-memory 0M', '--overprovisioned', '--set redpanda.empty_seed_starts_cluster=false', '--seeds kafka:33145', '--set redpanda.auto_create_topics_enabled=true']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.kafka.mounts]]
+volume = 'redpanda-data'
+mount_path = '/var/lib/redpanda/data'
+read_only = false
+sub_path = ''
+
+[services.kafka.env]
+[services.kafka.secrets]
+[services.kafka-init]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/redpandadata/redpanda:v25.1.9@sha256:8f7e9e4c1422baaa1a5e2a6c6c668cfe05442cb3cb476542c7dff61725e6fe31'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['/bin/sh']
+args = ['-c', "set -e\nTOPICS=\"clickhouse_events_json \\\n    clickhouse_ai_events_json \\\n    clickhouse_heatmap_events \\\n    clickhouse_ingestion_warnings \\\n    events_plugin_ingestion \\\n    events_plugin_ingestion_dlq \\\n    events_plugin_ingestion_overflow \\\n    events_plugin_ingestion_async \\\n    events_plugin_ingestion_historical \\\n    ingestion-clientwarnings-main-1 \\\n    heatmaps_ingestion \\\n    session_recording_snapshot_item_events \\\n    session_recording_snapshot_item_overflow \\\n    clickhouse_groups \\\n    clickhouse_person \\\n    clickhouse_person_distinct_id \\\n    clickhouse_app_metrics2 \\\n    log_entries \\\n    clickhouse_tophog\"\nfor topic in $$TOPICS; do\n  rpk topic create \"$$topic\" --brokers kafka:9092 -p 1 -r 1 2>/dev/null \\\n    || rpk topic list --brokers kafka:9092 | grep -q \"$$topic\"\ndone\necho \"Kafka topics ready\"\n"]
+depends_on = ['kafka']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.kafka-init.env]
+[services.kafka-init.secrets]
+[services.livestream]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ghcr.io/posthog/posthog/livestream:master@sha256:6926f340b72d609e43cee5aa8b75a85cfdc77d182e610dafafdd81d3b2ab53f5'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['kafka']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.livestream.env]
+[services.livestream.secrets]
+[services.livestream.secrets.LIVESTREAM_JWT_SECRET]
+ref = 'livestream-jwt-secret'
+
+[services.objectstorage]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'minio/minio:RELEASE.2025-04-22T22-12-26Z'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['sh']
+args = ['-c', 'mkdir -p /data/posthog && minio server --address ":19000" --console-address ":19001" /data']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.objectstorage.mounts]]
+volume = 'objectstorage-data'
+mount_path = '/data'
+read_only = false
+sub_path = ''
+
+[services.objectstorage.env]
+MINIO_ROOT_USER = 'object_storage_root_user'
+
+[services.objectstorage.secrets]
+[services.objectstorage.secrets.MINIO_ROOT_PASSWORD]
+ref = 'minio-root-password'
+
+[services.plugins]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'posthog/posthog-node:sha-82ea668'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db', 'redis7', 'kafka', 'clickhouse', 'kafka-init', 'init-assets']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.plugins.mounts]]
+volume = 'geoip-data'
+mount_path = '/share'
+read_only = true
+sub_path = ''
+
+[services.plugins.env]
+CDP_REDIS_HOST = 'redis7'
+CDP_REDIS_PORT = '6379'
+CLICKHOUSE_DATABASE = 'posthog'
+CLICKHOUSE_HOST = 'clickhouse'
+CLICKHOUSE_SECURE = 'false'
+CLICKHOUSE_VERIFY = 'false'
+COOKIELESS_REDIS_HOST = 'redis7'
+COOKIELESS_REDIS_PORT = '6379'
+KAFKA_HOSTS = 'kafka:9092'
+LOGS_REDIS_HOST = 'redis7'
+LOGS_REDIS_TLS = 'false'
+NODEJS_CAPABILITY_GROUPS = 'cdp_workflows,realtime_cohorts,feature_flags'
+OBJECT_STORAGE_ENABLED = 'true'
+OBJECT_STORAGE_ENDPOINT = 'http://objectstorage:19000'
+OBJECT_STORAGE_PUBLIC_ENDPOINT = 'http://{{site_host}}'
+OTEL_EXPORTER_OTLP_ENDPOINT = ''
+SITE_URL = 'http://{{site_host}}'
+TRACES_REDIS_HOST = 'redis7'
+TRACES_REDIS_TLS = 'false'
+
+[services.plugins.secrets]
+[services.plugins.secrets.BEHAVIORAL_COHORTS_DATABASE_URL]
+ref = 'behavioral-cohorts-database-url'
+
+[services.plugins.secrets.CYCLOTRON_DATABASE_URL]
+ref = 'cyclotron-database-url'
+
+[services.plugins.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.plugins.secrets.ENCRYPTION_SALT_KEYS]
+ref = 'encryption-salt-keys'
+
+[services.plugins.secrets.OBJECT_STORAGE_ACCESS_KEY_ID]
+ref = 'object-storage-access-key-id'
+
+[services.plugins.secrets.OBJECT_STORAGE_SECRET_ACCESS_KEY]
+ref = 'object-storage-secret-access-key'
+
+[services.plugins.secrets.PERSONS_DATABASE_URL]
+ref = 'persons-database-url'
+
+[services.plugins.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.plugins.secrets.SECRET_KEY]
+ref = 'secret-key'
+
+[services.proxy]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'caddy:2.10-alpine@sha256:4c6e91c6ed0e2fa03efd5b44747b625fec79bc9cd06ac5235a779726618e530d'
+port = 80
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = ['sh']
+args = ['-c', 'printf "%s" "$$CADDYFILE" > /etc/caddy/Caddyfile && exec caddy run -c /etc/caddy/Caddyfile']
+depends_on = ['web']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.proxy.env]
+CADDYFILE = "{\n    auto_https off\n}\n:80 {\n    @capture path /e /e/ /e/* /i/v0 /i/v0/ /i/v0/* /i/v1/analytics/events /i/v1/analytics/events/ /batch /batch/ /batch/* /capture /capture/ /capture/*\n    @replay-capture path /s /s/ /s/*\n    @flags path /flags /flags/ /flags/* /api/feature_flag/local_evaluation /api/feature_flag/local_evaluation/ /api/feature_flag/local_evaluation/*\n    @surveys path /surveys /surveys/ /api/surveys /api/surveys/\n    @remote-config path /array/*\n    @webhooks path /public/webhooks /public/webhooks/ /public/webhooks/* /public/m/ /public/m/*\n    @livestream path /livestream /livestream/ /livestream/*\n    @objectstorage path /posthog /posthog/ /posthog/*\n\n    handle @capture {\n        reverse_proxy capture:3000\n    }\n    handle @replay-capture {\n        reverse_proxy replay-capture:3000\n    }\n    handle @flags {\n        reverse_proxy feature-flags:3001\n    }\n    handle @surveys {\n        reverse_proxy hypercache-server:3002\n    }\n    handle @remote-config {\n        reverse_proxy hypercache-server:3002\n    }\n    handle @webhooks {\n        reverse_proxy plugins:6738\n    }\n    handle @livestream {\n        uri strip_prefix /livestream\n        reverse_proxy livestream:8080 {\n            flush_interval -1\n        }\n    }\n    handle @objectstorage {\n        reverse_proxy objectstorage:19000\n    }\n    handle {\n        reverse_proxy web:8000\n    }\n}\n"
+
+[services.proxy.secrets]
+[services.recording-api]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'posthog/posthog-node:sha-82ea668'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db', 'redis7', 'clickhouse', 'objectstorage']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.recording-api.env]
+CLICKHOUSE_DATABASE = 'posthog'
+CLICKHOUSE_HOST = 'clickhouse'
+CLICKHOUSE_SECURE = 'false'
+CLICKHOUSE_VERIFY = 'false'
+PLUGIN_SERVER_MODE = 'recording-api'
+SESSION_RECORDING_API_REDIS_HOST = 'redis7'
+SESSION_RECORDING_API_REDIS_PORT = '6379'
+SESSION_RECORDING_V2_S3_ENDPOINT = 'http://objectstorage:19000'
+
+[services.recording-api.secrets]
+[services.recording-api.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.recording-api.secrets.ENCRYPTION_SALT_KEYS]
+ref = 'encryption-salt-keys'
+
+[services.recording-api.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.recording-api.secrets.SESSION_RECORDING_V2_S3_ACCESS_KEY_ID]
+ref = 'session-recording-v2-s3-access-key-id'
+
+[services.recording-api.secrets.SESSION_RECORDING_V2_S3_SECRET_ACCESS_KEY]
+ref = 'session-recording-v2-s3-secret-access-ke'
+
+[services.redis7]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'redis:7.2-alpine@sha256:ccd6aa8d45ff3f033d6fa15b8cc1a50579f65c89f38cf9bb607a954c4f2128ed'
+port = 6379
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['redis-server', '--maxmemory-policy', 'allkeys-lru', '--maxmemory', '200mb']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.redis7.mounts]]
+volume = 'redis-data'
+mount_path = '/data'
+read_only = false
+sub_path = ''
+
+[services.redis7.env]
+[services.redis7.secrets]
+[services.replay-capture]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ghcr.io/posthog/posthog/capture:master@sha256:9b166761f1e282880a76fb4f3e66afad9ba954fe383581dc5e0074a729c5c99e'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['kafka', 'redis7']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.replay-capture.env]
+ADDRESS = '0.0.0.0:3000'
+CAPTURE_MODE = 'recordings'
+KAFKA_HOSTS = 'kafka:9092'
+KAFKA_TOPIC = 'session_recording_snapshot_item_events'
+
+[services.replay-capture.secrets]
+[services.replay-capture.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.web]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'posthog/posthog:1e7b36ebe0da38a738fed250d175809a899ef422'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['sh', '-c', './bin/migrate && exec ./bin/docker-server']
+depends_on = ['db', 'redis7', 'clickhouse', 'kafka', 'kafka-init', 'objectstorage']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.web.env]
+API_QUERIES_PER_TEAM = '{"1": 100}'
+CDP_API_URL = 'http://plugins:6738'
+CLICKHOUSE_API_USER = 'api'
+CLICKHOUSE_APP_USER = 'app'
+CLICKHOUSE_DATABASE = 'posthog'
+CLICKHOUSE_HOST = 'clickhouse'
+CLICKHOUSE_LOGS_CLUSTER_HOST = 'clickhouse'
+CLICKHOUSE_LOGS_CLUSTER_SECURE = 'false'
+CLICKHOUSE_SECURE = 'false'
+CLICKHOUSE_VERIFY = 'false'
+DEPLOYMENT = 'hobby'
+DISABLE_SECURE_SSL_REDIRECT = 'true'
+FEATURE_FLAGS_SERVICE_URL = 'http://feature-flags:3001'
+FLAGS_REDIS_ENABLED = 'false'
+IS_BEHIND_PROXY = 'true'
+KAFKA_HOSTS = 'kafka:9092'
+LIVESTREAM_HOST = 'http://{{site_host}}/livestream'
+NGINX_UNIT_APP_PROCESSES = '2'
+OBJECT_STORAGE_ENABLED = 'true'
+OBJECT_STORAGE_ENDPOINT = 'http://objectstorage:19000'
+OBJECT_STORAGE_FORCE_PATH_STYLE = 'true'
+OBJECT_STORAGE_PUBLIC_ENDPOINT = 'http://{{site_host}}'
+OTEL_EXPORTER_OTLP_ENDPOINT = ''
+OTEL_SDK_DISABLED = 'true'
+PGHOST = 'db'
+PGUSER = 'posthog'
+RECORDING_API_URL = 'http://recording-api:6738'
+SECURE_COOKIES = 'false'
+SESSION_RECORDING_V2_S3_ENDPOINT = 'http://objectstorage:19000'
+SITE_URL = 'http://{{site_host}}'
+
+[services.web.secrets]
+[services.web.secrets.CLICKHOUSE_API_PASSWORD]
+ref = 'clickhouse-api-password'
+
+[services.web.secrets.CLICKHOUSE_APP_PASSWORD]
+ref = 'clickhouse-app-password'
+
+[services.web.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.web.secrets.ENCRYPTION_SALT_KEYS]
+ref = 'encryption-salt-keys'
+
+[services.web.secrets.OBJECT_STORAGE_ACCESS_KEY_ID]
+ref = 'object-storage-access-key-id'
+
+[services.web.secrets.OBJECT_STORAGE_SECRET_ACCESS_KEY]
+ref = 'object-storage-secret-access-key'
+
+[services.web.secrets.PERSONS_DB_READER_URL]
+ref = 'persons-db-reader-url'
+
+[services.web.secrets.PERSONS_DB_WRITER_URL]
+ref = 'persons-db-writer-url'
+
+[services.web.secrets.PGPASSWORD]
+ref = 'pgpassword'
+
+[services.web.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.web.secrets.SECRET_KEY]
+ref = 'secret-key'
+
+[services.web.secrets.SESSION_RECORDING_V2_S3_ACCESS_KEY_ID]
+ref = 'session-recording-v2-s3-access-key-id'
+
+[services.web.secrets.SESSION_RECORDING_V2_S3_SECRET_ACCESS_KEY]
+ref = 'session-recording-v2-s3-secret-access-ke'
+
+[services.worker]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'posthog/posthog:1e7b36ebe0da38a738fed250d175809a899ef422'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['./bin/docker-worker-celery', '--with-scheduler']
+depends_on = ['db', 'redis7', 'clickhouse', 'kafka', 'web']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.worker.env]
+API_QUERIES_PER_TEAM = '{"1": 100}'
+CDP_API_URL = 'http://plugins:6738'
+CLICKHOUSE_API_USER = 'api'
+CLICKHOUSE_APP_USER = 'app'
+CLICKHOUSE_DATABASE = 'posthog'
+CLICKHOUSE_HOST = 'clickhouse'
+CLICKHOUSE_LOGS_CLUSTER_HOST = 'clickhouse'
+CLICKHOUSE_LOGS_CLUSTER_SECURE = 'false'
+CLICKHOUSE_SECURE = 'false'
+CLICKHOUSE_VERIFY = 'false'
+DEPLOYMENT = 'hobby'
+DISABLE_SECURE_SSL_REDIRECT = 'true'
+FEATURE_FLAGS_SERVICE_URL = 'http://feature-flags:3001'
+FLAGS_REDIS_ENABLED = 'false'
+IS_BEHIND_PROXY = 'true'
+KAFKA_HOSTS = 'kafka:9092'
+LIVESTREAM_HOST = 'http://{{site_host}}/livestream'
+OBJECT_STORAGE_ENABLED = 'true'
+OBJECT_STORAGE_ENDPOINT = 'http://objectstorage:19000'
+OBJECT_STORAGE_FORCE_PATH_STYLE = 'true'
+OBJECT_STORAGE_PUBLIC_ENDPOINT = 'http://{{site_host}}'
+OTEL_EXPORTER_OTLP_ENDPOINT = ''
+OTEL_SDK_DISABLED = 'true'
+PGHOST = 'db'
+PGUSER = 'posthog'
+POSTHOG_SKIP_MIGRATION_CHECKS = '1'
+RECORDING_API_URL = 'http://recording-api:6738'
+SECURE_COOKIES = 'false'
+SESSION_RECORDING_V2_S3_ENDPOINT = 'http://objectstorage:19000'
+SITE_URL = 'http://{{site_host}}'
+WEB_CONCURRENCY = '2'
+
+[services.worker.secrets]
+[services.worker.secrets.CLICKHOUSE_API_PASSWORD]
+ref = 'clickhouse-api-password'
+
+[services.worker.secrets.CLICKHOUSE_APP_PASSWORD]
+ref = 'clickhouse-app-password'
+
+[services.worker.secrets.DATABASE_URL]
+ref = 'database-url'
+
+[services.worker.secrets.ENCRYPTION_SALT_KEYS]
+ref = 'encryption-salt-keys'
+
+[services.worker.secrets.OBJECT_STORAGE_ACCESS_KEY_ID]
+ref = 'object-storage-access-key-id'
+
+[services.worker.secrets.OBJECT_STORAGE_SECRET_ACCESS_KEY]
+ref = 'object-storage-secret-access-key'
+
+[services.worker.secrets.PERSONS_DB_READER_URL]
+ref = 'persons-db-reader-url'
+
+[services.worker.secrets.PERSONS_DB_WRITER_URL]
+ref = 'persons-db-writer-url'
+
+[services.worker.secrets.PGPASSWORD]
+ref = 'pgpassword'
+
+[services.worker.secrets.REDIS_URL]
+ref = 'redis-url'
+
+[services.worker.secrets.SECRET_KEY]
+ref = 'secret-key'
+
+[services.worker.secrets.SESSION_RECORDING_V2_S3_ACCESS_KEY_ID]
+ref = 'session-recording-v2-s3-access-key-id'
+
+[services.worker.secrets.SESSION_RECORDING_V2_S3_SECRET_ACCESS_KEY]
+ref = 'session-recording-v2-s3-secret-access-ke'
+
+[services.zookeeper]
+architecture = ''
+run_as_user = 0
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'zookeeper:3.7.0'
+port = 0
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.zookeeper.mounts]]
+volume = 'zookeeper-data'
+mount_path = '/data'
+read_only = false
+sub_path = ''
+
+[[services.zookeeper.mounts]]
+volume = 'zookeeper-datalog'
+mount_path = '/datalog'
+read_only = false
+sub_path = ''
+
+[services.zookeeper.env]
+ZOO_AUTOPURGE_PURGEINTERVAL = '1'
+ZOO_AUTOPURGE_SNAPRETAINCOUNT = '3'
+
+[services.zookeeper.secrets]
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+[volumes.clickhouse-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.geoip-data]
+size_gib = 5
+storage_class = 'administrator-rwx'
+access_mode = 'ReadWriteMany'
+
+[volumes.objectstorage-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.postgres-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.posthog-assets]
+size_gib = 5
+storage_class = 'administrator-rwx'
+access_mode = 'ReadWriteMany'
+
+[volumes.redis-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.redpanda-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.zookeeper-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.zookeeper-datalog]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
