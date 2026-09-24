@@ -953,7 +953,7 @@
       "arm64"
     ],
     "resource_summary": "2 services; review per-service compute and persistent storage",
-    "verification": "Pinned registry manifests and non-root startup configuration reviewed; runtime acceptance pending.",
+    "verification": "Verified on AMD64 and ARM64: external PostgreSQL/application startup and data-volume persistence across a pod restart. Backup restoration was not tested.",
     "providers": [],
     "configuration": "template",
     "site_url_required": false,
@@ -4941,7 +4941,7 @@
       "arm64"
     ],
     "resource_summary": "1 services; review per-service compute and persistent storage",
-    "verification": "Pinned registry manifests and non-root startup configuration reviewed; runtime acceptance pending.",
+    "verification": "Verified on AMD64 and ARM64: protected API authentication and persistent data across a pod restart.",
     "providers": [],
     "configuration": "template",
     "site_url_required": false,
@@ -4990,7 +4990,7 @@
       "arm64"
     ],
     "resource_summary": "1 services; review per-service compute and persistent storage",
-    "verification": "Pinned registry manifests and non-root startup configuration reviewed; runtime acceptance pending.",
+    "verification": "Verified on AMD64 and ARM64: authenticated database/document access and document persistence across a pod restart.",
     "providers": [],
     "configuration": "template",
     "site_url_required": false,
@@ -5045,7 +5045,7 @@
       "arm64"
     ],
     "resource_summary": "2 services; review per-service compute and persistent storage",
-    "verification": "Pinned registry manifests and non-root startup configuration reviewed; runtime acceptance pending.",
+    "verification": "Verified on AMD64 and ARM64: PostgreSQL/application startup and attachment-volume persistence across a pod restart. Backup restoration was not tested.",
     "providers": [],
     "configuration": "template",
     "site_url_required": true,
@@ -5223,7 +5223,7 @@
       "arm64"
     ],
     "resource_summary": "7 services; review per-service compute and persistent storage",
-    "verification": "Pinned registry manifests, full service topology and private S3 settings reviewed; runtime acceptance pending.",
+    "verification": "Verified on AMD64 and ARM64: complete service startup, proxy routing, worker health and private S3 media read/write. Configure your own bucket policy and CORS.",
     "providers": [],
     "configuration": "template",
     "site_url_required": true,
