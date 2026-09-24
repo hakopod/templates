@@ -5134,7 +5134,7 @@
       "https://github.com/calcom/cal.com/blob/v5.9.1/Dockerfile",
       "https://github.com/calcom/cal.com/blob/v5.9.1/scripts/start.sh",
       "https://github.com/calcom/cal.com/blob/v5.9.1/scripts/replace-placeholder.sh",
-      "https://github.com/hakopod/templates/tree/codex/catalog-complete-presets/images/calcom"
+      "https://github.com/hakopod/templates/tree/46fdbe4369e708c88b9dc88f001fd5921f2148cc/images/calcom"
     ],
     "deployable": false,
     "config_fields": [],
