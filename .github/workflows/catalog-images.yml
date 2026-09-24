@@ -1,0 +1,34 @@
+name: Build catalog compatibility images
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+jobs:
+  calcom:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Build public Cal.com compatibility wrapper
+        run: docker build --pull --tag ghcr.io/hakopod/catalog-calcom:v5.9.1-hakopod.1 images/calcom
+      - name: Verify non-root URL replacement and entrypoint
+        run: |
+          docker run --rm --user 1000:1000 --cap-drop ALL --security-opt no-new-privileges --entrypoint sh ghcr.io/hakopod/catalog-calcom:v5.9.1-hakopod.1 -ec '
+            test "$(id -u)" = 1000
+            test -w /calcom/apps/web/.next
+            test -w /calcom/apps/web/public
+            test -x /calcom/node_modules/.bin/prisma
+            test -x /calcom/node_modules/.bin/ts-node
+            test -f /calcom/scripts/seed-app-store.ts
+            sh -n /usr/local/bin/hakopod-calcom-start
+            scripts/replace-placeholder.sh "$BUILT_NEXT_PUBLIC_WEBAPP_URL" https://catalog-fixture.example.test
+            grep -rl https://catalog-fixture.example.test apps/web/.next apps/web/public >/dev/null
+          '
+      - name: Publish tested public wrapper
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          printf '%s' "$GHCR_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          docker push ghcr.io/hakopod/catalog-calcom:v5.9.1-hakopod.1
+          docker logout ghcr.io
