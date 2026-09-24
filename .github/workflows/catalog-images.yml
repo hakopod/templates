@@ -1,6 +1,8 @@
 name: Build catalog compatibility images
 on:
   workflow_dispatch:
+  push:
+    tags: [catalog-calcom-v5.9.1-hakopod.1]
 permissions:
   contents: read
   packages: write
