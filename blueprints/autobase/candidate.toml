@@ -1,0 +1,46 @@
+# New installation preset. Review README.md and save scoped secrets before deployment.
+schema_version = 1
+name = "template"
+
+[services.main]
+image = "autobase/console:2.7.2@sha256:897ebc919fc7042d4eb0b3b80cdb8eb28337a89e431946e5c9a09e7bf41761bb"
+port = 8080
+run_as_user = 1000
+run_as_group = 1000
+fs_group = 1000
+size = "compute"
+replicas = 1
+public = false
+networks = [ "default",]
+update_strategy = "recreate"
+[[services.main.mounts]]
+volume = "metadata"
+mount_path = "/var/lib/postgresql"
+
+[[services.main.mounts]]
+volume = "studio"
+mount_path = "/opt/dbdesk-studio"
+
+[[services.main.ports]]
+name = "ui"
+port = 80
+
+[networks.default]
+internal = false
+
+[volumes.metadata]
+size_gib = 5
+access_mode = "ReadWriteOnce"
+
+[volumes.studio]
+size_gib = 5
+access_mode = "ReadWriteOnce"
+
+[services.main.env]
+PG_CONSOLE_API_URL = "https://catalog.example.test/api/v1"
+
+[services.main.secrets.PG_CONSOLE_AUTHORIZATION_TOKEN]
+ref = "console-token"
+
+[services.main.secrets.POSTGRES_PASSWORD]
+ref = "database-password"

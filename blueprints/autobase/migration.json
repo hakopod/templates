@@ -1,0 +1,10 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://dokploy.com/templates/autobase",
+  "blockers": [
+    "Official console requires the host Docker socket and /tmp/ansible host directory to launch automation containers. These are intentionally unavailable to Hakopod application workloads.",
+    "The all-in-one image initializes PostgreSQL and Nginx as root; a restricted non-root pod cannot run its supervisor setup."
+  ],
+  "runtime_verified": false,
+  "reviewed_at": "2026-09-24"
+}

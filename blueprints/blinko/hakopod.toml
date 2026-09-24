@@ -1,0 +1,91 @@
+# New installation preset. Review README.md and save scoped secrets before deployment.
+schema_version = 1
+name = "template"
+
+[services.db]
+architecture = ""
+run_as_user = 70
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ""
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = "docker.io/library/postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73"
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = "medium"
+replicas = 1
+update_strategy = "recreate"
+healthcheck = ""
+command = []
+args = [ "postgres", "-c", "shared_buffers=64MB", "-c", "max_connections=50",]
+depends_on = []
+networks = [ "default",]
+restart_nonce = ""
+registry_credential = ""
+aws_identity = ""
+
+[services.main]
+image = "blinkospace/blinko:1.6.3@sha256:a0bc1924a0b963b63bc2ffb8dbda15c12729672291f74b8a2e15f86125ab6934"
+port = 1111
+run_as_user = 1000
+run_as_group = 1000
+fs_group = 1000
+size = "compute"
+replicas = 1
+public = true
+networks = [ "default",]
+command = [ "/usr/local/bin/dumb-init", "--", "/bin/sh", "-ec",]
+args = [ "node_modules/.bin/prisma migrate deploy\nnode server/seed.js\nexec node server/index.js",]
+depends_on = [ "db",]
+working_dir = "/app"
+healthcheck = "/"
+update_strategy = "recreate"
+[[services.main.temporary_mounts]]
+mount_path = "/app/backup"
+size_mib = 128
+
+[networks.default]
+internal = false
+
+[services.db.volume]
+mount_path = "/var/lib/postgresql/data"
+size_gib = 5
+storage_class = ""
+
+[services.db.env]
+PGDATA = "/var/lib/postgresql/data/pgdata"
+POSTGRES_DB = "app"
+POSTGRES_USER = "hakopod"
+
+[services.main.env]
+NODE_ENV = "production"
+NEXTAUTH_URL = "https://catalog.example.test"
+NEXT_PUBLIC_BASE_URL = "https://catalog.example.test"
+DISABLE_SECURE_COOKIE = "false"
+TRUST_PROXY = "1"
+HOME = "/tmp"
+
+[services.main.volume]
+mount_path = "/app/.blinko"
+size_gib = 5
+
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = "database-password"
+
+[services.main.secrets.NEXTAUTH_SECRET]
+ref = "session-secret"
+
+[services.main.bindings.DATABASE_URL]
+service = "db"
+protocol = "postgres"
+username = "hakopod"
+database = "app"
+
+[services.main.bindings.DATABASE_URL.password]
+ref = "database-password"

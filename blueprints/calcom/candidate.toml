@@ -1,0 +1,90 @@
+# Requires public availability of the tested compatibility image. See README.md.
+schema_version = 1
+name = "template"
+
+[services.db]
+architecture = ""
+run_as_user = 70
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ""
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = "docker.io/library/postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73"
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = "medium"
+replicas = 1
+update_strategy = "recreate"
+healthcheck = ""
+command = []
+args = [ "postgres", "-c", "shared_buffers=64MB", "-c", "max_connections=50",]
+depends_on = []
+networks = [ "default",]
+restart_nonce = ""
+registry_credential = ""
+aws_identity = ""
+
+[services.main]
+image = "ghcr.io/hakopod/catalog-calcom:v5.9.1-hakopod.1@sha256:2b7212a649d609d59b9f7cfd6f1509d46f8b122c7dc7ed8179370cdada279ead"
+port = 3000
+run_as_user = 1000
+run_as_group = 1000
+fs_group = 1000
+size = "compute"
+replicas = 1
+public = true
+networks = [ "default",]
+depends_on = [ "db",]
+healthcheck = "/"
+
+[networks.default]
+internal = false
+
+[services.db.volume]
+mount_path = "/var/lib/postgresql/data"
+size_gib = 5
+storage_class = ""
+
+[services.db.env]
+PGDATA = "/var/lib/postgresql/data/pgdata"
+POSTGRES_DB = "app"
+POSTGRES_USER = "hakopod"
+
+[services.main.env]
+NEXT_PUBLIC_WEBAPP_URL = "https://catalog.example.test"
+NEXTAUTH_URL = "https://catalog.example.test/api/auth"
+NODE_ENV = "production"
+CALCOM_TELEMETRY_DISABLED = "1"
+
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = "database-password"
+
+[services.main.secrets.NEXTAUTH_SECRET]
+ref = "session-secret"
+
+[services.main.secrets.CALENDSO_ENCRYPTION_KEY]
+ref = "encryption-key"
+
+[services.main.bindings.DATABASE_URL]
+service = "db"
+protocol = "postgres"
+username = "hakopod"
+database = "app"
+
+[services.main.bindings.DATABASE_DIRECT_URL]
+service = "db"
+protocol = "postgres"
+username = "hakopod"
+database = "app"
+
+[services.main.bindings.DATABASE_URL.password]
+ref = "database-password"
+
+[services.main.bindings.DATABASE_DIRECT_URL.password]
+ref = "database-password"

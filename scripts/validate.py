@@ -18,7 +18,17 @@ for row in rows:
         continue
     spec = tomllib.loads(file.read_text())
     assert spec["schema_version"] == 1 and spec["services"], ident
-    refs = {ref["ref"] for service in spec["services"].values() for ref in service.get("secrets", {}).values()}
+    def secret_refs(value):
+        if isinstance(value, dict):
+            for key, child in value.items():
+                if key == "ref" and isinstance(child, str):
+                    yield child
+                else:
+                    yield from secret_refs(child)
+        elif isinstance(value, list):
+            for child in value:
+                yield from secret_refs(child)
+    refs = set(secret_refs(spec))
     assert refs == set(row["required_secrets"]), ident
     assert refs <= {field["name"] for field in row["secret_fields"]}, ident
     if not row["deployable"]:

@@ -1375,5 +1375,119 @@
     "source": "https://hub.docker.com/v2/repositories/library/wordpress/tags/latest",
     "image_config_inspected": false,
     "checked_at": "2026-09-14"
+  },
+  {
+    "reference": "ghcr.io/dagucloud/dagu:2.10.7",
+    "digest": "sha256:5e715705e0c96e462417303f3e2fbbadc7f9cd15d153764c89fd1442e80a1d66",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-24"
+  },
+  {
+    "reference": "couchdb:3.5.1",
+    "digest": "sha256:ccea1e8035bf7afd68336e24056a1ca9c1c46d7abe42da686322c0ac7218e5c2",
+    "platforms": [
+      "amd64",
+      "arm64",
+      "s390x"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-24"
+  },
+  {
+    "reference": "blinkospace/blinko:1.6.3",
+    "digest": "sha256:a0bc1924a0b963b63bc2ffb8dbda15c12729672291f74b8a2e15f86125ab6934",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-24"
+  },
+  {
+    "reference": "bytebase/bytebase:3.22.1",
+    "digest": "sha256:a6d845773b60360f042b6ffd95968fa72198502ae38ad5af39121af084228192",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-24"
+  },
+  {
+    "reference": "calcom/cal.com:v5.9.1",
+    "digest": "sha256:ed4509ccbe7409636cb62d25d07f4a624409f797d1cbf07a051e1049652ccfd3",
+    "platforms": [
+      "amd64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-24"
+  },
+  {
+    "reference": "autobase/console:2.7.2",
+    "digest": "sha256:897ebc919fc7042d4eb0b3b80cdb8eb28337a89e431946e5c9a09e7bf41761bb",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-24"
+  },
+  {
+    "reference": "baserow/backend:1.35.2",
+    "digest": "sha256:719fd80a279f67ef49acbbb16aef80d5fc1c9186d882d1f6aebcb40913c0c3b6",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-24"
+  },
+  {
+    "reference": "baserow/web-frontend:1.35.2",
+    "digest": "sha256:e9889623a3936cd681e006e6279b2e64c038bd150134fd2947779a5f4f4eaf02",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-24"
+  },
+  {
+    "reference": "caddy:2.11.4",
+    "digest": "sha256:0c994536bddb66445885237f1a5dcc1916bccea922661c76b4e9fc24061f9b52",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-24"
+  },
+  {
+    "reference": "ghcr.io/hakopod/catalog-calcom:v5.9.1-hakopod.1",
+    "digest": "sha256:2b7212a649d609d59b9f7cfd6f1509d46f8b122c7dc7ed8179370cdada279ead",
+    "platforms": [
+      "amd64"
+    ],
+    "source": "Authenticated OCI registry inspection; anonymous access pending organization policy",
+    "image_config_inspected": true,
+    "checked_at": "2026-09-24"
   }
 ]

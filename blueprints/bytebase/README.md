@@ -1,27 +1,29 @@
 # Bytebase
 
-**Migration guide: not enabled for deployment.** Native migration candidate; runtime acceptance pending. Not enabled for deployment.
+Database change management with a private PostgreSQL metadata database.
 
-Bytebase is a database management tool that allows you to manage your databases with ease. It provides a simple and effective solution for managing your databases from anywhere.
+## Deployment
 
-## Requirements
+Native schema-v1 preset for a new installation. The catalog renders `hakopod.toml`; never substitute plaintext credentials into TOML.
 
-- bytebase: immutable image/architecture verification remains incomplete for bytebase/bytebase:3.3.0
+- New installation with PostgreSQL metadata and persistent Bytebase data
+- Complete administrator setup before sharing; existing installations require upstream upgrade review
+- Replaces the unavailable 3.3.0 image candidate with verified multi-architecture 3.22.1 manifests.
+- PG_URL is assembled from the same scoped password used by the database. No duplicate URL credential or embedded database is used. Back up both metadata and /var/opt/bytebase.
 
-## Candidate credential references
+## Secrets and storage
 
-This draft may include alternative providers; not every reference is required for every eventual configuration.
+`database-password` are application-scoped secret references. Generate or save them before deployment. Database connection bindings reuse those same saved passwords.
 
-- `pg-url`: Value for PG_URL. Supply the complete connection URL with matching database credentials and private service DNS.
-- `postgres-password`: Value for POSTGRES_PASSWORD. Use the upstream required format; keep stable and back up securely.
+Persistent services use one replica; scaling replicas does not create a database cluster. The storage option applies to each claim. New installations only: an image/template update is not an automatic database-major-version migration.
 
-## Ordinary configuration
+## Verification
 
-Use the catalog options described in the root README.
+Reviewed on 24 September 2026. Image manifests and container configuration were inspected remotely without executing workloads. Runtime startup, application-specific workflows and backup restoration are not yet verified unless later evidence is recorded here.
 
 ## Sources
 
-- https://github.com/bytebase/bytebase
-- https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/bytebase
-
-Application license: Review upstream license and edition.
+- https://dokploy.com/templates/bytebase
+- https://github.com/bytebase/bytebase/blob/3.22.1/scripts/Dockerfile
+- https://www.bytebase.com/docs/get-started/self-host/
+- https://www.bytebase.com/docs/how-to/manage-workspace/external-postgres/

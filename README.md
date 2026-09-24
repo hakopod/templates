@@ -4,7 +4,7 @@ Shared catalog for the open-source Hakopod engine and the Hakopod website.
 Both consumers pin this repository as a Git submodule. The server embeds the
 catalog at build time; installations do not execute remote template downloads.
 
-Currently 71 entries: 35 deployment presets and 36 migration guides.
+Currently 77 entries: 40 deployment presets and 37 migration guides.
 Every requested Dokploy blueprint has a migration record. A guide is **not** a
 working deployment: unsupported initialization, host access, static config,
 public UDP, or unresolved image/runtime requirements are listed explicitly.
@@ -34,6 +34,8 @@ and vLLM model/revision options remain supported. Private databases stay private
 `public` enables HTTP ingress only. Additional ports are private; public custom
 TCP requires administrator provisioning on self-hosted Hakopod. Public UDP and
 host-network access are not implicitly introduced by a conversion.
+
+See [the September completion review](REVIEW-2026-09-24.md) for the new native stacks, compatibility image and exact remaining blockers.
 
 ## Checks and updates
 
