@@ -121,7 +121,10 @@ size = "small"
 replicas = 1
 public = true
 networks = [ "default",]
-command = [ "caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile",]
+# The upstream binary has a low-port file capability, which the sandbox drops.
+# Copy only its bytes so the high-port proxy needs no additional capabilities.
+command = [ "/bin/sh", "-ec",]
+args = [ "cat /usr/bin/caddy > /tmp/hakopod-caddy; chmod 0500 /tmp/hakopod-caddy; exec /tmp/hakopod-caddy run --config /etc/caddy/Caddyfile --adapter caddyfile",]
 depends_on = [ "backend", "frontend",]
 
 [networks.default]
