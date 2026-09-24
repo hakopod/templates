@@ -23,14 +23,17 @@ shared ReadWriteMany volume is required.
 5. Review all seven service budgets. PostgreSQL and Redis each receive a PVC;
    uploads go to your bucket. Increasing replicas does not cluster the databases.
 
-The mounted Django settings extension adds only the current pod's own addresses to Django's allowed hosts for Kubernetes readiness probes; it does not enable a wildcard host. It also disables object ACL headers and enables
-15-minute signed URLs. This works with S3 Object Ownership and R2 without making
+The mounted Django settings extension adds only the current pod's own addresses
+to Django's allowed hosts for Kubernetes readiness probes; it does not enable a
+wildcard host. It also disables object ACL headers and enables 15-minute signed
+URLs. This works with S3 Object Ownership and R2 without making
 objects public. Customer credentials are environment references, never file content
 or versioned TOML values. The standard backend S3 credential chain performs access.
 
 The generated hostname must route to `main` (the reverse proxy); expose neither
 PostgreSQL/Redis nor the internal backend directly. The proxy forwards API and
-WebSocket paths; media URLs point directly to the configured bucket. Custom
+WebSocket paths and preserves the canonical HTTPS scheme for Django; media URLs
+point directly to the configured bucket. Custom
 builder domains and SMTP require additional upstream configuration. First-user
 registration is upstream setup; finish it before sharing the application URL.
 
