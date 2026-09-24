@@ -2,6 +2,7 @@
   "status": "native",
   "upstream_source": "https://dokploy.com/templates/blinko",
   "blockers": [],
-  "runtime_verified": false,
-  "reviewed_at": "2026-09-24"
+  "runtime_verified": true,
+  "reviewed_at": "2026-09-24",
+  "runtime_evidence": "https://github.com/hakopod/hakopod/actions/runs/36012352984"
 }

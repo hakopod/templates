@@ -19,7 +19,9 @@ Persistent services use one replica; scaling replicas does not create a database
 
 ## Verification
 
-Reviewed on 24 September 2026. Image manifests and container configuration were inspected remotely without executing workloads. Runtime startup, application-specific workflows and backup restoration are not yet verified unless later evidence is recorded here.
+Verified on AMD64 and ARM64 in [runtime workflow 36012352984](https://github.com/hakopod/hakopod/actions/runs/36012352984) using named disposable Hakopod development clusters. The authenticated DAG API rejects unauthenticated access and accepts its configured credential. A marker in the persistent home survives a pod restart on the same claim. Owned fixture claims and dynamic volumes were reclaimed after the test.
+
+These checks establish startup and the stated persistence behavior. Complete end-user workflows, upstream version upgrades and backup restoration were not tested.
 
 ## Sources
 
