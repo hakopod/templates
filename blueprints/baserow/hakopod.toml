@@ -252,7 +252,7 @@ ref = "storage-secret-key"
 
 [services.backend.files.storage-settings]
 mount_path = "/baserow/backend/src/baserow/config/settings/hakopod.py"
-content = "# Public configuration only. Secrets are provided through environment references.\nfrom .base import *\n\n# Keep customer uploads private and omit ACL headers for S3 Object Ownership / R2.\nAWS_DEFAULT_ACL = None\nAWS_QUERYSTRING_AUTH = True\n"
+content = "# Public configuration only. Secrets are provided through environment references.\nfrom .base import *\n\n# Keep customer uploads private and omit ACL headers for S3 Object Ownership / R2.\nAWS_DEFAULT_ACL = None\nAWS_QUERYSTRING_AUTH = True\n\n# Kubelet sends HTTP readiness to this pod IP, not the public hostname.\n# Preserve normal hostname checks; admit only this pod's own resolved addresses.\nimport socket\nALLOWED_HOSTS += [item[4][0] for item in socket.getaddrinfo(socket.gethostname(), None)]\n"
 
 [services.worker.secrets.SECRET_KEY]
 ref = "session-secret"
@@ -274,7 +274,7 @@ ref = "storage-secret-key"
 
 [services.worker.files.storage-settings]
 mount_path = "/baserow/backend/src/baserow/config/settings/hakopod.py"
-content = "# Public configuration only. Secrets are provided through environment references.\nfrom .base import *\n\n# Keep customer uploads private and omit ACL headers for S3 Object Ownership / R2.\nAWS_DEFAULT_ACL = None\nAWS_QUERYSTRING_AUTH = True\n"
+content = "# Public configuration only. Secrets are provided through environment references.\nfrom .base import *\n\n# Keep customer uploads private and omit ACL headers for S3 Object Ownership / R2.\nAWS_DEFAULT_ACL = None\nAWS_QUERYSTRING_AUTH = True\n\n# Kubelet sends HTTP readiness to this pod IP, not the public hostname.\n# Preserve normal hostname checks; admit only this pod's own resolved addresses.\nimport socket\nALLOWED_HOSTS += [item[4][0] for item in socket.getaddrinfo(socket.gethostname(), None)]\n"
 
 [services.beat.secrets.SECRET_KEY]
 ref = "session-secret"
@@ -296,7 +296,7 @@ ref = "storage-secret-key"
 
 [services.beat.files.storage-settings]
 mount_path = "/baserow/backend/src/baserow/config/settings/hakopod.py"
-content = "# Public configuration only. Secrets are provided through environment references.\nfrom .base import *\n\n# Keep customer uploads private and omit ACL headers for S3 Object Ownership / R2.\nAWS_DEFAULT_ACL = None\nAWS_QUERYSTRING_AUTH = True\n"
+content = "# Public configuration only. Secrets are provided through environment references.\nfrom .base import *\n\n# Keep customer uploads private and omit ACL headers for S3 Object Ownership / R2.\nAWS_DEFAULT_ACL = None\nAWS_QUERYSTRING_AUTH = True\n\n# Kubelet sends HTTP readiness to this pod IP, not the public hostname.\n# Preserve normal hostname checks; admit only this pod's own resolved addresses.\nimport socket\nALLOWED_HOSTS += [item[4][0] for item in socket.getaddrinfo(socket.gethostname(), None)]\n"
 
 [services.main.files.proxy]
 mount_path = "/etc/caddy/Caddyfile"

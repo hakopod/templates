@@ -23,7 +23,7 @@ shared ReadWriteMany volume is required.
 5. Review all seven service budgets. PostgreSQL and Redis each receive a PVC;
    uploads go to your bucket. Increasing replicas does not cluster the databases.
 
-The mounted Django settings extension disables object ACL headers and enables
+The mounted Django settings extension adds only the current pod's own addresses to Django's allowed hosts for Kubernetes readiness probes; it does not enable a wildcard host. It also disables object ACL headers and enables
 15-minute signed URLs. This works with S3 Object Ownership and R2 without making
 objects public. Customer credentials are environment references, never file content
 or versioned TOML values. The standard backend S3 credential chain performs access.
