@@ -5,7 +5,9 @@ The preset includes PostgreSQL, authenticated Redis, the backend, frontend,
 reverse proxy, combined Celery/export worker and the periodic beat scheduler.
 The backend completes locked migrations before dependent workers/frontend start.
 Every service runs as an unprivileged UID. No host socket, root initializer or
-shared ReadWriteMany volume is required.
+shared ReadWriteMany volume is required. The proxy copies the upstream Caddy
+binary into its bounded temporary directory without the low-port file capability,
+then listens on port 8080 under the normal dropped-capability sandbox.
 
 ## Before deployment
 
