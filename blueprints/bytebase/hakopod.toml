@@ -1,0 +1,78 @@
+# New installation preset. Review README.md and save scoped secrets before deployment.
+schema_version = 1
+name = "template"
+
+[services.db]
+architecture = ""
+run_as_user = 70
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ""
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = "docker.io/library/postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73"
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = "medium"
+replicas = 1
+update_strategy = "recreate"
+healthcheck = ""
+command = []
+args = [ "postgres", "-c", "shared_buffers=64MB", "-c", "max_connections=50",]
+depends_on = []
+networks = [ "default",]
+restart_nonce = ""
+registry_credential = ""
+aws_identity = ""
+
+[services.main]
+image = "bytebase/bytebase:3.22.1@sha256:a6d845773b60360f042b6ffd95968fa72198502ae38ad5af39121af084228192"
+port = 8080
+run_as_user = 113
+run_as_group = 113
+fs_group = 113
+size = "compute"
+replicas = 1
+public = true
+networks = [ "default",]
+depends_on = [ "db",]
+healthcheck = "/healthz"
+update_strategy = "recreate"
+
+[networks.default]
+internal = false
+
+[services.db.volume]
+mount_path = "/var/lib/postgresql/data"
+size_gib = 5
+storage_class = ""
+
+[services.db.env]
+PGDATA = "/var/lib/postgresql/data/pgdata"
+POSTGRES_DB = "app"
+POSTGRES_USER = "hakopod"
+
+[services.main.env]
+GOGC = "50"
+GOMEMLIMIT = "1536MiB"
+
+[services.main.volume]
+mount_path = "/var/opt/bytebase"
+size_gib = 5
+
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = "database-password"
+
+[services.main.bindings.PG_URL]
+service = "db"
+protocol = "postgres"
+username = "hakopod"
+database = "app"
+
+[services.main.bindings.PG_URL.password]
+ref = "database-password"

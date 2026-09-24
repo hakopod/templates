@@ -936,52 +936,51 @@
   },
   {
     "id": "bytebase",
-    "name": "Bytebase",
     "category": "application",
-    "description": "Bytebase is a database management tool that allows you to manage your databases with ease. It provides a simple and effective solution for managing your databases from anywhere.",
-    "license": "Review upstream license and edition",
-    "upstream": "https://github.com/bytebase/bytebase",
+    "name": "Bytebase",
+    "description": "Database change management with a private PostgreSQL metadata database.",
+    "license": "Apache-2.0 core; enterprise features have separate terms",
+    "upstream": "https://www.bytebase.com",
     "required_secrets": [
-      "pg-url",
-      "postgres-password"
+      "database-password"
     ],
     "requirements": [
-      "bytebase: immutable image/architecture verification remains incomplete for bytebase/bytebase:3.3.0"
+      "New installation with PostgreSQL metadata and persistent Bytebase data",
+      "Complete administrator setup before sharing; existing installations require upstream upgrade review"
     ],
-    "architectures": [],
-    "resource_summary": "2 services; review per-service budgets and persistent storage",
-    "verification": "Native migration candidate; runtime acceptance pending. Not enabled for deployment.",
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "2 services; review per-service compute and persistent storage",
+    "verification": "Pinned registry manifests and non-root startup configuration reviewed; runtime acceptance pending.",
     "providers": [],
-    "configuration": "guide",
+    "configuration": "template",
     "site_url_required": false,
     "site_url_supported": false,
     "database_config": false,
     "secret_fields": [
       {
-        "name": "pg-url",
-        "description": "Value for PG_URL. Supply the complete connection URL with matching database credentials and private service DNS.",
-        "format": "provider-key",
-        "generate": false,
-        "optional": false
-      },
-      {
-        "name": "postgres-password",
-        "description": "Value for POSTGRES_PASSWORD. Use the upstream required format; keep stable and back up securely.",
-        "format": "provider-key",
-        "generate": false,
+        "name": "database-password",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "password",
+        "generate": true,
         "optional": false
       }
     ],
     "sources": [
-      "https://github.com/bytebase/bytebase",
-      "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/bytebase"
+      "https://dokploy.com/templates/bytebase",
+      "https://github.com/bytebase/bytebase/blob/3.22.1/scripts/Dockerfile",
+      "https://www.bytebase.com/docs/get-started/self-host/",
+      "https://www.bytebase.com/docs/how-to/manage-workspace/external-postgres/"
     ],
-    "deployable": false,
+    "deployable": true,
     "config_fields": [],
     "notes": [
-      "This migration candidate preserves supported service, storage and credential declarations. Resolve every prerequisite before deployment."
+      "Replaces the unavailable 3.3.0 image candidate with verified multi-architecture 3.22.1 manifests.",
+      "PG_URL is assembled from the same scoped password used by the database. No duplicate URL credential or embedded database is used. Back up both metadata and /var/opt/bytebase."
     ],
-    "docs_url": "https://www.bytebase.com/docs",
+    "docs_url": "https://github.com/bytebase/bytebase/blob/3.22.1/scripts/Dockerfile",
     "logo": "/template-assets/bytebase/logo.png"
   },
   {
@@ -4922,5 +4921,394 @@
     "docs_url": "https://zipline.diced.sh/docs/",
     "logo": "/template-assets/zipline/logo.png",
     "logo_background": "dark"
+  },
+  {
+    "id": "dagu",
+    "category": "application",
+    "name": "Dagu",
+    "description": "Authenticated workflow scheduler with persistent DAGs, logs and run history.",
+    "license": "GPL-3.0-or-later",
+    "upstream": "https://dagu.cloud",
+    "required_secrets": [
+      "admin-password"
+    ],
+    "requirements": [
+      "One replica with persistent storage",
+      "Shell workflows run inside the restricted application container; Docker socket and host tasks are unavailable"
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 services; review per-service compute and persistent storage",
+    "verification": "Pinned registry manifests and non-root startup configuration reviewed; runtime acceptance pending.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "admin-password",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://dokploy.com/templates/dagu",
+      "https://github.com/dagu-org/dagu/blob/v2.10.7/Dockerfile",
+      "https://github.com/dagu-org/dagu/blob/v2.10.7/entrypoint.sh",
+      "https://docs.dagu.cloud/configurations/authentication"
+    ],
+    "deployable": true,
+    "config_fields": [],
+    "notes": [
+      "Sign in as admin with the saved admin-password. Back up the complete /var/lib/dagu volume.",
+      "Starts the scheduler and UI directly as UID 1000, bypassing the image entrypoint that requires sudo. Hakopod does not grant privileged execution to workflow steps."
+    ],
+    "docs_url": "https://github.com/dagu-org/dagu/blob/v2.10.7/Dockerfile"
+  },
+  {
+    "id": "couchdb",
+    "category": "database",
+    "name": "CouchDB",
+    "description": "Private authenticated CouchDB with single-node initialization and persistent documents.",
+    "license": "Apache-2.0",
+    "upstream": "https://couchdb.apache.org",
+    "required_secrets": [
+      "database-password",
+      "session-secret"
+    ],
+    "requirements": [
+      "Single-node database; one replica with persistent storage",
+      "Private HTTP 5984; use a scoped application credential for database clients"
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 services; review per-service compute and persistent storage",
+    "verification": "Pinned registry manifests and non-root startup configuration reviewed; runtime acceptance pending.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "database-password",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "session-secret",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://dokploy.com/templates/couchdb",
+      "https://docs.couchdb.org/en/stable/setup/single-node.html",
+      "https://github.com/apache/couchdb-docker/blob/main/3.5.1/docker-entrypoint.sh"
+    ],
+    "deployable": true,
+    "config_fields": [],
+    "notes": [
+      "The admin account is configured from database-password; session-secret keeps cookie authentication stable across restarts.",
+      "The single_node setting initializes system databases. Cluster distribution ports are not exposed. Runtime settings should be declared in versioned configuration; only database files persist."
+    ],
+    "docs_url": "https://docs.couchdb.org/en/stable/setup/single-node.html"
+  },
+  {
+    "id": "blinko",
+    "category": "application",
+    "name": "Blinko",
+    "description": "Private notes and AI workspace with PostgreSQL and persistent uploaded files.",
+    "license": "GPL-3.0",
+    "upstream": "https://github.com/blinkospace/blinko",
+    "required_secrets": [
+      "database-password",
+      "session-secret"
+    ],
+    "requirements": [
+      "Stable HTTPS origin; one application replica",
+      "Back up PostgreSQL and /app/.blinko together; configure AI providers inside Blinko"
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "2 services; review per-service compute and persistent storage",
+    "verification": "Pinned registry manifests and non-root startup configuration reviewed; runtime acceptance pending.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": true,
+    "site_url_supported": true,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "database-password",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "session-secret",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://dokploy.com/templates/blinko",
+      "https://github.com/blinkospace/blinko/blob/1.6.3/dockerfile",
+      "https://github.com/blinkospace/blinko/blob/1.6.3/shared/lib/pathConstant.ts"
+    ],
+    "deployable": true,
+    "config_fields": [],
+    "notes": [
+      "Database migrations and seed setup complete before the server starts; failures stop startup.",
+      "The .blinko volume retains attachments, vectors and local database dump files. It does not replace independent backups. Complete the first account setup before sharing the URL."
+    ],
+    "docs_url": "https://github.com/blinkospace/blinko/blob/1.6.3/dockerfile"
+  },
+  {
+    "id": "calcom",
+    "category": "application",
+    "name": "Cal.com",
+    "description": "Scheduling application with private PostgreSQL and a non-root compatibility image.",
+    "license": "AGPL-3.0 core; commercial features have separate terms",
+    "upstream": "https://cal.com",
+    "required_secrets": [
+      "database-password",
+      "session-secret",
+      "encryption-key"
+    ],
+    "requirements": [
+      "Publish the tested compatibility image for anonymous registry pull",
+      "Stable HTTPS origin and SMTP/provider configuration for invitations and calendar integrations"
+    ],
+    "architectures": [
+      "amd64"
+    ],
+    "resource_summary": "2 services; review per-service compute and persistent storage",
+    "verification": "Public-source non-root wrapper build and static URL replacement passed (workflow 36007368796). Organization policy currently prevents public image pulls; runtime acceptance pending.",
+    "providers": [],
+    "configuration": "guide",
+    "site_url_required": true,
+    "site_url_supported": true,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "database-password",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "session-secret",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "encryption-key",
+        "description": "Exactly 32 hexadecimal characters; preserve with database backups.",
+        "format": "hex32",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://dokploy.com/templates/calcom",
+      "https://github.com/calcom/cal.com/blob/v5.9.1/Dockerfile",
+      "https://github.com/calcom/cal.com/blob/v5.9.1/scripts/start.sh",
+      "https://github.com/calcom/cal.com/blob/v5.9.1/scripts/replace-placeholder.sh",
+      "https://github.com/hakopod/templates/tree/codex/catalog-complete-presets/images/calcom"
+    ],
+    "deployable": false,
+    "config_fields": [],
+    "notes": [
+      "The configuration includes both DATABASE_URL and DATABASE_DIRECT_URL from one private password, plus stable NextAuth and encryption secrets.",
+      "Encryption key must contain exactly 32 characters. This candidate does not silently use the Dokploy example database password. Invitation email and calendar provider credentials require the operator settings documented upstream."
+    ],
+    "docs_url": "https://github.com/calcom/docker/blob/main/Dockerfile"
+  },
+  {
+    "id": "autobase",
+    "category": "application",
+    "name": "Autobase",
+    "description": "PostgreSQL automation console requiring a dedicated operator-controlled host.",
+    "license": "Apache-2.0 core; review component terms",
+    "upstream": "https://autobase.tech",
+    "required_secrets": [
+      "console-token",
+      "database-password"
+    ],
+    "requirements": [
+      "Dedicated trusted operator host running the upstream stack",
+      "Host automation privileges; not supported as a tenant application"
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 services; review per-service compute and persistent storage",
+    "verification": "Complete native candidate; listed prerequisites prevent catalog deployment. Runtime acceptance pending.",
+    "providers": [],
+    "configuration": "guide",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "console-token",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "database-password",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://dokploy.com/templates/autobase",
+      "https://github.com/vitabaks/autobase/blob/2.7.2/console/docker-compose.yml",
+      "https://github.com/vitabaks/autobase/blob/master/console/docker-compose.yml"
+    ],
+    "deployable": false,
+    "config_fields": [],
+    "notes": [
+      "The candidate preserves application ports, credentials and persistent data declarations; it deliberately omits privileged host sockets and bind mounts.",
+      "Do not deploy this file unchanged. Use the upstream dedicated-host installation until a reviewed remote execution adapter exists."
+    ],
+    "docs_url": "https://github.com/vitabaks/autobase/blob/2.7.2/console/docker-compose.yml"
+  },
+  {
+    "id": "baserow",
+    "category": "application",
+    "name": "Baserow",
+    "description": "No-code database with PostgreSQL, Redis, background workers and user-owned S3 media.",
+    "license": "MIT core; premium and enterprise features have separate terms",
+    "upstream": "https://baserow.io",
+    "required_secrets": [
+      "database-password",
+      "redis-password",
+      "session-secret",
+      "jwt-secret",
+      "storage-access-key",
+      "storage-secret-key"
+    ],
+    "requirements": [
+      "User-owned S3-compatible bucket with private objects and bucket-scoped credentials",
+      "Stable HTTPS origin; seven bounded services with persistent PostgreSQL and Redis"
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "7 services; review per-service compute and persistent storage",
+    "verification": "Pinned registry manifests, full service topology and private S3 settings reviewed; runtime acceptance pending.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": true,
+    "site_url_supported": true,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "database-password",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "redis-password",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "session-secret",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "jwt-secret",
+        "description": "Generate or supply a stable private value. Keep it with the application backups.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "storage-access-key",
+        "description": "Provider-issued, bucket-scoped S3 credential. Do not generate a random value.",
+        "format": "provider-key",
+        "generate": false,
+        "optional": false
+      },
+      {
+        "name": "storage-secret-key",
+        "description": "Provider-issued, bucket-scoped S3 credential. Do not generate a random value.",
+        "format": "provider-key",
+        "generate": false,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://dokploy.com/templates/baserow",
+      "https://github.com/bram2w/baserow/blob/1.35.2/docker-compose.yml",
+      "https://github.com/bram2w/baserow/blob/1.35.2/Caddyfile",
+      "https://github.com/bram2w/baserow/blob/1.35.2/backend/docker/docker-entrypoint.sh",
+      "https://github.com/bram2w/baserow/blob/1.35.2/backend/src/baserow/config/settings/base.py"
+    ],
+    "deployable": true,
+    "config_fields": [
+      {
+        "name": "storage-bucket",
+        "label": "Media bucket",
+        "description": "Existing private bucket in your own account. Use a dedicated bucket for this application.",
+        "default": "",
+        "required": true
+      },
+      {
+        "name": "storage-region",
+        "label": "Storage region",
+        "description": "Provider region; use auto for Cloudflare R2.",
+        "default": "auto",
+        "required": true
+      },
+      {
+        "name": "storage-endpoint",
+        "label": "S3 endpoint",
+        "description": "HTTPS S3 API endpoint, such as https://ACCOUNT.r2.cloudflarestorage.com. Do not include the bucket or credentials.",
+        "default": "",
+        "required": true
+      }
+    ],
+    "notes": [
+      "Includes the backend, frontend, reverse proxy, combined Celery/export worker and periodic beat scheduler.",
+      "Uploaded media lives in the configured customer bucket; short-lived signed URLs are used and public ACL headers are disabled. Configure bucket CORS for your HTTPS origin.",
+      "Keep the database, signing keys and bucket recovery policy together. No shared RWX volume or root initializer is required. SMTP remains optional upstream configuration."
+    ],
+    "docs_url": "https://github.com/bram2w/baserow/blob/1.35.2/docker-compose.yml"
   }
 ]

@@ -1,0 +1,35 @@
+# New installation preset. Review README.md and save scoped secrets before deployment.
+schema_version = 1
+name = "template"
+
+[services.main]
+image = "couchdb:3.5.1@sha256:ccea1e8035bf7afd68336e24056a1ca9c1c46d7abe42da686322c0ac7218e5c2"
+port = 5984
+run_as_user = 5984
+run_as_group = 5984
+fs_group = 5984
+size = "medium"
+replicas = 1
+public = false
+networks = [ "default",]
+update_strategy = "recreate"
+
+[networks.default]
+internal = false
+
+[services.main.env]
+COUCHDB_USER = "admin"
+
+[services.main.volume]
+mount_path = "/opt/couchdb/data"
+size_gib = 5
+
+[services.main.secrets.COUCHDB_PASSWORD]
+ref = "database-password"
+
+[services.main.secrets.COUCHDB_SECRET]
+ref = "session-secret"
+
+[services.main.files.single-node]
+mount_path = "/opt/couchdb/etc/local.d/10-hakopod.ini"
+content = "[couchdb]\nsingle_node = true\n[chttpd]\nbind_address = 0.0.0.0\nrequire_valid_user = true\n"

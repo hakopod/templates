@@ -1,0 +1,9 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://dokploy.com/templates/calcom",
+  "blockers": [
+    "The tested compatibility image is published in GHCR but hakopod organization policy disables public package visibility. Anonymous pull must work before enabling the catalog preset."
+  ],
+  "runtime_verified": false,
+  "reviewed_at": "2026-09-24"
+}

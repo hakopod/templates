@@ -1,0 +1,303 @@
+# Complete S3-backed deployment. See README.md for bucket setup and scoped secrets.
+schema_version = 1
+name = "template"
+
+[services.db]
+architecture = ""
+run_as_user = 70
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ""
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = "docker.io/library/postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73"
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = "medium"
+replicas = 1
+update_strategy = "recreate"
+healthcheck = ""
+command = []
+args = [ "postgres", "-c", "shared_buffers=64MB", "-c", "max_connections=50",]
+depends_on = []
+networks = [ "default",]
+restart_nonce = ""
+registry_credential = ""
+aws_identity = ""
+
+[services.redis]
+architecture = ""
+run_as_user = 999
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ""
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = "docker.io/library/redis:8.6.6-alpine@sha256:75934ddb37bfaebe3b4082ba673cac39f66495244134f33dd0a502ce03cdcd36"
+port = 6379
+public_tcp = []
+ports = []
+public = false
+size = "small"
+replicas = 1
+update_strategy = "recreate"
+healthcheck = ""
+command = [ "sh", "-ec",]
+args = [ "exec redis-server --appendonly yes --maxmemory 64mb --maxmemory-policy noeviction --requirepass \"$REDIS_PASSWORD\"",]
+depends_on = []
+networks = [ "default",]
+restart_nonce = ""
+registry_credential = ""
+aws_identity = ""
+
+[services.backend]
+image = "baserow/backend:1.35.2@sha256:719fd80a279f67ef49acbbb16aef80d5fc1c9186d882d1f6aebcb40913c0c3b6"
+port = 8000
+run_as_user = 9999
+run_as_group = 9999
+fs_group = 9999
+size = "large"
+replicas = 1
+public = false
+networks = [ "default",]
+depends_on = [ "db", "redis",]
+healthcheck = "/api/_health/"
+update_strategy = "recreate"
+
+[services.worker]
+image = "baserow/backend:1.35.2@sha256:719fd80a279f67ef49acbbb16aef80d5fc1c9186d882d1f6aebcb40913c0c3b6"
+port = 0
+run_as_user = 9999
+run_as_group = 9999
+fs_group = 9999
+size = "large"
+replicas = 1
+public = false
+networks = [ "default",]
+depends_on = [ "backend",]
+update_strategy = "recreate"
+args = [ "celery-worker",]
+
+[services.beat]
+image = "baserow/backend:1.35.2@sha256:719fd80a279f67ef49acbbb16aef80d5fc1c9186d882d1f6aebcb40913c0c3b6"
+port = 0
+run_as_user = 9999
+run_as_group = 9999
+fs_group = 9999
+size = "medium"
+replicas = 1
+public = false
+networks = [ "default",]
+depends_on = [ "backend",]
+update_strategy = "recreate"
+args = [ "celery-beat",]
+
+[services.frontend]
+image = "baserow/web-frontend:1.35.2@sha256:e9889623a3936cd681e006e6279b2e64c038bd150134fd2947779a5f4f4eaf02"
+port = 3000
+run_as_user = 9999
+run_as_group = 9999
+fs_group = 9999
+size = "medium"
+replicas = 1
+public = false
+networks = [ "default",]
+depends_on = [ "backend",]
+healthcheck = "/_health/"
+
+[services.main]
+image = "caddy:2.11.4@sha256:0c994536bddb66445885237f1a5dcc1916bccea922661c76b4e9fc24061f9b52"
+port = 8080
+run_as_user = 9999
+run_as_group = 9999
+fs_group = 9999
+size = "small"
+replicas = 1
+public = true
+networks = [ "default",]
+command = [ "caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile",]
+depends_on = [ "backend", "frontend",]
+
+[networks.default]
+internal = false
+
+[services.db.volume]
+mount_path = "/var/lib/postgresql/data"
+size_gib = 5
+storage_class = ""
+
+[services.db.env]
+PGDATA = "/var/lib/postgresql/data/pgdata"
+POSTGRES_DB = "app"
+POSTGRES_USER = "hakopod"
+
+[services.redis.volume]
+mount_path = "/data"
+size_gib = 5
+storage_class = ""
+
+[services.backend.env]
+BASEROW_PUBLIC_URL = "https://catalog.example.test"
+DATABASE_HOST = "db"
+DATABASE_PORT = "5432"
+DATABASE_NAME = "app"
+DATABASE_USER = "hakopod"
+REDIS_HOST = "redis"
+REDIS_PORT = "6379"
+BASEROW_AMOUNT_OF_GUNICORN_WORKERS = "1"
+BASEROW_AMOUNT_OF_WORKERS = "1"
+BASEROW_RUN_MINIMAL = "yes"
+BASEROW_COMBINED_CELERY_EXPORT_WORKER = "true"
+BASEROW_EXTRA_ALLOWED_HOSTS = "backend"
+AWS_STORAGE_BUCKET_NAME = "{{config.storage-bucket}}"
+AWS_S3_REGION_NAME = "{{config.storage-region}}"
+AWS_S3_ENDPOINT_URL = "{{config.storage-endpoint}}"
+AWS_S3_ADDRESSING_STYLE = "path"
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_S3_USE_SSL = "true"
+AWS_S3_VERIFY = "true"
+AWS_QUERYSTRING_AUTH = "true"
+AWS_QUERYSTRING_EXPIRE = "900"
+DJANGO_SETTINGS_MODULE = "baserow.config.settings.hakopod"
+
+[services.worker.env]
+BASEROW_PUBLIC_URL = "https://catalog.example.test"
+DATABASE_HOST = "db"
+DATABASE_PORT = "5432"
+DATABASE_NAME = "app"
+DATABASE_USER = "hakopod"
+REDIS_HOST = "redis"
+REDIS_PORT = "6379"
+BASEROW_AMOUNT_OF_GUNICORN_WORKERS = "1"
+BASEROW_AMOUNT_OF_WORKERS = "1"
+BASEROW_RUN_MINIMAL = "yes"
+BASEROW_COMBINED_CELERY_EXPORT_WORKER = "true"
+BASEROW_EXTRA_ALLOWED_HOSTS = "backend"
+MIGRATE_ON_STARTUP = "false"
+AWS_STORAGE_BUCKET_NAME = "{{config.storage-bucket}}"
+AWS_S3_REGION_NAME = "{{config.storage-region}}"
+AWS_S3_ENDPOINT_URL = "{{config.storage-endpoint}}"
+AWS_S3_ADDRESSING_STYLE = "path"
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_S3_USE_SSL = "true"
+AWS_S3_VERIFY = "true"
+AWS_QUERYSTRING_AUTH = "true"
+AWS_QUERYSTRING_EXPIRE = "900"
+DJANGO_SETTINGS_MODULE = "baserow.config.settings.hakopod"
+
+[services.beat.env]
+BASEROW_PUBLIC_URL = "https://catalog.example.test"
+DATABASE_HOST = "db"
+DATABASE_PORT = "5432"
+DATABASE_NAME = "app"
+DATABASE_USER = "hakopod"
+REDIS_HOST = "redis"
+REDIS_PORT = "6379"
+BASEROW_AMOUNT_OF_GUNICORN_WORKERS = "1"
+BASEROW_AMOUNT_OF_WORKERS = "1"
+BASEROW_RUN_MINIMAL = "yes"
+BASEROW_COMBINED_CELERY_EXPORT_WORKER = "true"
+BASEROW_EXTRA_ALLOWED_HOSTS = "backend"
+MIGRATE_ON_STARTUP = "false"
+AWS_STORAGE_BUCKET_NAME = "{{config.storage-bucket}}"
+AWS_S3_REGION_NAME = "{{config.storage-region}}"
+AWS_S3_ENDPOINT_URL = "{{config.storage-endpoint}}"
+AWS_S3_ADDRESSING_STYLE = "path"
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_S3_USE_SSL = "true"
+AWS_S3_VERIFY = "true"
+AWS_QUERYSTRING_AUTH = "true"
+AWS_QUERYSTRING_EXPIRE = "900"
+DJANGO_SETTINGS_MODULE = "baserow.config.settings.hakopod"
+
+[services.frontend.env]
+BASEROW_PUBLIC_URL = "https://catalog.example.test"
+PRIVATE_BACKEND_URL = "http://backend:8000"
+PUBLIC_BACKEND_URL = "https://catalog.example.test"
+PUBLIC_WEB_FRONTEND_URL = "https://catalog.example.test"
+
+[services.main.env]
+XDG_CONFIG_HOME = "/tmp/caddy-config"
+XDG_DATA_HOME = "/tmp/caddy-data"
+
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = "database-password"
+
+[services.redis.secrets.REDIS_PASSWORD]
+ref = "redis-password"
+
+[services.backend.secrets.SECRET_KEY]
+ref = "session-secret"
+
+[services.backend.secrets.BASEROW_JWT_SIGNING_KEY]
+ref = "jwt-secret"
+
+[services.backend.secrets.DATABASE_PASSWORD]
+ref = "database-password"
+
+[services.backend.secrets.REDIS_PASSWORD]
+ref = "redis-password"
+
+[services.backend.secrets.AWS_ACCESS_KEY_ID]
+ref = "storage-access-key"
+
+[services.backend.secrets.AWS_SECRET_ACCESS_KEY]
+ref = "storage-secret-key"
+
+[services.backend.files.storage-settings]
+mount_path = "/baserow/backend/src/baserow/config/settings/hakopod.py"
+content = "# Public configuration only. Secrets are provided through environment references.\nfrom .base import *\n\n# Keep customer uploads private and omit ACL headers for S3 Object Ownership / R2.\nAWS_DEFAULT_ACL = None\nAWS_QUERYSTRING_AUTH = True\n"
+
+[services.worker.secrets.SECRET_KEY]
+ref = "session-secret"
+
+[services.worker.secrets.BASEROW_JWT_SIGNING_KEY]
+ref = "jwt-secret"
+
+[services.worker.secrets.DATABASE_PASSWORD]
+ref = "database-password"
+
+[services.worker.secrets.REDIS_PASSWORD]
+ref = "redis-password"
+
+[services.worker.secrets.AWS_ACCESS_KEY_ID]
+ref = "storage-access-key"
+
+[services.worker.secrets.AWS_SECRET_ACCESS_KEY]
+ref = "storage-secret-key"
+
+[services.worker.files.storage-settings]
+mount_path = "/baserow/backend/src/baserow/config/settings/hakopod.py"
+content = "# Public configuration only. Secrets are provided through environment references.\nfrom .base import *\n\n# Keep customer uploads private and omit ACL headers for S3 Object Ownership / R2.\nAWS_DEFAULT_ACL = None\nAWS_QUERYSTRING_AUTH = True\n"
+
+[services.beat.secrets.SECRET_KEY]
+ref = "session-secret"
+
+[services.beat.secrets.BASEROW_JWT_SIGNING_KEY]
+ref = "jwt-secret"
+
+[services.beat.secrets.DATABASE_PASSWORD]
+ref = "database-password"
+
+[services.beat.secrets.REDIS_PASSWORD]
+ref = "redis-password"
+
+[services.beat.secrets.AWS_ACCESS_KEY_ID]
+ref = "storage-access-key"
+
+[services.beat.secrets.AWS_SECRET_ACCESS_KEY]
+ref = "storage-secret-key"
+
+[services.beat.files.storage-settings]
+mount_path = "/baserow/backend/src/baserow/config/settings/hakopod.py"
+content = "# Public configuration only. Secrets are provided through environment references.\nfrom .base import *\n\n# Keep customer uploads private and omit ACL headers for S3 Object Ownership / R2.\nAWS_DEFAULT_ACL = None\nAWS_QUERYSTRING_AUTH = True\n"
+
+[services.main.files.proxy]
+mount_path = "/etc/caddy/Caddyfile"
+content = "{\n admin off\n auto_https off\n}\n:8080 {\n @backend path /api/* /ws/* /mcp/*\n handle @backend { reverse_proxy backend:8000 }\n handle { reverse_proxy frontend:3000 }\n}\n"

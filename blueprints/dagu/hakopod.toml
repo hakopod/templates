@@ -1,0 +1,35 @@
+# New installation preset. Review README.md and save scoped secrets before deployment.
+schema_version = 1
+name = "template"
+
+[services.main]
+image = "ghcr.io/dagucloud/dagu:2.10.7@sha256:5e715705e0c96e462417303f3e2fbbadc7f9cd15d153764c89fd1442e80a1d66"
+port = 8080
+run_as_user = 1000
+run_as_group = 1000
+fs_group = 1000
+size = "medium"
+replicas = 1
+public = true
+networks = [ "default",]
+command = [ "/usr/local/bin/tini", "-g", "--", "/usr/local/bin/dagu",]
+args = [ "start-all",]
+update_strategy = "recreate"
+
+[networks.default]
+internal = false
+
+[services.main.env]
+DAGU_HOME = "/var/lib/dagu"
+DAGU_HOST = "0.0.0.0"
+DAGU_PORT = "8080"
+DAGU_AUTH_MODE = "basic"
+DAGU_AUTH_BASIC_USERNAME = "admin"
+DAGU_TZ = "Etc/UTC"
+
+[services.main.volume]
+mount_path = "/var/lib/dagu"
+size_gib = 5
+
+[services.main.secrets.DAGU_AUTH_BASIC_PASSWORD]
+ref = "admin-password"
