@@ -49,9 +49,9 @@ S3 bucket. Bucket lifecycle/costs remain under the customer account.
 
 ## Verification
 
-Reviewed 24 September 2026 against the pinned 1.35.2 image configuration and source.
-Full named-development-cluster startup and actual S3 media round-trip acceptance
-are tracked separately; registry inspection alone does not prove them.
+Verified on AMD64 and ARM64 in [runtime workflow 36017327004](https://github.com/hakopod/hakopod/actions/runs/36017327004), using named disposable Hakopod development clusters. All seven application services reached readiness. The checks exercised HTTP through the public proxy to Django, the upstream Celery worker healthcheck, and private media save/read/signed-URL/delete through a real MinIO fixture. The owned fixture namespace, claims and dynamic volumes were reclaimed afterward.
+
+This does not verify a particular customer's S3/R2 credentials, TLS, CORS or bucket policy. Complete user-account workflows, upstream version upgrades and backup restoration were not tested.
 
 ## Sources
 
