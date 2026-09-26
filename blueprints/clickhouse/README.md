@@ -6,7 +6,7 @@ Private authenticated HTTP analytics database with persistent data.
 
 ## Requirements
 
-- HTTP port 8123 only; native TCP is not exposed
+- HTTP port 8123 on the pod network; the native protocol listens on loopback only, for backups the engine performs itself
 - Persistent storage; one replica; background pools bounded
 
 ## Credentials
