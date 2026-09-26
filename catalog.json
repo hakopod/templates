@@ -1905,29 +1905,29 @@
   },
   {
     "id": "glitchtip",
-    "name": "Glitchtip",
+    "name": "GlitchTip",
     "category": "application",
     "description": "Glitchtip is simple, open source error tracking",
-    "license": "Review upstream license and edition",
+    "license": "MIT",
     "upstream": "https://gitlab.com/glitchtip/",
     "required_secrets": [
       "database-url",
       "secret-key"
     ],
     "requirements": [
-      "Non-root startup, writable paths and dependency readiness require runtime acceptance before enabling this preset",
-      "Provision ReadWriteMany storage for shared volume uploads.",
-      "Provision ReadWriteMany storage for shared volume uploads.",
-      "Provision ReadWriteMany storage for shared volume uploads."
+      "One all-in-one service runs the web interface, migrations and the worker",
+      "Bundled PostgreSQL and Valkey; persistent storage for the database and uploads",
+      "A site host or custom domain must match GLITCHTIP_DOMAIN for links and origin checks",
+      "Console mail by default; supply an SMTP URL before relying on notifications"
     ],
     "architectures": [
       "amd64",
       "arm64"
     ],
-    "resource_summary": "5 services; review per-service budgets and persistent storage",
-    "verification": "Native migration candidate; runtime acceptance pending. Not enabled for deployment.",
+    "resource_summary": "3 services; one large application service, bundled database and queue",
+    "verification": "Configuration mirrors a running deployment of this all-in-one layout. Not yet exercised by runtime acceptance in this repository.",
     "providers": [],
-    "configuration": "guide",
+    "configuration": "template",
     "site_url_required": true,
     "site_url_supported": true,
     "database_config": false,
@@ -1951,7 +1951,7 @@
       "https://gitlab.com/glitchtip/",
       "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/glitchtip"
     ],
-    "deployable": false,
+    "deployable": true,
     "config_fields": [
       {
         "name": "email",
@@ -1962,7 +1962,8 @@
       }
     ],
     "notes": [
-      "This migration candidate preserves supported service, storage and credential declarations. Resolve every prerequisite before deployment."
+      "The all-in-one role replaces the upstream split of migrate, web and worker, so the uploads volume no longer needs ReadWriteMany storage.",
+      "GLITCHTIP_ENABLE_MCP exposes a Model Context Protocol endpoint. Review whether that belongs on a public host before enabling it."
     ],
     "docs_url": "https://glitchtip.com/documentation",
     "logo": "/template-assets/glitchtip/logo.png"

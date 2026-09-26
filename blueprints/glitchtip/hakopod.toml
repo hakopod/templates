@@ -1,0 +1,131 @@
+schema_version = 1
+name = 'template'
+
+# GlitchTip in its all-in-one role: one service runs the web interface, the
+# migrations and the background worker in a single process tree.
+#
+# The earlier candidate followed the upstream compose layout, with separate
+# migrate, web and worker services sharing an uploads volume. That needed
+# ReadWriteMany storage, which is not available on the default storage class,
+# and it was the reason this preset could not be enabled. One service needs
+# only ReadWriteOnce, so that requirement is gone.
+
+[services]
+
+# ---------------------------------------------------------------- glitchtip --
+
+[services.glitchtip]
+# Digest taken from a running deployment of this configuration.
+image = 'docker.io/glitchtip/glitchtip@sha256:a3d8eb1b36c1e1603d55ab32711ea3dd8115874742a781a57391a62a16e0dff6'
+port = 8080
+public = true
+size = 'large'
+replicas = 1
+depends_on = ['postgres', 'valkey']
+networks = ['default']
+
+# No healthcheck path: the declared port gets a TCP readiness check, which is
+# what this image satisfies during its migration phase on a first start.
+
+# Uploaded files and avatars. ReadWriteOnce is sufficient because one service
+# and one replica own this volume; that is the whole point of the all-in-one
+# role.
+[[services.glitchtip.mounts]]
+volume = 'uploads'
+mount_path = '/code/uploads'
+read_only = false
+sub_path = ''
+
+[services.glitchtip.env]
+# The site host the platform assigns, or the custom domain assigned to this
+# service. GlitchTip builds absolute links and validates its own origin from
+# this, so it has to match the hostname users actually visit.
+GLITCHTIP_DOMAIN = 'https://{{site_host}}'
+# The all-in-one role. Without it this image serves only the web interface and
+# nothing applies migrations or drains the queue.
+SERVER_ROLE = 'all_in_one'
+PORT = '8080'
+# Optional features, both safe to turn off. DuckDB powers the analytics views;
+# the MCP endpoint lets an agent read issues through the Model Context Protocol
+# and is worth reviewing before exposing it publicly.
+GLITCHTIP_ENABLE_DUCKDB = 'True'
+GLITCHTIP_ENABLE_MCP = 'True'
+# Valkey speaks the Redis protocol, so the Redis URL scheme is correct here.
+# Private service DNS; no credentials, so this is ordinary configuration.
+VALKEY_URL = 'redis://valkey:6379'
+# Invitations and alert mail are sent from this address. The console backend
+# writes mail to the log instead of delivering it; replace EMAIL_URL with a real
+# SMTP URL before relying on notifications.
+DEFAULT_FROM_EMAIL = '{{config.email}}'
+EMAIL_URL = 'consolemail://'
+
+[services.glitchtip.secrets]
+
+# Full connection URL for the database below, including its credentials.
+[services.glitchtip.secrets.DATABASE_URL]
+ref = 'database-url'
+
+# Django signing key. Rotating it invalidates existing sessions and password
+# reset links, so keep it stable and back it up.
+[services.glitchtip.secrets.SECRET_KEY]
+ref = 'secret-key'
+
+# ----------------------------------------------------------------- postgres --
+
+[services.postgres]
+image = 'postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280'
+port = 5432
+public = false
+size = 'medium'
+replicas = 1
+networks = ['default']
+
+[[services.postgres.mounts]]
+volume = 'pg-data'
+mount_path = '/var/lib/postgresql/data'
+read_only = false
+sub_path = ''
+
+[services.postgres.env]
+# Reachable only inside this application's network, and the connection URL above
+# carries whatever credentials you set. Change this if you would rather the
+# database demanded a password from its peers as well.
+POSTGRES_HOST_AUTH_METHOD = 'trust'
+
+[services.postgres.secrets]
+
+# ------------------------------------------------------------------- valkey --
+
+[services.valkey]
+image = 'valkey/valkey:9@sha256:c123e3715db63d06d4ad6964884037aa0d5d4d703939b9929954112889708e1d'
+port = 6379
+public = false
+size = 'medium'
+replicas = 1
+networks = ['default']
+
+# Deliberately no volume: this holds the task queue and cache, and GlitchTip
+# rebuilds both after a restart.
+
+[services.valkey.env]
+[services.valkey.secrets]
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+
+[volumes.pg-data]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+# ReadWriteOnce, unlike the candidate's ReadWriteMany: only the single
+# all-in-one service mounts it.
+[volumes.uploads]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'
