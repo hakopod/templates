@@ -12,9 +12,11 @@ name = 'template'
 
 [services]
 
-# ---------------------------------------------------------------- glitchtip --
+# --------------------------------------------------------------------- main --
+# The public service is named main: the engine requires that any service a
+# preset exposes publicly carries that name.
 
-[services.glitchtip]
+[services.main]
 # Digest taken from a running deployment of this configuration.
 image = 'docker.io/glitchtip/glitchtip@sha256:a3d8eb1b36c1e1603d55ab32711ea3dd8115874742a781a57391a62a16e0dff6'
 port = 8080
@@ -30,13 +32,13 @@ networks = ['default']
 # Uploaded files and avatars. ReadWriteOnce is sufficient because one service
 # and one replica own this volume; that is the whole point of the all-in-one
 # role.
-[[services.glitchtip.mounts]]
+[[services.main.mounts]]
 volume = 'uploads'
 mount_path = '/code/uploads'
 read_only = false
 sub_path = ''
 
-[services.glitchtip.env]
+[services.main.env]
 # The site host the platform assigns, or the custom domain assigned to this
 # service. GlitchTip builds absolute links and validates its own origin from
 # this, so it has to match the hostname users actually visit.
@@ -59,15 +61,15 @@ VALKEY_URL = 'redis://valkey:6379'
 DEFAULT_FROM_EMAIL = '{{config.email}}'
 EMAIL_URL = 'consolemail://'
 
-[services.glitchtip.secrets]
+[services.main.secrets]
 
 # Full connection URL for the database below, including its credentials.
-[services.glitchtip.secrets.DATABASE_URL]
+[services.main.secrets.DATABASE_URL]
 ref = 'database-url'
 
 # Django signing key. Rotating it invalidates existing sessions and password
 # reset links, so keep it stable and back it up.
-[services.glitchtip.secrets.SECRET_KEY]
+[services.main.secrets.SECRET_KEY]
 ref = 'secret-key'
 
 # ----------------------------------------------------------------- postgres --
