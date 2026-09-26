@@ -1,11 +1,11 @@
 {
-  "status": "blocked",
+  "status": "native",
   "upstream_source": "https://github.com/Dokploy/templates/tree/830d6bbc8de2a8cb0c87d3c3f2294940ecd0e933/blueprints/glitchtip",
-  "blockers": [
-    "Non-root startup, writable paths and dependency readiness require runtime acceptance before enabling this preset",
-    "Provision ReadWriteMany storage for shared volume uploads.",
-    "Provision ReadWriteMany storage for shared volume uploads.",
-    "Provision ReadWriteMany storage for shared volume uploads."
+  "blockers": [],
+  "resolved": [
+    "Shared ReadWriteMany uploads volume: the all-in-one role collapses migrate, web and worker into one service, so the volume is ReadWriteOnce and needs no shared storage class.",
+    "Dependency readiness: one service owns migrations and the worker, so there is no ordering to arrange between them."
   ],
-  "runtime_verified": false
+  "runtime_verified": false,
+  "runtime_notes": "Derived from a running deployment of this configuration. Runtime acceptance has not been performed in this repository, so the preset is enabled on the strength of that deployment rather than a recorded test here."
 }
