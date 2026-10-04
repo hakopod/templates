@@ -155,19 +155,45 @@ backend and portable frontend for AMD64 and ARM64. `images.lock.json` records th
 observed public registry indexes and the source commit used to verify them.
 Registry metadata and CI results are distinct from application runtime evidence.
 
-Earlier ARM64 development work exercised administrator login, same-origin browser
-API calls and uploads using preceding development images with an external private
-S3 fixture. The final five-case matrix stopped after development-node disk pressure
-evicted PostgreSQL and Redis, before backend or bundled-MinIO assertions began.
-That interrupted run does not establish bundled MinIO downloads through the public
-proxy, PostgreSQL/Redis TLS, or restart persistence for the final images. Its
-owned namespace, credentials, persistent volumes, worker and registry were removed.
+On October 4, 2026, all five native AMD64 runtime cases passed on an isolated
+cloud VM using the final public image digests in `images.lock.json`:
 
-The eight PostgreSQL/Redis/storage combinations are covered by planner/API
-regressions. Runtime execution of the final public images, AMD64 runtime, public
-ingress TLS, external-provider access, email delivery, bucket CORS and backup
-restoration remain outside the recorded acceptance. See `migration.json` for
-release and runtime evidence.
+| PostgreSQL | Redis | Storage | Evidence |
+| --- | --- | --- | --- |
+| Bundled | Bundled | Bundled MinIO | R4: 187.83 s |
+| External fixture | Bundled | Bundled MinIO | R4: 159.96 s |
+| Bundled | External fixture, DB 2 | Bundled MinIO | R4: 161.00 s |
+| External fixture | External fixture, DB 2 | Bundled MinIO | R5: 282.12 s |
+| External fixture | External fixture, DB 2 | External S3 fixture | R5: 167.81 s |
+
+Each case checked administrator and frontend sessions, access rejection, private
+uploads and signed downloads, then token, account, object, Redis and PVC
+persistence after restarting every service. Bundled MinIO began without a bucket
+and the backend created it. The fourth case also verified trusted PostgreSQL and
+Redis TLS, PostgreSQL plaintext refusal with `verify-full`, and independent
+untrusted-CA and hostname rejection. Both owned test clusters were removed.
+
+The evidence combines R4's first three passing cases with R5's last two. R4 as a
+whole failed because normal pod status updates invalidated the probe cleanup's
+creation-time resource version. R5 used the immutable UID, required confirmed
+probe deletion, and passed the affected fourth case and remaining fifth case.
+It was an explicitly scoped retry, not a second complete matrix run.
+
+Both used Hakopod source base `67516302d7e57bf175bdc950d9f02ac8ad418e21`
+and catalog `44f3bd6c396039920893592b0f93e5927562121c`. The manifests include
+the actual acceptance-source changes:
+
+- R4: `xem-acceptance-1791110270-4131858`, source manifest SHA256
+  `6c3a9aa1eff9d40be309f00ead12be3f553ce2e1555dc2b98a9f9c57f6416033`.
+- R5: `xem-acceptance-1791111289-34482`, source manifest SHA256
+  `1e3e42b6057db004c93f446d640247e59159a96e89510ec02bdb77b591668d69`.
+
+The eight PostgreSQL/Redis/storage combinations have planner/API regression
+coverage; five have runtime evidence. Earlier ARM64 checks used development
+images. Final-image ARM64 runtime, public ACME/DNS, arbitrary external providers,
+real email delivery, bucket CORS and backup restoration remain unverified.
+See the [runtime acceptance procedure](https://github.com/hakopod/hakopod/blob/main/docs/xem-runtime-acceptance.md)
+for isolation requirements, assertions and retained evidence.
 
 ## Sources
 
