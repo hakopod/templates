@@ -2,7 +2,7 @@
 
 Mathesar 0.12.0 with bundled PostgreSQL 17 or a database you already manage, plus
 an HTTP proxy for the application and uploaded media. This is a new-install preset,
-adapted from the upstream production Compose file. The preset passed the ARM64
+adapted from the upstream production Compose file. The preset passed the AMD64 and ARM64
 development-cluster acceptance described below.
 
 ## Before deployment
@@ -121,8 +121,11 @@ startup migrations, static collection, WhiteNoise, HTTPS proxy handling and the
 health endpoints. The PostgreSQL and Caddy pins are shared with existing presets.
 
 On October 4, 2026, `TestLiveMathesarTemplate` passed on the named
-`k3d-hakopod-dev` ARM64 development node. It exercised the real images and native
-plan through health checks, hostname rejection, administrator setup and login,
+`k3d-hakopod-dev` ARM64 development node and then on both native architectures in
+[GitHub CI run 37184398017](https://github.com/hakopod/hakopod/actions/runs/37184398017),
+using engine source `1b8e4a14d200e7f6ec002d77da7a8ea3a65e6561`. The CI test took
+180.95 seconds on AMD64 and 175.53 seconds on ARM64. Both exercised the real images
+and native plan through health checks, hostname rejection, administrator setup and login,
 Secure cookie flags, static delivery, CSV upload and media download. The backend
 ran as UID 1000 and collected 30,199,207 bytes of static files within its 128 MiB
 temporary mount. Database, backend and proxy restarts preserved the claims,
@@ -139,10 +142,10 @@ Media used an explicitly marked shared-filesystem fixture pinned to one node.
 This exercises real shared storage and persistent bytes but does not qualify a
 production, multi-node RWX storage class. The test accessed the proxy's private
 HTTP listener and explicitly replayed Secure cookies while checking their flags;
-public ingress TLS and browser interaction were not tested. Backup restoration,
-AMD64 execution and production rollout remain unverified. The CI workflow is
-configured for both AMD64 and ARM64. All owned fixture data and resources were
-removed after acceptance.
+public ingress TLS and browser interaction were not tested. Backup restoration
+and production rollout remain unverified. Both CI architectures confirmed cleanup
+of their owned application namespace, media files, PVCs, PVs and fixture storage
+class after acceptance.
 
 ## Sources
 
