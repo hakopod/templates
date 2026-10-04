@@ -1,0 +1,164 @@
+# New installation preset. Read README.md and review the shared media storage class.
+schema_version = 1
+name = "template"
+
+[services.db]
+image = "docker.io/library/postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73"
+port = 5432
+public = false
+size = "medium"
+replicas = 1
+run_as_user = 70
+run_as_group = 70
+fs_group = 70
+update_strategy = "recreate"
+args = ["postgres", "-c", "shared_buffers=64MB", "-c", "max_connections=50"]
+networks = ["default"]
+
+[services.db.volume]
+mount_path = "/var/lib/postgresql/data"
+size_gib = 5
+
+[services.db.env]
+PGDATA = "/var/lib/postgresql/data/pgdata"
+POSTGRES_DB = "mathesar_django"
+POSTGRES_USER = "mathesar"
+
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = "database-password"
+
+[services.backend]
+image = "mathesar/mathesar:0.12.0@sha256:091757cb01fec9718d627aa672fdd565d76a2da6b53cdab6264e9fbc031472a4"
+port = 8000
+public = false
+size = "large"
+replicas = 1
+run_as_user = 1000
+run_as_group = 1000
+fs_group = 1000
+working_dir = "/code"
+update_strategy = "recreate"
+termination_grace_seconds = 45
+healthcheck = "/healthz/ready/"
+command = ["bash", "./bin/mathesar"]
+# Install runs migrations and collects static assets before starting Gunicorn.
+# Omit upstream's -f flag: this service must use the private PostgreSQL service.
+args = ["run", "-nse"]
+depends_on = ["db"]
+networks = ["default"]
+
+[[services.backend.mounts]]
+volume = "media"
+mount_path = "/code/.media"
+
+[[services.backend.temporary_mounts]]
+mount_path = "/code/static"
+size_mib = 128
+memory = false
+
+[services.backend.env]
+DJANGO_SETTINGS_MODULE = "config.settings.production"
+DEBUG = "false"
+ALLOWED_HOSTS = "{{site_hostname}}"
+POSTGRES_HOST = "db"
+POSTGRES_PORT = "5432"
+POSTGRES_DB = "mathesar_django"
+POSTGRES_USER = "mathesar"
+PGCONNECT_TIMEOUT = "10"
+WEB_CONCURRENCY = "1"
+GUNICORN_CMD_ARGS = "--timeout 120 --graceful-timeout 30 --max-requests 1000 --max-requests-jitter 100"
+PER_USER_DATABASES_ENABLED = "false"
+MATHESAR_DJANGO_ADMIN_ENABLED = "false"
+
+[services.backend.secrets.POSTGRES_PASSWORD]
+ref = "database-password"
+
+[services.backend.secrets.SECRET_KEY]
+ref = "secret-key"
+
+[services.backend.files.database-tls]
+mount_path = "/code/config/settings/local.py"
+content = """
+# Mathesar imports this supported override after its production settings.
+# Preserve its other database options while enforcing the selected TLS mode.
+import os
+from .common_settings import DATABASES
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+options = DATABASES["default"].setdefault("OPTIONS", {})
+if os.environ.get("POSTGRES_SSLMODE"):
+    options["sslmode"] = os.environ["POSTGRES_SSLMODE"]
+if os.environ.get("PGSSLROOTCERT"):
+    options["sslrootcert"] = os.environ["PGSSLROOTCERT"]
+"""
+
+[services.main]
+image = "caddy:2.11.4@sha256:0c994536bddb66445885237f1a5dcc1916bccea922661c76b4e9fc24061f9b52"
+port = 8080
+public = true
+size = "small"
+replicas = 1
+run_as_user = 1000
+run_as_group = 1000
+fs_group = 1000
+healthcheck = "/healthz/ready/"
+depends_on = ["backend"]
+networks = ["default"]
+# Remove the upstream binary's low-port file capability; the proxy uses port 8080.
+command = ["/bin/sh", "-ec"]
+args = ["cat /usr/bin/caddy > /tmp/hakopod-caddy; chmod 0500 /tmp/hakopod-caddy; exec /tmp/hakopod-caddy run --config /etc/caddy/Caddyfile --adapter caddyfile"]
+
+[[services.main.mounts]]
+volume = "media"
+mount_path = "/code/.media"
+read_only = true
+
+[services.main.env]
+SITE_HOST = "{{site_hostname}}"
+XDG_CONFIG_HOME = "/tmp"
+XDG_DATA_HOME = "/tmp"
+
+[services.main.files.proxy]
+mount_path = "/etc/caddy/Caddyfile"
+content = """
+{
+    admin off
+    auto_https off
+}
+:8080 {
+    @health path /healthz/ready/ /healthz/live/
+    handle @health {
+        reverse_proxy backend:8000
+    }
+    @site host {$SITE_HOST}
+    handle @site {
+        handle_path /media/* {
+            root * /code/.media
+            header X-Content-Type-Options nosniff
+            file_server
+        }
+        handle {
+            reverse_proxy backend:8000 {
+                header_up X-Forwarded-Proto https
+                transport http {
+                    dial_timeout 5s
+                    response_header_timeout 120s
+                }
+            }
+        }
+    }
+    handle {
+        respond "Unknown host" 404
+    }
+}
+"""
+
+[volumes.media]
+size_gib = 5
+storage_class = "{{config.media-storage-class}}"
+access_mode = "ReadWriteMany"
+
+[networks.default]
+internal = false

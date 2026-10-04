@@ -758,44 +758,374 @@
   },
   {
     "id": "xem",
-    "name": "xem.email",
+    "name": "Xem",
     "category": "application",
-    "description": "Email marketing workspace; requires a frontend built for your API origin.",
+    "description": "Self-hosted email marketing workspace with independently bundled or existing PostgreSQL, Redis and S3-compatible storage.",
     "license": "GPL-3.0",
-    "upstream": "https://github.com/mailxem/devops",
-    "required_secrets": [],
+    "upstream": "https://github.com/mailxem/mail",
+    "required_secrets": [
+      "database-password",
+      "redis-password",
+      "jwt-secret",
+      "frontend-session-secret",
+      "encryption-private-key",
+      "admin-password",
+      "storage-user",
+      "storage-password"
+    ],
     "requirements": [
-      "The upstream frontend embeds NEXT_PUBLIC_API_URL at image build time",
-      "Build and pin your frontend with your own API origin before deployment",
-      "Provide database, Redis, JWT, session, encryption and administrator credentials",
-      "SMTP sending needs your own provider setup; no hosted Xem or AI credentials are assumed",
-      "See docs/templates-xem.md for the reviewed upstream pins and requirements",
+      "Stable HTTPS origin and initial administrator credentials",
+      "Private PostgreSQL and Redis, each bundled or an existing service with its current credentials",
+      "Private media storage: bundled MinIO with a dedicated persistent volume, or an existing S3-compatible bucket",
+      "Keep database, media objects, RSA encryption key and signing secrets together in protected backups",
+      "Configure your own sending provider inside Xem before sending mail; no managed sending, SMTP submission, MCP, payments or hosted AI service is included",
       "After deployment, open Custom domains, verify the site URL hostname, and apply routing and TLS before using login or callbacks"
     ],
     "architectures": [
       "amd64",
       "arm64"
     ],
-    "resource_summary": "Four services: web, API, PostgreSQL and Redis",
-    "verification": "Official AMD64/ARM64 manifests checked; deployment blocked by build-time frontend URL",
+    "resource_summary": "3\u20136 services; bundled PostgreSQL, Redis and MinIO use separate persistent volumes",
+    "verification": "Public upstream AMD64/ARM64 image indexes and runtime configurations verified against merged source 63b0809c2a4ba0965047ee20d08b101e0fac7c48. Earlier ARM64 development images passed login and external-storage upload checks; final public-image runtime and bundled-MinIO acceptance remain unverified.",
     "providers": [],
-    "configuration": "guide",
+    "configuration": "template",
     "site_url_required": true,
-    "deployable": false,
+    "deployable": true,
     "site_url_supported": true,
     "database_config": false,
-    "secret_fields": [],
+    "secret_fields": [
+      {
+        "name": "database-password",
+        "description": "Generate a password for bundled PostgreSQL, or supply the existing role's current password. Changing this secret does not rotate an initialized database role.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "redis-password",
+        "description": "Generate a password for bundled Redis, or supply the existing Redis account's current password.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "jwt-secret",
+        "description": "Stable random JWT signing key. Keep it with protected application backups.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "frontend-session-secret",
+        "description": "Stable random frontend session signing key. Both NextAuth secret variables use this reference.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "encryption-private-key",
+        "description": "Base64 of an unencrypted RSA private PEM key, 2048\u20134096 bits. Generate and copy it before saving; retain this same key with database backups or encrypted account credentials become unreadable.",
+        "format": "base64-rsa-private-key",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "admin-password",
+        "description": "Initial administrator password, 16\u201372 bytes. Bootstrap runs only when no administrator exists; changing this secret does not reset an existing account.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "storage-user",
+        "description": "Generated access ID for this application's bundled MinIO account. Keep it stable with the matching storage password; existing storage uses provider-issued credentials instead.",
+        "format": "hex32",
+        "generate": true,
+        "optional": true
+      },
+      {
+        "name": "storage-password",
+        "description": "Generated password for this application's bundled MinIO account. Keep it stable with protected media backups; only bundled storage uses this reference.",
+        "format": "password",
+        "generate": true,
+        "optional": true
+      },
+      {
+        "name": "storage-access-key",
+        "description": "Provider-issued access key scoped to the dedicated S3 bucket. Random generated text will not work.",
+        "format": "provider-key",
+        "generate": false,
+        "optional": true
+      },
+      {
+        "name": "storage-secret-key",
+        "description": "Matching provider-issued secret key scoped to the dedicated S3 bucket. Random generated text will not work.",
+        "format": "provider-key",
+        "generate": false,
+        "optional": true
+      }
+    ],
     "sources": [
-      "https://github.com/mailxem/devops/blob/main/docs/kubernetes.md"
+      "https://github.com/mailxem/mail/tree/63b0809c2a4ba0965047ee20d08b101e0fac7c48",
+      "https://github.com/mailxem/mail/blob/63b0809c2a4ba0965047ee20d08b101e0fac7c48/server/internal/config/config.go",
+      "https://github.com/mailxem/mail/blob/63b0809c2a4ba0965047ee20d08b101e0fac7c48/docs/guides/self-hosting.mdx",
+      "https://github.com/mailxem/mail/blob/63b0809c2a4ba0965047ee20d08b101e0fac7c48/.github/workflows/component-release.yml",
+      "https://github.com/pgsty/minio"
     ],
     "notes": [
-      "This catalog entry is a prerequisite guide, not a deployable preset.",
-      "The upstream frontend embeds NEXT_PUBLIC_API_URL at build time. Build and pin your own frontend for the installation API origin first.",
-      "The reviewed architecture has web, API, PostgreSQL and Redis services. Supply private database, JWT, session, RSA, administrator and SMTP configuration."
+      "Only Caddy is public. It sends /api/v1, public forms and tracking to the private API; /api/auth stays on the frontend. Browser API calls use this installation without a per-domain image build.",
+      "The preset enables S3_DISABLE_ACL so backend uploads omit object ACLs. Bundled MinIO stays private; browser reads use short-lived signed URLs through the installation proxy. Existing storage keeps its own bucket policy.",
+      "PostgreSQL, Redis and storage choices are independent. Existing services are not provisioned or deleted by Hakopod; Xem applies database migrations at startup.",
+      "Initial administrator settings are used only for an empty installation. Keep the RSA private key stable; losing it can make encrypted provider credentials unreadable.",
+      "The bundled Redis has a 64 MiB no-eviction budget and PostgreSQL permits 100 connections. The upstream API pool allows 300 connections and worker concurrency is fixed at 10; review capacity for your workload.",
+      "Managed sending, SMTP submission, notifications, hosted assistants, MCP and payments are excluded. A user-owned sending provider must be configured separately.",
+      "Bundled MinIO uses a dedicated account and creates only the private xem-files bucket. The console and administrative API have no public route. Single-instance media storage is not redundant; keep independent backups."
     ],
-    "docs_url": "https://github.com/mailxem/devops/blob/main/docs/kubernetes.md",
-    "port": null,
-    "image": null
+    "docs_url": "https://github.com/hakopod/templates/blob/main/blueprints/xem/README.md",
+    "port": 8080,
+    "image": "theboringhumane/xemgo:sudo@sha256:b35d7d53fa9999af023fe21eb26853443b7877e399f954eeffbd5dd68c091f25",
+    "config_fields": [
+      {
+        "name": "database-mode",
+        "label": "Database",
+        "description": "Create a private PostgreSQL service or connect to a database you manage.",
+        "default": "bundled",
+        "required": true,
+        "options": [
+          {
+            "value": "bundled",
+            "label": "Bundled PostgreSQL"
+          },
+          {
+            "value": "external",
+            "label": "Existing PostgreSQL"
+          }
+        ]
+      },
+      {
+        "name": "database-host",
+        "label": "Database host",
+        "description": "Reachable PostgreSQL hostname or IP address without a URL scheme, port or credentials.",
+        "default": "",
+        "required": true,
+        "when": {
+          "field": "database-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "database-port",
+        "label": "Database port",
+        "description": "PostgreSQL TCP port. The application network must allow this connection.",
+        "default": "5432",
+        "required": true,
+        "when": {
+          "field": "database-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "database-name",
+        "label": "Database name",
+        "description": "Existing dedicated database for Xem metadata. Back it up before startup migrations run.",
+        "default": "xem",
+        "required": true,
+        "when": {
+          "field": "database-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "database-user",
+        "label": "Database user",
+        "description": "Existing login role permitted to connect and create Xem objects in the chosen database.",
+        "default": "hakopod",
+        "required": true,
+        "when": {
+          "field": "database-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "database-sslmode",
+        "label": "Database TLS",
+        "description": "Verify the hostname and a certificate trusted by the system CA bundle. Encryption alone does not verify identity; disable TLS only on a trusted private network.",
+        "default": "verify-full",
+        "required": true,
+        "when": {
+          "field": "database-mode",
+          "value": "external"
+        },
+        "options": [
+          {
+            "value": "verify-full",
+            "label": "Verify server identity"
+          },
+          {
+            "value": "require",
+            "label": "Require encryption"
+          },
+          {
+            "value": "disable",
+            "label": "Disabled (trusted private network only)"
+          }
+        ]
+      },
+      {
+        "name": "redis-mode",
+        "label": "Redis",
+        "description": "Create a private Redis service or connect to Redis you manage. This choice is independent of PostgreSQL.",
+        "default": "bundled",
+        "required": true,
+        "options": [
+          {
+            "value": "bundled",
+            "label": "Bundled Redis"
+          },
+          {
+            "value": "external",
+            "label": "Existing Redis"
+          }
+        ]
+      },
+      {
+        "name": "redis-host",
+        "label": "Redis host",
+        "description": "Reachable hostname or IP address without a URL scheme, port or credentials.",
+        "default": "",
+        "required": true,
+        "when": {
+          "field": "redis-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "redis-port",
+        "label": "Redis port",
+        "description": "TCP port for the existing Redis service.",
+        "default": "6379",
+        "required": true,
+        "when": {
+          "field": "redis-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "redis-username",
+        "label": "Redis username",
+        "description": "Existing ACL username. Leave empty for the default account.",
+        "default": "",
+        "required": false,
+        "when": {
+          "field": "redis-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "redis-db",
+        "label": "Redis database",
+        "description": "Logical database number from 0 to 15. Use a dedicated database for Xem.",
+        "default": "0",
+        "required": true,
+        "when": {
+          "field": "redis-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "redis-tls",
+        "label": "Redis TLS",
+        "description": "Verify the server certificate using the system CA bundle. Disable TLS only on a trusted private network.",
+        "default": "true",
+        "required": true,
+        "when": {
+          "field": "redis-mode",
+          "value": "external"
+        },
+        "options": [
+          {
+            "value": "true",
+            "label": "Verify server identity"
+          },
+          {
+            "value": "false",
+            "label": "Disabled (trusted private network only)"
+          }
+        ]
+      },
+      {
+        "name": "admin-email",
+        "label": "Administrator email",
+        "description": "Email address for the initial administrator. No invitation or verification email is sent by the preset.",
+        "default": "",
+        "required": true
+      },
+      {
+        "name": "admin-name",
+        "label": "Administrator name",
+        "description": "Name for the initial administrator. Bootstrap values do not change existing users.",
+        "default": "Administrator",
+        "required": true
+      },
+      {
+        "name": "team-name",
+        "label": "Team name",
+        "description": "Name for the initial workspace.",
+        "default": "Xem",
+        "required": true
+      },
+      {
+        "name": "storage-mode",
+        "label": "Media storage",
+        "description": "Create private MinIO storage for this application or use a private S3-compatible bucket you manage. This choice is independent of PostgreSQL and Redis.",
+        "default": "bundled",
+        "required": true,
+        "options": [
+          {
+            "value": "bundled",
+            "label": "Bundled MinIO"
+          },
+          {
+            "value": "external",
+            "label": "Existing S3-compatible storage"
+          }
+        ]
+      },
+      {
+        "name": "storage-bucket",
+        "label": "Media bucket",
+        "description": "Existing private S3-compatible bucket in your own account. Use a dedicated bucket and retain its contents with database backups.",
+        "default": "",
+        "required": true,
+        "when": {
+          "field": "storage-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "storage-endpoint",
+        "label": "S3 endpoint",
+        "description": "HTTPS S3 API origin reachable by both the API and browsers. Do not include a bucket, path or credentials.",
+        "default": "",
+        "required": true,
+        "when": {
+          "field": "storage-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "storage-region",
+        "label": "Storage region",
+        "description": "Signing region supplied by your storage provider, such as us-east-1 or auto.",
+        "default": "us-east-1",
+        "required": true,
+        "when": {
+          "field": "storage-mode",
+          "value": "external"
+        }
+      }
+    ],
+    "logo": "/template-assets/xem/logo.png"
   },
   {
     "id": "bentopdf",
@@ -5311,5 +5641,162 @@
       "Keep the database, signing keys and bucket recovery policy together. No shared RWX volume or root initializer is required. SMTP remains optional upstream configuration."
     ],
     "docs_url": "https://github.com/bram2w/baserow/blob/1.35.2/docker-compose.yml"
+  },
+  {
+    "id": "mathesar",
+    "category": "application",
+    "name": "Mathesar",
+    "description": "Spreadsheet-style PostgreSQL workspace with persistent media and a bundled or existing database.",
+    "license": "GPL-3.0",
+    "upstream": "https://mathesar.org",
+    "required_secrets": [
+      "database-password",
+      "secret-key"
+    ],
+    "requirements": [
+      "Explicit ReadWriteMany storage class for uploaded media; bundled PostgreSQL storage or an existing PostgreSQL database",
+      "Stable HTTPS origin; complete the first administrator setup before sharing the URL",
+      "Back up PostgreSQL, media and the stable signing key together"
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "2 services with an existing database, or 3 with bundled PostgreSQL; one application worker",
+    "verification": "AMD64/ARM64 registry manifests checked; ARM64 named-cluster startup, administrator login, media and database persistence, existing-database reattachment and PostgreSQL TLS acceptance passed. AMD64 runtime, public ingress and production multi-node RWX remain unverified; see the blueprint acceptance record.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": true,
+    "site_url_supported": true,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "database-password",
+        "description": "Generate a password for bundled PostgreSQL, or supply the existing database role's current password. Use at least 16 characters; generating or changing this secret does not rotate an existing role.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "secret-key",
+        "description": "Stable Django signing key, at least 64 random characters. Keep it with protected application backups.",
+        "format": "token64",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/mathesar-foundation/mathesar/blob/0.12.0/docker-compose.yml",
+      "https://github.com/mathesar-foundation/mathesar/blob/0.12.0/Dockerfile",
+      "https://github.com/mathesar-foundation/mathesar/tree/0.12.0/config",
+      "https://docs.mathesar.org/0.12.0/configuration/env-variables/"
+    ],
+    "deployable": true,
+    "config_fields": [
+      {
+        "name": "database-mode",
+        "label": "Database",
+        "description": "Create a private PostgreSQL service or connect to a database you manage.",
+        "default": "bundled",
+        "required": true,
+        "options": [
+          {
+            "value": "bundled",
+            "label": "Bundled PostgreSQL"
+          },
+          {
+            "value": "external",
+            "label": "Existing PostgreSQL"
+          }
+        ]
+      },
+      {
+        "name": "database-host",
+        "label": "Database host",
+        "description": "Reachable PostgreSQL hostname or IP address without a URL scheme, port or credentials.",
+        "default": "",
+        "required": true,
+        "when": {
+          "field": "database-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "database-port",
+        "label": "Database port",
+        "description": "PostgreSQL TCP port. The application network must allow this connection.",
+        "default": "5432",
+        "required": true,
+        "when": {
+          "field": "database-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "database-name",
+        "label": "Database name",
+        "description": "Existing dedicated database for Mathesar metadata. Back it up before startup migrations run.",
+        "default": "mathesar_django",
+        "required": true,
+        "when": {
+          "field": "database-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "database-user",
+        "label": "Database user",
+        "description": "Existing login role permitted to connect and create Mathesar objects in the chosen database.",
+        "default": "mathesar",
+        "required": true,
+        "when": {
+          "field": "database-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "database-sslmode",
+        "label": "Database TLS",
+        "description": "Verify the hostname and a certificate trusted by the system CA bundle. Encryption alone does not verify identity; disable TLS only on a trusted private network.",
+        "default": "verify-full",
+        "required": true,
+        "when": {
+          "field": "database-mode",
+          "value": "external"
+        },
+        "options": [
+          {
+            "value": "verify-full",
+            "label": "Verify server identity"
+          },
+          {
+            "value": "require",
+            "label": "Require encryption"
+          },
+          {
+            "value": "disable",
+            "label": "Disabled (trusted private network only)"
+          }
+        ]
+      },
+      {
+        "name": "media-storage-class",
+        "label": "Shared media storage class",
+        "description": "Existing ReadWriteMany-capable storage class. Backend and proxy mount the same media claim; ordinary local-path or block storage is not sufficient.",
+        "default": "",
+        "required": true
+      }
+    ],
+    "notes": [
+      "Only the HTTP proxy is public. It serves media from a read-only shared mount and forwards the verified HTTPS origin to the private backend.",
+      "The backend uses upstream migrations and WhiteNoise static serving, one worker and a stable scoped signing key. All services run as non-root users.",
+      "Media files follow upstream public URL behavior. Possession of an uploaded media URL permits downloading that object; use an appropriate storage policy for sensitive files.",
+      "Choose bundled PostgreSQL 17 or an existing database. The existing database is not provisioned, upgraded or deleted by Hakopod; startup applies Mathesar migrations to the database you supply."
+    ],
+    "docs_url": "https://docs.mathesar.org/0.12.0/administration/install-via-docker-compose/",
+    "port": 8080,
+    "image": "mathesar/mathesar:0.12.0@sha256:091757cb01fec9718d627aa672fdd565d76a2da6b53cdab6264e9fbc031472a4",
+    "logo": "/template-assets/mathesar/logo.svg",
+    "logo_background": "dark"
   }
 ]
