@@ -5663,7 +5663,7 @@
       "arm64"
     ],
     "resource_summary": "2 services with an existing database, or 3 with bundled PostgreSQL; one application worker",
-    "verification": "AMD64/ARM64 registry manifests checked; ARM64 named-cluster startup, administrator login, media and database persistence, existing-database reattachment and PostgreSQL TLS acceptance passed. AMD64 runtime, public ingress and production multi-node RWX remain unverified; see the blueprint acceptance record.",
+    "verification": "AMD64/ARM64 registry manifests checked; native AMD64 and ARM64 named-cluster startup, administrator login, media and database persistence, existing-database reattachment and PostgreSQL TLS acceptance passed in CI run 37184398017. Public ingress, backup restoration and production multi-node RWX remain unverified; see the blueprint acceptance record.",
     "providers": [],
     "configuration": "template",
     "site_url_required": true,
