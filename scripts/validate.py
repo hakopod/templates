@@ -37,6 +37,7 @@ for row in rows:
     assert row["architectures"], ident
     for service in spec["services"].values():
         assert re.search(r"@sha256:[0-9a-f]{64}$", service["image"]), ident
+        assert not re.match(r"(?:localhost|127(?:\.\d+){3}|\[::1\])(?::\d+)?/", service["image"]), ident
         assert service.get("run_as_user", 0) >= 0, ident
         assert not service.get("public_tcp"), ident
         for value in service.get("env", {}).values():

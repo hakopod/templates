@@ -1489,5 +1489,40 @@
     "source": "Authenticated OCI registry inspection; anonymous access pending organization policy",
     "image_config_inspected": true,
     "checked_at": "2026-09-24"
+  },
+  {
+    "reference": "mathesar/mathesar:0.12.0",
+    "digest": "sha256:091757cb01fec9718d627aa672fdd565d76a2da6b53cdab6264e9fbc031472a4",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest and published image configuration inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-10-04"
+  },
+  {
+    "reference": "theboringhumane/xemgo:sudo",
+    "digest": "sha256:b35d7d53fa9999af023fe21eb26853443b7877e399f954eeffbd5dd68c091f25",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "Anonymous Docker Hub index and image-config inspection; public alias equals theboringhumane/xemgo:sha-63b0809c2a4ba0965047ee20d08b101e0fac7c48. Published by https://github.com/mailxem/mail/actions/runs/37183743720",
+    "image_config_inspected": true,
+    "checked_at": "2026-10-04",
+    "source_commit": "63b0809c2a4ba0965047ee20d08b101e0fac7c48"
+  },
+  {
+    "reference": "theboringhumane/xemapp:sudo-self-hosted",
+    "digest": "sha256:94bd8a0d677821b9d47789b622bfbfb5b1560964b36c494751099e84f325af13",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "Anonymous Docker Hub index and image-config inspection; public alias equals theboringhumane/xemapp:sha-63b0809c2a4ba0965047ee20d08b101e0fac7c48-self-hosted. Published by https://github.com/mailxem/mail/actions/runs/37183743619",
+    "image_config_inspected": true,
+    "checked_at": "2026-10-04",
+    "source_commit": "63b0809c2a4ba0965047ee20d08b101e0fac7c48"
   }
 ]

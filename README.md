@@ -4,7 +4,7 @@ Shared catalog for the open-source Hakopod engine and the Hakopod website.
 Both consumers pin this repository as a Git submodule. The server embeds the
 catalog at build time; installations do not execute remote template downloads.
 
-Currently 77 entries: 40 deployment presets and 37 migration guides.
+Currently 78 entries: 43 deployment presets and 35 migration guides.
 Every requested Dokploy blueprint has a migration record. A guide is **not** a
 working deployment: unsupported initialization, host access, static config,
 public UDP, or unresolved image/runtime requirements are listed explicitly.
@@ -23,17 +23,32 @@ The existing Valkey preset is retained rather than downgraded to the Compose blu
 
 Use the Hakopod catalog to select scope, application name, storage and architecture,
 then review the rendered TOML. Blueprint files are planner inputs: do not deploy
-placeholders unchanged. The planner replaces `{{config.name}}`, `{{site_host}}`
+placeholders unchanged. The planner replaces `{{config.name}}`, `{{site_host}}`,
+`{{site_hostname}}` (the hostname without a port),
 and the representative `https://catalog.example.test` origin inside decoded
-string values. It never interpolates raw TOML. Site origins require HTTPS.
+environment values. It also replaces declared `{{config.name}}` placeholders in
+named volumes' `storage_class` values, which are then validated as Kubernetes
+names. It never interpolates raw TOML or service file contents. Site origins
+require HTTPS.
 Secrets are named references only. Save their values in the application scope;
 provider credentials must be issued by the provider, not random generated text.
 
 The existing PostgreSQL/MySQL database options, Open WebUI provider/model options,
 and vLLM model/revision options remain supported. Private databases stay private.
+Mathesar can use bundled PostgreSQL or an existing database; it requires an
+explicit ReadWriteMany-capable storage class for shared uploaded media.
+Xem has independent PostgreSQL, Redis and storage choices. It defaults to
+bundled MinIO and uses the upstream portable frontend with immutable image pins.
 `public` enables HTTP ingress only. Additional ports are private; public custom
 TCP requires administrator provisioning on self-hosted Hakopod. Public UDP and
 host-network access are not implicitly introduced by a conversion.
+
+Catalog `config_fields` may declare `options` as a list of `{value, label}`
+choices and a `when` condition as `{field, value}`. The planner resolves defaults
+before checking conditional requirements and validates selected options. The
+dashboard keeps entered values when switching a condition, displays the active
+fields and submits their values for review. Secrets remain separate named
+references regardless of the selected database mode.
 
 See [the September completion review](REVIEW-2026-09-24.md) for the new native stacks, compatibility image and exact remaining blockers.
 

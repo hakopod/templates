@@ -1,0 +1,269 @@
+# Xem with private PostgreSQL, Redis and MinIO, or existing dependencies.
+# Review README.md and the recorded verification limits before deployment.
+schema_version = 1
+name = "template"
+
+[services.db]
+image = "docker.io/library/postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73"
+port = 5432
+public = false
+size = "medium"
+replicas = 1
+run_as_user = 70
+run_as_group = 70
+fs_group = 70
+update_strategy = "recreate"
+args = ["postgres", "-c", "shared_buffers=64MB", "-c", "max_connections=100"]
+networks = ["default"]
+
+[services.db.volume]
+mount_path = "/var/lib/postgresql/data"
+size_gib = 5
+
+[services.db.env]
+PGDATA = "/var/lib/postgresql/data/pgdata"
+POSTGRES_DB = "xem"
+POSTGRES_USER = "hakopod"
+
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = "database-password"
+
+[services.redis]
+image = "docker.io/library/redis:8.6.6-alpine@sha256:75934ddb37bfaebe3b4082ba673cac39f66495244134f33dd0a502ce03cdcd36"
+port = 6379
+public = false
+size = "small"
+replicas = 1
+run_as_user = 999
+run_as_group = 0
+fs_group = 0
+update_strategy = "recreate"
+command = ["sh", "-ec"]
+args = ['exec redis-server --appendonly yes --maxmemory 64mb --maxmemory-policy noeviction --requirepass "$REDIS_PASSWORD"']
+networks = ["default"]
+
+[services.redis.volume]
+mount_path = "/data"
+size_gib = 5
+
+[services.redis.secrets.REDIS_PASSWORD]
+ref = "redis-password"
+
+[services.storage]
+image = "pgsty/minio:RELEASE.2026-06-18T00-00-00Z@sha256:dacff8306a6e0a734518533992dbdcca26bc1ca47f77cf47cb9945725f92b29b"
+port = 9000
+public = false
+size = "large"
+replicas = 1
+run_as_user = 10001
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+update_strategy = "recreate"
+healthcheck = "/minio/health/live"
+args = ["server", "/data", "--console-address", ":9001"]
+networks = ["default"]
+
+[services.storage.volume]
+mount_path = "/data"
+size_gib = 5
+
+[services.storage.env]
+MINIO_BROWSER = "off"
+MINIO_BROWSER_REDIRECT = "false"
+MINIO_API_REQUESTS_MAX = "32"
+
+[services.storage.secrets.MINIO_ROOT_USER]
+ref = "storage-user"
+
+[services.storage.secrets.MINIO_ROOT_PASSWORD]
+ref = "storage-password"
+
+[services.backend]
+image = "theboringhumane/xemgo:sudo@sha256:b35d7d53fa9999af023fe21eb26853443b7877e399f954eeffbd5dd68c091f25"
+port = 9001
+public = false
+size = "large"
+replicas = 1
+run_as_user = 65532
+run_as_group = 65532
+fs_group = 65532
+working_dir = "/app"
+healthcheck = "/health"
+termination_grace_seconds = 45
+depends_on = ["db", "redis", "storage"]
+networks = ["default"]
+
+[services.backend.env]
+SERVER_HOST = "0.0.0.0"
+SERVER_PORT = "9001"
+GOMAXPROCS = "2"
+GOMEMLIMIT = "768MiB"
+PUBLIC_URL = "https://catalog.example.test"
+PUBLIC_API_URL = "https://catalog.example.test"
+DASHBOARD_URL = "https://catalog.example.test"
+CORS_ALLOWED_ORIGINS = "https://catalog.example.test"
+POSTGRES_HOST = "db"
+POSTGRES_PORT = "5432"
+POSTGRES_DB = "xem"
+POSTGRES_USER = "hakopod"
+POSTGRES_SSLMODE = "disable"
+REDIS_HOST = "redis"
+REDIS_PORT = "6379"
+REDIS_USERNAME = ""
+REDIS_DB = "0"
+REDIS_USE_TLS = "false"
+STORAGE_PROVIDER = "s3"
+S3_BUCKET_NAME = "xem-files"
+S3_ENDPOINT_URL = "http://storage:9000"
+S3_PUBLIC_ENDPOINT_URL = "https://catalog.example.test"
+S3_REGION = "us-east-1"
+S3_CREATE_BUCKET = "true"
+S3_DISABLE_ACL = "true"
+SUPERADMIN_EMAIL = "{{config.admin-email}}"
+SUPERADMIN_NAME = "{{config.admin-name}}"
+SUPERADMIN_TEAM_NAME = "{{config.team-name}}"
+MANAGED_SENDING_ENABLED = "false"
+MANAGED_SMTP_ENABLED = "false"
+MANAGED_NOTIFICATIONS_ENABLED = "false"
+SERVICE_NOTIFICATIONS_ENABLED = "false"
+AI_ENABLED = "false"
+AIRLEY_ENABLED = "false"
+
+[services.backend.secrets.POSTGRES_PASSWORD]
+ref = "database-password"
+[services.backend.secrets.REDIS_PASSWORD]
+ref = "redis-password"
+[services.backend.secrets.JWT_SECRET]
+ref = "jwt-secret"
+[services.backend.secrets.PRIVATE_KEY]
+ref = "encryption-private-key"
+[services.backend.secrets.SUPERADMIN_PASSWORD]
+ref = "admin-password"
+[services.backend.secrets.S3_ACCESS_KEY]
+ref = "storage-user"
+[services.backend.secrets.S3_SECRET_KEY]
+ref = "storage-password"
+
+[services.frontend]
+image = "theboringhumane/xemapp:sudo-self-hosted@sha256:94bd8a0d677821b9d47789b622bfbfb5b1560964b36c494751099e84f325af13"
+port = 3000
+public = false
+size = "medium"
+replicas = 1
+run_as_user = 1000
+run_as_group = 1000
+fs_group = 1000
+working_dir = "/app"
+healthcheck = "/api/auth/providers"
+depends_on = ["backend"]
+networks = ["default"]
+
+[services.frontend.env]
+INTERNAL_API_URL = "http://backend:9001/api/v1"
+NEXTAUTH_URL = "https://catalog.example.test"
+AUTH_TRUST_HOST = "true"
+XEM_ASSISTANT_ENABLED = "false"
+XEM_MAIL_SUMMARY_ENABLED = "false"
+HOSTNAME = "0.0.0.0"
+PORT = "3000"
+NODE_ENV = "production"
+NEXT_TELEMETRY_DISABLED = "1"
+NODE_OPTIONS = "--max-old-space-size=384"
+
+[services.frontend.secrets.AUTH_SECRET]
+ref = "frontend-session-secret"
+[services.frontend.secrets.NEXTAUTH_SECRET]
+ref = "frontend-session-secret"
+
+[services.main]
+image = "caddy:2.11.4@sha256:0c994536bddb66445885237f1a5dcc1916bccea922661c76b4e9fc24061f9b52"
+port = 8080
+public = true
+size = "small"
+replicas = 1
+run_as_user = 1000
+run_as_group = 1000
+fs_group = 1000
+healthcheck = "/health"
+depends_on = ["backend", "frontend"]
+networks = ["default"]
+# Copy the upstream binary without its unnecessary low-port file capability.
+command = ["/bin/sh", "-ec"]
+args = ["cat /usr/bin/caddy > /tmp/hakopod-caddy; chmod 0500 /tmp/hakopod-caddy; exec /tmp/hakopod-caddy run --config /etc/caddy/Caddyfile --adapter caddyfile"]
+
+[services.main.env]
+SITE_HOST = "{{site_hostname}}"
+XDG_CONFIG_HOME = "/tmp"
+XDG_DATA_HOME = "/tmp"
+
+[services.main.files.proxy]
+mount_path = "/etc/caddy/Caddyfile"
+content = """
+{
+    admin off
+    auto_https off
+}
+:8080 {
+    @health path /health
+    handle @health {
+        reverse_proxy backend:9001
+    }
+    @site host {$SITE_HOST}
+    handle @site {
+        import /etc/caddy/storage/*.caddy
+        request_body {
+            max_size 25MB
+        }
+        @api path /api/v1 /api/v1/* /public /public/* /t /t/*
+        handle @api {
+            reverse_proxy backend:9001 {
+                header_up X-Forwarded-Proto https
+                transport http {
+                    dial_timeout 5s
+                    response_header_timeout 120s
+                }
+            }
+        }
+        handle {
+            reverse_proxy frontend:3000 {
+                header_up X-Forwarded-Proto https
+                transport http {
+                    dial_timeout 5s
+                    response_header_timeout 120s
+                }
+            }
+        }
+    }
+    handle {
+        respond "Unknown host" 404
+    }
+}
+"""
+
+[services.main.files.storage]
+mount_path = "/etc/caddy/storage/routes.caddy"
+content = """
+@storage {
+    path /xem-files/*
+    not path /xem-files/
+}
+handle @storage {
+    @read method GET HEAD
+    handle @read {
+        reverse_proxy storage:9000 {
+            header_up -Cookie
+            header_up -Authorization
+            header_down Cache-Control "private, no-store"
+            transport http {
+                dial_timeout 5s
+                response_header_timeout 30s
+            }
+        }
+    }
+    respond "Method not allowed" 405
+}
+"""
+
+[networks.default]
+internal = false

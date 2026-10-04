@@ -1,0 +1,15 @@
+{
+  "status": "native",
+  "upstream_source": "https://github.com/mathesar-foundation/mathesar/blob/0.12.0/docker-compose.yml",
+  "blockers": [],
+  "resolved": [
+    "Host bind mounts become separate PostgreSQL and shared ReadWriteMany media claims. The shared media storage class must be selected explicitly.",
+    "Upstream WhiteNoise serves collected static assets from bounded temporary storage without sharing the static directory with the proxy.",
+    "Hakopod owns TLS; non-root Caddy listens on port 8080 and preserves the HTTPS scheme for production Django settings.",
+    "Stable scoped secrets replace default database credentials and generated container-local signing keys.",
+    "Startup uses upstream migrations without automatic database fallback, with one application worker and a bounded bundled PostgreSQL connection budget.",
+    "The database selector can remove the bundled PostgreSQL service and use an existing metadata database without taking ownership of its infrastructure."
+  ],
+  "runtime_verified": true,
+  "runtime_notes": "Passed TestLiveMathesarTemplate on the named k3d-hakopod-dev ARM64 node on 2026-10-04: startup, private HTTP administrator setup/login, Secure cookie flags, static/media delivery, CSV and account persistence after all-service restarts, external-mode backend reattachment to the retained fixture database, and actual verify-full PostgreSQL TLS success plus plaintext/untrusted-CA/hostname rejection. The explicit single-node shared-filesystem fixture was removed with all owned data and resources. Production multi-node RWX, public ingress TLS, browser interaction, backup restoration and AMD64 runtime remain unverified."
+}

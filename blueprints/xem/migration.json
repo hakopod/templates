@@ -1,13 +1,19 @@
 {
-  "status": "blocked",
-  "upstream_source": "https://github.com/mailxem/devops/blob/main/docs/kubernetes.md",
-  "blockers": [
-    "The upstream frontend embeds NEXT_PUBLIC_API_URL at image build time",
-    "Build and pin your frontend with your own API origin before deployment",
-    "Provide database, Redis, JWT, session, encryption and administrator credentials",
-    "SMTP sending needs your own provider setup; no hosted Xem or AI credentials are assumed",
-    "See docs/templates-xem.md for the reviewed upstream pins and requirements",
-    "After deployment, open Custom domains, verify the site URL hostname, and apply routing and TLS before using login or callbacks"
+  "status": "native",
+  "upstream_source": "https://github.com/mailxem/mail/tree/63b0809c2a4ba0965047ee20d08b101e0fac7c48",
+  "blockers": [],
+  "resolved": [
+    "Independent PostgreSQL, Redis and storage choices remove only the selected bundled service and retain the credentials appropriate to that mode.",
+    "Same-origin browser API routing and runtime server authentication remove the per-installation frontend build requirement.",
+    "The preset enables the upstream S3_DISABLE_ACL option so object ownership and private bucket policy govern uploads while reads use presigned URLs.",
+    "Only the HTTP proxy is public; application services run as non-root users with bounded compute.",
+    "Hosted managed sending, SMTP submission, payments, MCP and AI services are excluded.",
+    "Bundled MinIO has its own persistent volume and private administrative API. Backend uploads use its private endpoint; browser file reads use a separate public presign origin and retain bucket path and host.",
+    "Only an explicit bundled-storage flag allows creation of a missing bucket, with a bounded request and a mandatory authenticated access check. No ACL or bucket policy is changed.",
+    "Refresh-token authentication binds UUIDs as PostgreSQL parameters instead of raw SQL conditions."
   ],
-  "runtime_verified": false
+  "runtime_verified": false,
+  "runtime_notes": "Earlier ARM64 development images exercised administrator/browser login and uploads against an external private S3 fixture. The final canonical five-case matrix ended after 353.92 seconds under development-node DiskPressure/API timeout, before backend or bundled MinIO assertions. All owned fixture resources were removed. This is not final-image runtime, MinIO public-proxy, restart/TLS or AMD64 acceptance.",
+  "release_verified": true,
+  "release_notes": "Anonymous Docker Hub inspection on 2026-10-04 verified both public aliases against their commit-specific aliases for merged source 63b0809c2a4ba0965047ee20d08b101e0fac7c48. Both indexes contain exactly Linux AMD64 and ARM64 images; child manifest and config hashes were verified without downloading layers. Exact pins and release workflow links are recorded in images.lock.json. This is release provenance, not final-image runtime acceptance."
 }
