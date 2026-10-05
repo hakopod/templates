@@ -2,8 +2,8 @@
 
 Mathesar 0.12.0 with bundled PostgreSQL 17 or a database you already manage, plus
 an HTTP proxy for the application and uploaded media. This is a new-install preset,
-adapted from the upstream production Compose file. Earlier shared-storage acceptance
-is recorded below; the automatic local-storage path has a separate acceptance gate.
+adapted from the upstream production Compose file. Automatic local storage passed
+native AMD64 and ARM64 development-cluster acceptance, recorded below.
 
 ## Before deployment
 
@@ -132,6 +132,21 @@ The Mathesar 0.12.0 multi-platform registry manifest and published image
 configuration were inspected for AMD64 and ARM64. Source inspection confirmed
 startup migrations, static collection, WhiteNoise, HTTPS proxy handling and the
 health endpoints. The PostgreSQL and Caddy pins are shared with existing presets.
+
+On October 5, 2026, automatic local storage passed on both native architectures in
+[CI run 37277578543](https://github.com/hakopod/hakopod/actions/runs/37277578543),
+using engine source `41da0fd1e91b24a92f9039dd8928a8339a373e1f`. AMD64 took
+188.08 seconds and ARM64 took 191.09 seconds. This run used an ordinary
+`hakopod-local-path` ReadWriteOnce claim created from the default plan, without a
+handcrafted RWX volume or explicit backend/proxy node assignment. It verified
+required placement, both consumers on one node, stable claim/PV UIDs, writable
+backend and read-only proxy media, and CSV bytes after individual replacements
+and after stopping both consumers completely. Setup/login, static assets,
+external database reattachment and PostgreSQL TLS checks also passed. The owned
+namespace, PVCs and PVs were removed after acceptance. This does not establish
+backup restoration, public ingress TLS or recovery from loss of the storage node.
+
+The following earlier acceptance used the explicit shared-storage path.
 
 On October 4, 2026, `TestLiveMathesarTemplate` passed on the named
 `k3d-hakopod-dev` ARM64 development node and then on both native architectures in
