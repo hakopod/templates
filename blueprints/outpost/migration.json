@@ -1,0 +1,15 @@
+{
+  "status": "native",
+  "upstream_source": "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/examples/kubernetes/outpost.yaml",
+  "blockers": [],
+  "resolved": [
+    "Helm values are expressed as native services with separate API, delivery and log roles.",
+    "Explicit once-per-revision PostgreSQL and Redis migrations complete before any server role starts.",
+    "Independent dependency choices remove the corresponding bundled service, volume and bindings when an existing endpoint is selected.",
+    "Private service bindings build credential-escaped PostgreSQL and AMQP URLs; external connection URLs remain scoped secret references.",
+    "Published v1.6.0 image configuration supplies the non-root UID and executable entrypoint.",
+    "Each bundled dependency receives a separate persistent claim without public database or broker listeners."
+  ],
+  "runtime_verified": false,
+  "runtime_notes": "Source and registry inspection only. Migration, authenticated API operations, tenant and delivery persistence, dependency permutations, real webhook delivery, public TLS and restoration are not yet runtime-verified."
+}

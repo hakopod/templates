@@ -307,3 +307,10 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+## Outpost
+
+The unmodified Outpost logo comes from `images/outpost-logo-white.svg` at upstream
+commit `27ebb3587ee974e55cf443c643b087db7bf9216e` (v1.6.0). The upstream
+Apache-2.0 license is retained in [LICENSE-Outpost](LICENSE-Outpost).
+The Outpost and Hookdeck names and logos remain their owners' marks.

@@ -1,0 +1,268 @@
+{
+  "checked_at": "2026-10-05",
+  "upstream_release": "v1.6.0",
+  "upstream_commit": "27ebb3587ee974e55cf443c643b087db7bf9216e",
+  "upstream_license": "Apache-2.0",
+  "method": "Anonymous registry HTTP manifest and configuration inspection; no image layers downloaded or containers run.",
+  "images": [
+    {
+      "reference": "hookdeck/outpost:v1.6.0",
+      "index_digest": "sha256:36ed337bb1edf52b6b0130f87e9eef0b9c03187bfb85d946b4eeab5b7b602a28",
+      "selected_platforms": [
+        {
+          "platform": {
+            "architecture": "amd64",
+            "os": "linux"
+          },
+          "manifest_digest": "sha256:bc4295b143c54f84ea8d49200f26ededfc7e2bcdba6f88f4c34a9e14765738ae",
+          "config_digest": "sha256:73f5c86a1b2722765e55d403f3546e035f2e9ecc391bb09773ce898343904b22",
+          "user": "65532",
+          "entrypoint": [
+            "/bin/sh",
+            "/usr/local/bin/entrypoint.sh"
+          ],
+          "cmd": null,
+          "working_dir": "/home/nonroot",
+          "labels": {
+            "homepage": "https://hookdeck.com",
+            "org.opencontainers.image.created": "2026-10-02T14:25:00Z",
+            "org.opencontainers.image.name": "outpost",
+            "org.opencontainers.image.revision": "27ebb3587ee974e55cf443c643b087db7bf9216e",
+            "org.opencontainers.image.version": "1.6.0",
+            "repository": "https://github.com/hookdeck/outpost"
+          }
+        },
+        {
+          "platform": {
+            "architecture": "arm64",
+            "os": "linux"
+          },
+          "manifest_digest": "sha256:3e644a7b71bc74845f4966091b505418b0852c8a900f629127ea12031d7c3f7b",
+          "config_digest": "sha256:fa7f82402aca9739b8930b3790853cff5255caa5066518ed13069df8560be13c",
+          "user": "65532",
+          "entrypoint": [
+            "/bin/sh",
+            "/usr/local/bin/entrypoint.sh"
+          ],
+          "cmd": null,
+          "working_dir": "/home/nonroot",
+          "labels": {
+            "homepage": "https://hookdeck.com",
+            "org.opencontainers.image.created": "2026-10-02T14:25:00Z",
+            "org.opencontainers.image.name": "outpost",
+            "org.opencontainers.image.revision": "27ebb3587ee974e55cf443c643b087db7bf9216e",
+            "org.opencontainers.image.version": "1.6.0",
+            "repository": "https://github.com/hookdeck/outpost"
+          }
+        }
+      ]
+    },
+    {
+      "reference": "docker.io/library/postgres:17.11-alpine",
+      "index_digest": "sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73",
+      "selected_platforms": [
+        {
+          "platform": {
+            "architecture": "amd64",
+            "os": "linux"
+          },
+          "manifest_digest": "sha256:7456ef82e5f5bc43d997f4781bbd7c0d6389bff397564649a356e206ba473aee",
+          "config_digest": "sha256:1bea307dfb3ee30541a7acf7de14b58bcd6948da98e5d31a04c627c4d35ec64b",
+          "user": null,
+          "entrypoint": [
+            "docker-entrypoint.sh"
+          ],
+          "cmd": [
+            "postgres"
+          ],
+          "working_dir": "/",
+          "labels": null
+        },
+        {
+          "platform": {
+            "architecture": "arm64",
+            "os": "linux",
+            "variant": "v8"
+          },
+          "manifest_digest": "sha256:dfc2780980fe6ca2d158bfe4342660db5e4c6431fb969088e543430d09f8d0f2",
+          "config_digest": "sha256:ff80089083d7365046af7f03d949a2defa14e0b09e14bd5b8f08a242291be8b2",
+          "user": null,
+          "entrypoint": [
+            "docker-entrypoint.sh"
+          ],
+          "cmd": [
+            "postgres"
+          ],
+          "working_dir": "/",
+          "labels": null
+        }
+      ]
+    },
+    {
+      "reference": "docker.io/library/redis:8.6.6-alpine",
+      "index_digest": "sha256:75934ddb37bfaebe3b4082ba673cac39f66495244134f33dd0a502ce03cdcd36",
+      "selected_platforms": [
+        {
+          "platform": {
+            "architecture": "amd64",
+            "os": "linux"
+          },
+          "manifest_digest": "sha256:2c9168169a7017f4726aef4646bec0fc8e473d760ca8b733b570133fd94cda5b",
+          "config_digest": "sha256:cba0ae2c6b78197947b901cf84ea378854d86b9ae82ee2e21dd8d95579957959",
+          "user": null,
+          "entrypoint": [
+            "docker-entrypoint.sh"
+          ],
+          "cmd": [
+            "redis-server"
+          ],
+          "working_dir": "/data",
+          "labels": null
+        },
+        {
+          "platform": {
+            "architecture": "arm64",
+            "os": "linux",
+            "variant": "v8"
+          },
+          "manifest_digest": "sha256:f486f1c3889f3cfd90f89b12f8f203199a0deaaf2aebc7446f6f5e52b4608d11",
+          "config_digest": "sha256:b5b5ee0dcf280b38ac21afdd5a49b3bea6cdcd678059c192985c9bd22cea35a8",
+          "user": null,
+          "entrypoint": [
+            "docker-entrypoint.sh"
+          ],
+          "cmd": [
+            "redis-server"
+          ],
+          "working_dir": "/data",
+          "labels": null
+        }
+      ]
+    },
+    {
+      "reference": "rabbitmq:4.1-management",
+      "index_digest": "sha256:036dbf561d8040eaed77d0d326b44bd8fa1c9ac382d2310bd7f35970fae70613",
+      "selected_platforms": [
+        {
+          "platform": {
+            "architecture": "amd64",
+            "os": "linux"
+          },
+          "manifest_digest": "sha256:9e949cc1f28b31a87396c7140e51e1abe2b85ed832969eb06d2b252ce80a0250",
+          "config_digest": "sha256:2ad15174258d914a3ffc6f3d74cd1b74b4c01beb4b39374730e910da7c3858af",
+          "user": null,
+          "entrypoint": [
+            "docker-entrypoint.sh"
+          ],
+          "cmd": [
+            "rabbitmq-server"
+          ],
+          "working_dir": null,
+          "labels": {
+            "org.opencontainers.image.version": "24.04"
+          }
+        },
+        {
+          "platform": {
+            "architecture": "arm64",
+            "os": "linux",
+            "variant": "v8"
+          },
+          "manifest_digest": "sha256:7f402de9df841bb11a09576ff525f65de82098b43fb15248562912d1a870f05e",
+          "config_digest": "sha256:070d96be5ec5141a416b258116ccc939c588f2de12b876b7818f80b4bd1742f2",
+          "user": null,
+          "entrypoint": [
+            "docker-entrypoint.sh"
+          ],
+          "cmd": [
+            "rabbitmq-server"
+          ],
+          "working_dir": null,
+          "labels": {
+            "org.opencontainers.image.version": "24.04"
+          }
+        }
+      ]
+    }
+  ],
+  "source_files": [
+    {
+      "path": "LICENSE",
+      "sha256": "c6494c19546fb649fa428a9ecc62d437580305a4d9246d2379a9570cccbe7dcc",
+      "url": "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/LICENSE"
+    },
+    {
+      "path": "build/Dockerfile.goreleaser",
+      "sha256": "71439a6903528e4c8b196dfa770e2b1644da67a4253e8e4f6251057d59c4adc1",
+      "url": "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/build/Dockerfile.goreleaser"
+    },
+    {
+      "path": "build/entrypoint.sh",
+      "sha256": "fd8b0cba044a5128823fa7217d85bfd073a1e88bb60c5b83f49b71b04e3ddf80",
+      "url": "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/build/entrypoint.sh"
+    },
+    {
+      "path": "examples/kubernetes/outpost.yaml",
+      "sha256": "b406aa0cb2608ab5ea560e8d48e8da312ae921680d0bc65099ab2c31a2ba2fa4",
+      "url": "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/examples/kubernetes/outpost.yaml"
+    },
+    {
+      "path": "internal/config/config.go",
+      "sha256": "970278f6e47db886eee1d18f4381ff4722b9739591ca10666f7f7b7464eca2f9",
+      "url": "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/internal/config/config.go"
+    },
+    {
+      "path": "internal/config/mqconfig_rabbitmq.go",
+      "sha256": "a983db6bac495786a06e611de479d13eb1c342e0339682ca3f9143e5b8b164f1",
+      "url": "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/internal/config/mqconfig_rabbitmq.go"
+    },
+    {
+      "path": "cmd/outpost/migrate.go",
+      "sha256": "498463f9b548bef4d22bc8a009f65aaa1abc808a062c1ddc74c8d7198fde3765",
+      "url": "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/cmd/outpost/migrate.go"
+    },
+    {
+      "path": "internal/app/migration.go",
+      "sha256": "b307c566db62f0ebeb1b9cf71ce63a89dc13a8e7b510890cd61f6bb6d9dbf15e",
+      "url": "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/internal/app/migration.go"
+    },
+    {
+      "path": "internal/services/health.go",
+      "sha256": "e55b0fe0a434bc4e504378058e6e6a4e0660f51e0788b27f63d57d64db19e5cc",
+      "url": "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/internal/services/health.go"
+    },
+    {
+      "path": "images/outpost-logo-white.svg",
+      "sha256": "6f57221a66a206f766acf49da556b4927af0552681365083ec026d9d574a9922",
+      "url": "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/images/outpost-logo-white.svg"
+    }
+  ],
+  "runtime_verified": false,
+  "dependency_source_files": [
+    {
+      "path": "postgres.Dockerfile",
+      "url": "https://github.com/docker-library/postgres/blob/2603e26e245e558218728ee14e0a42dcb020dc7f/17/alpine3.24/Dockerfile",
+      "sha256": "03484c8058b53c342cf407d476e45539dc44ffe468e66241bbd7c9e369166e81"
+    },
+    {
+      "path": "redis.Dockerfile",
+      "url": "https://github.com/redis/docker-library-redis/blob/d573aa9142ef37e40e5ec71c0d8824497359accb/alpine/Dockerfile",
+      "sha256": "357596096d421fa5055ca988233eb126bc8ec5e9d678f2531cfe53819e224386"
+    },
+    {
+      "path": "rabbitmq.Dockerfile",
+      "url": "https://github.com/docker-library/rabbitmq/blob/77700515643c9fc8c93421b828758401f1a7b953/4.1/ubuntu/Dockerfile",
+      "sha256": "9c361013c2a33fd407ace39c0cd6c05bf9ac670dd845cafad9a39e03e02fd7ad"
+    },
+    {
+      "path": "rabbitmq-management.Dockerfile",
+      "url": "https://github.com/docker-library/rabbitmq/blob/77700515643c9fc8c93421b828758401f1a7b953/4.1/ubuntu/management/Dockerfile",
+      "sha256": "9d3081fcacad09e3f980baa7699f73c11e6cafd676bd8c6cd7ec38bdea2883e3"
+    }
+  ],
+  "dependency_users": {
+    "postgres": 70,
+    "redis": 999,
+    "rabbitmq": 999
+  }
+}
