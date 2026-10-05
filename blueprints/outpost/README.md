@@ -50,8 +50,9 @@ integrating the portal.
 
 All Outpost roles use the same digest-pinned upstream image and run as UID/GID
 65532. The upstream CLI entrypoint handles both migration and server commands;
-no custom image build or Docker login is needed. The migration job receives only
-its PostgreSQL and Redis configuration, without API, encryption or broker keys.
+no custom image build or Docker login is needed. The migration job receives
+PostgreSQL, Redis, broker and encryption configuration because the upstream CLI
+validates these settings before applying migrations. It does not receive API keys.
 All server roles expose upstream `/healthz`. The response also reports worker
 state: upstream can return HTTP 200 while a worker is `degraded` and retrying
 within its recovery budget, so monitor the response status as well as HTTP status.
