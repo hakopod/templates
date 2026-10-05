@@ -5798,5 +5798,239 @@
     "image": "mathesar/mathesar:0.12.0@sha256:091757cb01fec9718d627aa672fdd565d76a2da6b53cdab6264e9fbc031472a4",
     "logo": "/template-assets/mathesar/logo.svg",
     "logo_background": "dark"
+  },
+  {
+    "id": "outpost",
+    "name": "Outpost",
+    "category": "application",
+    "description": "Self-hosted webhook delivery with separate API, delivery and log workers, plus independently bundled or existing PostgreSQL, Redis and RabbitMQ.",
+    "license": "Apache-2.0",
+    "upstream": "https://github.com/hookdeck/outpost",
+    "required_secrets": [
+      "api-key",
+      "jwt-secret",
+      "encryption-secret",
+      "redis-password",
+      "database-password",
+      "broker-password"
+    ],
+    "requirements": [
+      "Persistent PostgreSQL, Redis and RabbitMQ, each bundled or supplied independently",
+      "Stable API, JWT and AES keys retained with coordinated data backups",
+      "A dedicated database, Redis keyspace and RabbitMQ virtual host when using existing dependencies",
+      "Startup applies upstream PostgreSQL and Redis migrations before the server roles become ready",
+      "Configure tenant-scoped portal authentication and destination delivery rules in your application"
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "4\u20137 services, including one migration job; bundled dependencies use three separate 5 GiB volumes",
+    "verification": "Pinned upstream source, public image configuration and native AMD64/ARM64 manifests inspected. Runtime acceptance remains pending.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": true,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "api-key",
+        "description": "Stable API bearer key. Generate it before deployment and give it only to trusted application servers.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "jwt-secret",
+        "description": "Stable signing secret for tenant-scoped portal JWTs. Retain it with protected backups.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "encryption-secret",
+        "description": "Exactly 32 ASCII hexadecimal characters, used directly as a 32-byte AES key. Keep it unchanged with database and Redis backups; losing it makes encrypted destination credentials unreadable.",
+        "format": "hex32",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "redis-password",
+        "description": "Generate a password for bundled Redis or supply the current password for the existing Redis account.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "database-password",
+        "description": "Initial password for bundled PostgreSQL. Changing this secret does not rotate a role in an initialized database. Existing PostgreSQL uses database-url instead.",
+        "format": "password",
+        "generate": true,
+        "optional": true
+      },
+      {
+        "name": "broker-password",
+        "description": "Initial password for bundled RabbitMQ. Changing this secret does not rotate an existing broker account. Existing RabbitMQ uses broker-url instead.",
+        "format": "password",
+        "generate": true,
+        "optional": true
+      },
+      {
+        "name": "database-url",
+        "description": "Connection URL for a dedicated existing PostgreSQL database, including its current role and password. Percent-encode credentials and select the correct TLS mode; prefer sslmode=verify-full. The role must be allowed to apply Outpost migrations.",
+        "format": "postgres-connection-url",
+        "generate": false,
+        "optional": true
+      },
+      {
+        "name": "broker-url",
+        "description": "AMQP or AMQPS URL for an existing RabbitMQ account and dedicated virtual host. Percent-encode credentials and the virtual host. Prefer AMQPS; permit Outpost to configure, write and read its queues and exchange.",
+        "format": "amqp-url",
+        "generate": false,
+        "optional": true
+      }
+    ],
+    "sources": [
+      "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/examples/kubernetes/outpost.yaml",
+      "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/build/entrypoint.sh",
+      "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/internal/config/config.go",
+      "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/internal/config/mqconfig_rabbitmq.go",
+      "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/cmd/outpost/migrate.go",
+      "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/internal/services/health.go",
+      "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/LICENSE"
+    ],
+    "deployable": true,
+    "config_fields": [
+      {
+        "name": "database-mode",
+        "label": "PostgreSQL",
+        "description": "Create a private PostgreSQL service or connect to one you manage. Each dependency can be selected independently.",
+        "default": "bundled",
+        "required": true,
+        "options": [
+          {
+            "value": "bundled",
+            "label": "Bundled PostgreSQL"
+          },
+          {
+            "value": "external",
+            "label": "Existing PostgreSQL"
+          }
+        ]
+      },
+      {
+        "name": "redis-mode",
+        "label": "Redis",
+        "description": "Create a private Redis service or connect to one you manage. Each dependency can be selected independently.",
+        "default": "bundled",
+        "required": true,
+        "options": [
+          {
+            "value": "bundled",
+            "label": "Bundled Redis"
+          },
+          {
+            "value": "external",
+            "label": "Existing Redis"
+          }
+        ]
+      },
+      {
+        "name": "broker-mode",
+        "label": "RabbitMQ",
+        "description": "Create a private RabbitMQ service or connect to one you manage. Each dependency can be selected independently.",
+        "default": "bundled",
+        "required": true,
+        "options": [
+          {
+            "value": "bundled",
+            "label": "Bundled RabbitMQ"
+          },
+          {
+            "value": "external",
+            "label": "Existing RabbitMQ"
+          }
+        ]
+      },
+      {
+        "name": "redis-host",
+        "label": "Redis host",
+        "description": "Reachable hostname or IP address without a URL scheme, port or credentials. Use a dedicated Redis database for this installation.",
+        "default": "",
+        "required": true,
+        "when": {
+          "field": "redis-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "redis-port",
+        "label": "Redis port",
+        "description": "TCP port for the existing Redis service.",
+        "default": "6379",
+        "required": true,
+        "when": {
+          "field": "redis-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "redis-username",
+        "label": "Redis username",
+        "description": "Existing ACL username. Leave empty for the default account.",
+        "default": "",
+        "required": false,
+        "when": {
+          "field": "redis-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "redis-database",
+        "label": "Redis database",
+        "description": "Dedicated Redis database number from 0 to 15. Redis stores durable application state, not only cached data.",
+        "default": "0",
+        "required": true,
+        "when": {
+          "field": "redis-mode",
+          "value": "external"
+        }
+      },
+      {
+        "name": "redis-tls",
+        "label": "Redis TLS",
+        "description": "Verify the server certificate and hostname using the image system CA bundle. Disable TLS only on a trusted private network.",
+        "default": "true",
+        "required": true,
+        "when": {
+          "field": "redis-mode",
+          "value": "external"
+        },
+        "options": [
+          {
+            "value": "true",
+            "label": "Verify server identity"
+          },
+          {
+            "value": "false",
+            "label": "Disabled (trusted private network only)"
+          }
+        ]
+      }
+    ],
+    "notes": [
+      "The API is the only public service. Delivery, log, migration, PostgreSQL, Redis and RabbitMQ remain private; RabbitMQ management has no public route.",
+      "An explicit deployment job applies SQL and Redis migrations once per release revision. API, delivery and log services wait for that job and the selected dependencies.",
+      "All application processes use the upstream non-root UID 65532. Anonymous registry access is sufficient for every image.",
+      "Redis contains tenants, destinations and retry state. Its bundled 64 MiB no-eviction data budget rejects new writes when full; increase capacity before sustained traffic.",
+      "Existing infrastructure is not provisioned or deleted by Hakopod. Outpost applies schema migrations and declares its exchange and queues within the resources you provide.",
+      "Portal, topic, retry and deployment-ID settings retain upstream defaults. Outpost is an API and embeddable tenant portal, not a standalone administrator account system.",
+      "The pinned RabbitMQ service is a single instance; PostgreSQL, Redis and queue volumes are not independent backups. Review upstream upgrades and test restores before changing image versions."
+    ],
+    "docs_url": "https://github.com/hakopod/templates/blob/main/blueprints/outpost/README.md",
+    "port": 3333,
+    "image": "hookdeck/outpost:v1.6.0@sha256:36ed337bb1edf52b6b0130f87e9eef0b9c03187bfb85d946b4eeab5b7b602a28",
+    "logo": "/template-assets/outpost/logo.svg",
+    "logo_background": "dark"
   }
 ]

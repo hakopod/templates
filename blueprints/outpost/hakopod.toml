@@ -1,0 +1,340 @@
+# Outpost v1.6.0: API, delivery and log workers with a deployment migration job.
+# The planner independently removes bundled dependencies when existing services are selected.
+schema_version = 1
+name = "template"
+
+[services.db]
+image = "docker.io/library/postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73"
+port = 5432
+public = false
+size = "medium"
+replicas = 1
+run_as_user = 70
+run_as_group = 70
+fs_group = 70
+update_strategy = "recreate"
+args = ["postgres", "-c", "shared_buffers=64MB", "-c", "max_connections=50"]
+networks = ["default"]
+
+[services.db.volume]
+mount_path = "/var/lib/postgresql/data"
+size_gib = 5
+
+[services.db.env]
+PGDATA = "/var/lib/postgresql/data/pgdata"
+POSTGRES_DB = "outpost"
+POSTGRES_USER = "hakopod"
+
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = "database-password"
+
+[services.redis]
+image = "docker.io/library/redis:8.6.6-alpine@sha256:75934ddb37bfaebe3b4082ba673cac39f66495244134f33dd0a502ce03cdcd36"
+port = 6379
+public = false
+size = "small"
+replicas = 1
+run_as_user = 999
+run_as_group = 0
+fs_group = 0
+update_strategy = "recreate"
+command = ["sh", "-ec"]
+args = ['exec redis-server --appendonly yes --maxmemory 64mb --maxmemory-policy noeviction --requirepass "$REDIS_PASSWORD"']
+networks = ["default"]
+
+[services.redis.volume]
+mount_path = "/data"
+size_gib = 5
+
+[services.redis.secrets.REDIS_PASSWORD]
+ref = "redis-password"
+
+[services.broker]
+image = "rabbitmq:4.1-management@sha256:036dbf561d8040eaed77d0d326b44bd8fa1c9ac382d2310bd7f35970fae70613"
+port = 5672
+public = false
+size = "large"
+replicas = 1
+run_as_user = 999
+run_as_group = 0
+fs_group = 0
+update_strategy = "recreate"
+termination_grace_seconds = 60
+networks = ["default"]
+
+[services.broker.volume]
+mount_path = "/var/lib/rabbitmq"
+size_gib = 5
+
+[services.broker.env]
+RABBITMQ_DEFAULT_USER = "hakopod"
+RABBITMQ_DEFAULT_VHOST = "outpost"
+RABBITMQ_NODENAME = "rabbit@localhost"
+RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS = "+S 2:2 +A 4 -rabbit disk_free_limit 1073741824"
+
+[services.broker.secrets.RABBITMQ_DEFAULT_PASS]
+ref = "broker-password"
+
+[services.migrate]
+image = "hookdeck/outpost:v1.6.0@sha256:36ed337bb1edf52b6b0130f87e9eef0b9c03187bfb85d946b4eeab5b7b602a28"
+public = false
+size = "medium"
+replicas = 1
+run_as_user = 65532
+run_as_group = 65532
+fs_group = 65532
+read_only_root_filesystem = true
+working_dir = "/home/nonroot"
+termination_grace_seconds = 45
+networks = ["default"]
+args = ["migrate", "apply", "--yes"]
+depends_on = ["db", "redis"]
+
+[services.migrate.job]
+timeout_seconds = 600
+retries = 0
+
+[services.migrate.env]
+GOMAXPROCS = "1"
+GOMEMLIMIT = "384MiB"
+LOG_LEVEL = "info"
+DISABLE_TELEMETRY = "true"
+REDIS_HOST = "redis"
+REDIS_PORT = "6379"
+REDIS_USERNAME = ""
+REDIS_DATABASE = "0"
+REDIS_TLS_ENABLED = "false"
+REDIS_TLS_VERIFY = "true"
+REDIS_CLUSTER_ENABLED = "false"
+REDIS_POOL_SIZE = "4"
+
+[services.migrate.secrets.REDIS_PASSWORD]
+ref = "redis-password"
+
+[services.migrate.bindings.POSTGRES_URL]
+service = "db"
+protocol = "postgres"
+username = "hakopod"
+database = "outpost"
+
+[services.migrate.bindings.POSTGRES_URL.password]
+ref = "database-password"
+
+[services.main]
+image = "hookdeck/outpost:v1.6.0@sha256:36ed337bb1edf52b6b0130f87e9eef0b9c03187bfb85d946b4eeab5b7b602a28"
+public = true
+size = "small"
+replicas = 1
+run_as_user = 65532
+run_as_group = 65532
+fs_group = 65532
+read_only_root_filesystem = true
+working_dir = "/home/nonroot"
+termination_grace_seconds = 45
+networks = ["default"]
+port = 3333
+healthcheck = "/healthz"
+args = ["serve"]
+depends_on = ["migrate", "db", "redis", "broker"]
+
+[services.main.env]
+GOMAXPROCS = "1"
+GOMEMLIMIT = "192MiB"
+LOG_LEVEL = "info"
+DISABLE_TELEMETRY = "true"
+REDIS_HOST = "redis"
+REDIS_PORT = "6379"
+REDIS_USERNAME = ""
+REDIS_DATABASE = "0"
+REDIS_TLS_ENABLED = "false"
+REDIS_TLS_VERIFY = "true"
+REDIS_CLUSTER_ENABLED = "false"
+REDIS_POOL_SIZE = "4"
+SERVICE = "api"
+API_PORT = "3333"
+GIN_MODE = "release"
+PPROF_ENABLED = "false"
+PUBLISH_MAX_CONCURRENCY = "1"
+DELIVERY_MAX_CONCURRENCY = "1"
+LOG_MAX_CONCURRENCY = "1"
+MQS_AUTO_PROVISION = "true"
+RABBITMQ_EXCHANGE = "outpost"
+RABBITMQ_DELIVERY_QUEUE = "outpost-delivery"
+RABBITMQ_LOG_QUEUE = "outpost-log"
+
+[services.main.secrets.API_KEY]
+ref = "api-key"
+
+[services.main.secrets.API_JWT_SECRET]
+ref = "jwt-secret"
+
+[services.main.secrets.AES_ENCRYPTION_SECRET]
+ref = "encryption-secret"
+
+[services.main.secrets.REDIS_PASSWORD]
+ref = "redis-password"
+
+[services.main.bindings.POSTGRES_URL]
+service = "db"
+protocol = "postgres"
+username = "hakopod"
+database = "outpost"
+
+[services.main.bindings.POSTGRES_URL.password]
+ref = "database-password"
+
+[services.main.bindings.RABBITMQ_SERVER_URL]
+service = "broker"
+protocol = "amqp"
+username = "hakopod"
+database = "outpost"
+
+[services.main.bindings.RABBITMQ_SERVER_URL.password]
+ref = "broker-password"
+
+[services.delivery]
+image = "hookdeck/outpost:v1.6.0@sha256:36ed337bb1edf52b6b0130f87e9eef0b9c03187bfb85d946b4eeab5b7b602a28"
+public = false
+size = "medium"
+replicas = 1
+run_as_user = 65532
+run_as_group = 65532
+fs_group = 65532
+read_only_root_filesystem = true
+working_dir = "/home/nonroot"
+termination_grace_seconds = 45
+networks = ["default"]
+port = 3333
+healthcheck = "/healthz"
+args = ["serve"]
+depends_on = ["migrate", "db", "redis", "broker"]
+
+[services.delivery.env]
+GOMAXPROCS = "1"
+GOMEMLIMIT = "384MiB"
+LOG_LEVEL = "info"
+DISABLE_TELEMETRY = "true"
+REDIS_HOST = "redis"
+REDIS_PORT = "6379"
+REDIS_USERNAME = ""
+REDIS_DATABASE = "0"
+REDIS_TLS_ENABLED = "false"
+REDIS_TLS_VERIFY = "true"
+REDIS_CLUSTER_ENABLED = "false"
+REDIS_POOL_SIZE = "4"
+SERVICE = "delivery"
+API_PORT = "3333"
+GIN_MODE = "release"
+PPROF_ENABLED = "false"
+PUBLISH_MAX_CONCURRENCY = "1"
+DELIVERY_MAX_CONCURRENCY = "1"
+LOG_MAX_CONCURRENCY = "1"
+MQS_AUTO_PROVISION = "true"
+RABBITMQ_EXCHANGE = "outpost"
+RABBITMQ_DELIVERY_QUEUE = "outpost-delivery"
+RABBITMQ_LOG_QUEUE = "outpost-log"
+
+[services.delivery.secrets.API_KEY]
+ref = "api-key"
+
+[services.delivery.secrets.API_JWT_SECRET]
+ref = "jwt-secret"
+
+[services.delivery.secrets.AES_ENCRYPTION_SECRET]
+ref = "encryption-secret"
+
+[services.delivery.secrets.REDIS_PASSWORD]
+ref = "redis-password"
+
+[services.delivery.bindings.POSTGRES_URL]
+service = "db"
+protocol = "postgres"
+username = "hakopod"
+database = "outpost"
+
+[services.delivery.bindings.POSTGRES_URL.password]
+ref = "database-password"
+
+[services.delivery.bindings.RABBITMQ_SERVER_URL]
+service = "broker"
+protocol = "amqp"
+username = "hakopod"
+database = "outpost"
+
+[services.delivery.bindings.RABBITMQ_SERVER_URL.password]
+ref = "broker-password"
+
+[services.log]
+image = "hookdeck/outpost:v1.6.0@sha256:36ed337bb1edf52b6b0130f87e9eef0b9c03187bfb85d946b4eeab5b7b602a28"
+public = false
+size = "small"
+replicas = 1
+run_as_user = 65532
+run_as_group = 65532
+fs_group = 65532
+read_only_root_filesystem = true
+working_dir = "/home/nonroot"
+termination_grace_seconds = 45
+networks = ["default"]
+port = 3333
+healthcheck = "/healthz"
+args = ["serve"]
+depends_on = ["migrate", "db", "redis", "broker"]
+
+[services.log.env]
+GOMAXPROCS = "1"
+GOMEMLIMIT = "192MiB"
+LOG_LEVEL = "info"
+DISABLE_TELEMETRY = "true"
+REDIS_HOST = "redis"
+REDIS_PORT = "6379"
+REDIS_USERNAME = ""
+REDIS_DATABASE = "0"
+REDIS_TLS_ENABLED = "false"
+REDIS_TLS_VERIFY = "true"
+REDIS_CLUSTER_ENABLED = "false"
+REDIS_POOL_SIZE = "4"
+SERVICE = "log"
+API_PORT = "3333"
+GIN_MODE = "release"
+PPROF_ENABLED = "false"
+PUBLISH_MAX_CONCURRENCY = "1"
+DELIVERY_MAX_CONCURRENCY = "1"
+LOG_MAX_CONCURRENCY = "1"
+MQS_AUTO_PROVISION = "true"
+RABBITMQ_EXCHANGE = "outpost"
+RABBITMQ_DELIVERY_QUEUE = "outpost-delivery"
+RABBITMQ_LOG_QUEUE = "outpost-log"
+
+[services.log.secrets.API_KEY]
+ref = "api-key"
+
+[services.log.secrets.API_JWT_SECRET]
+ref = "jwt-secret"
+
+[services.log.secrets.AES_ENCRYPTION_SECRET]
+ref = "encryption-secret"
+
+[services.log.secrets.REDIS_PASSWORD]
+ref = "redis-password"
+
+[services.log.bindings.POSTGRES_URL]
+service = "db"
+protocol = "postgres"
+username = "hakopod"
+database = "outpost"
+
+[services.log.bindings.POSTGRES_URL.password]
+ref = "database-password"
+
+[services.log.bindings.RABBITMQ_SERVER_URL]
+service = "broker"
+protocol = "amqp"
+username = "hakopod"
+database = "outpost"
+
+[services.log.bindings.RABBITMQ_SERVER_URL.password]
+ref = "broker-password"
+
+[networks.default]
+internal = false

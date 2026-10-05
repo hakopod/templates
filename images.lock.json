@@ -1524,5 +1524,17 @@
     "image_config_inspected": true,
     "checked_at": "2026-10-04",
     "source_commit": "63b0809c2a4ba0965047ee20d08b101e0fac7c48"
+  },
+  {
+    "reference": "hookdeck/outpost:v1.6.0",
+    "digest": "sha256:36ed337bb1edf52b6b0130f87e9eef0b9c03187bfb85d946b4eeab5b7b602a28",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "Anonymous Docker Hub OCI index and both image configurations; source revision labels match the v1.6.0 release commit. Dependency pins independently rechecked; see blueprints/outpost/provenance.json.",
+    "image_config_inspected": true,
+    "checked_at": "2026-10-05",
+    "source_commit": "27ebb3587ee974e55cf443c643b087db7bf9216e"
   }
 ]

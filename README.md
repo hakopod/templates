@@ -4,7 +4,7 @@ Shared catalog for the open-source Hakopod engine and the Hakopod website.
 Both consumers pin this repository as a Git submodule. The server embeds the
 catalog at build time; installations do not execute remote template downloads.
 
-Currently 78 entries: 43 deployment presets and 35 migration guides.
+Currently 79 entries: 44 deployment presets and 35 migration guides.
 Every requested Dokploy blueprint has a migration record. A guide is **not** a
 working deployment: unsupported initialization, host access, static config,
 public UDP, or unresolved image/runtime requirements are listed explicitly.
@@ -39,6 +39,8 @@ Mathesar can use bundled PostgreSQL or an existing database; it requires an
 explicit ReadWriteMany-capable storage class for shared uploaded media.
 Xem has independent PostgreSQL, Redis and storage choices. It defaults to
 bundled MinIO and uses the upstream portable frontend with immutable image pins.
+Outpost provides separate API, delivery and log roles, an explicit migration job,
+and independent bundled or existing PostgreSQL, Redis and RabbitMQ choices.
 `public` enables HTTP ingress only. Additional ports are private; public custom
 TCP requires administrator provisioning on self-hosted Hakopod. Public UDP and
 host-network access are not implicitly introduced by a conversion.
