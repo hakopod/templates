@@ -5663,7 +5663,7 @@
       "arm64"
     ],
     "resource_summary": "2 services with an existing database, or 3 with bundled PostgreSQL; one application worker",
-    "verification": "Earlier AMD64 and ARM64 acceptance verified Mathesar startup, login, media persistence and PostgreSQL TLS with an explicit shared-storage fixture. Automatic local storage acceptance is pending; see the blueprint record.",
+    "verification": "Automatic local media passed native AMD64 and ARM64 named-cluster startup, administrator login, CSV persistence, individual and full-consumer restarts, existing-database reattachment and PostgreSQL TLS acceptance in CI run 37277578543. Public ingress, backup restoration and multi-node RWX remain unverified; see the blueprint record.",
     "providers": [],
     "configuration": "template",
     "site_url_required": true,
