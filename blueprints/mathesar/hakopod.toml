@@ -1,4 +1,4 @@
-# New installation preset. Read README.md and review the shared media storage class.
+# New installation preset. Hakopod creates local media storage automatically.
 schema_version = 1
 name = "template"
 
@@ -157,8 +157,7 @@ content = """
 
 [volumes.media]
 size_gib = 5
-storage_class = "{{config.media-storage-class}}"
-access_mode = "ReadWriteMany"
+access_mode = "ReadWriteOnce"
 
 [networks.default]
 internal = false

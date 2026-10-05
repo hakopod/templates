@@ -2,16 +2,18 @@
 
 Mathesar 0.12.0 with bundled PostgreSQL 17 or a database you already manage, plus
 an HTTP proxy for the application and uploaded media. This is a new-install preset,
-adapted from the upstream production Compose file. The preset passed the AMD64 and ARM64
-development-cluster acceptance described below.
+adapted from the upstream production Compose file. Earlier shared-storage acceptance
+is recorded below; the automatic local-storage path has a separate acceptance gate.
 
 ## Before deployment
 
-1. Choose a storage class that supports `ReadWriteMany` and provide its name as
-   `media-storage-class`. The backend writes media and Caddy reads the same claim.
-   The class must support mounting the claim across the nodes where these services
-   can run and allow UID/GID 1000 to write. A default local-path or ordinary
-   block-storage class does not supply shared media storage.
+1. Keep **Automatic local storage** to have Hakopod create the media claim using
+   the installation's default storage class. The backend writes media and Caddy
+   reads the same claim; Hakopod keeps them on one node. Local-path and ordinary
+   ReadWriteOnce block storage work in this mode. A local disk is not replicated:
+   node or disk loss requires restoring backups. Choose **Existing shared storage**
+   and enter a ReadWriteMany class, such as NFS or EFS, when services should be able
+   to run on different nodes. Both modes require UID/GID 1000 to write media.
 2. Save `database-password` and `secret-key` in this application's scope. Generate
    the database password for a bundled database, or supply the current role's
    password for an existing database. Generate the signing key in either mode.
@@ -36,6 +38,17 @@ requests to `backend`. Only the readiness and liveness endpoints are available
 without that hostname so Kubernetes probes can check the service. PostgreSQL and
 the backend are private. Choosing an existing database removes the bundled
 PostgreSQL service and its claim; the proxy, backend and media claim remain.
+
+Automatic media uses an owned, retained `ReadWriteOnce` claim. The services have
+required same-node placement and one replica each; Kubernetes retains the bound
+volume's node constraints across full restarts. Hakopod does not install an NFS
+server or change the installation's default storage class. A missing default
+storage provisioner must still be configured in the installation.
+
+An explicitly supplied `media-storage-class` continues to select shared storage
+for older API/CLI callers. `media-storage-mode = "local"` ignores inactive shared
+class drafts. Existing deployments retain their reviewed storage mode: changing
+an existing claim's access mode or class requires a deliberate data migration.
 
 ## Using an existing database
 

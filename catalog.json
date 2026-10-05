@@ -5654,7 +5654,7 @@
       "secret-key"
     ],
     "requirements": [
-      "Explicit ReadWriteMany storage class for uploaded media; bundled PostgreSQL storage or an existing PostgreSQL database",
+      "Automatic media storage keeps the backend and proxy on one node. Local disk is not replicated; back up media for node or disk loss.",
       "Stable HTTPS origin; complete the first administrator setup before sharing the URL",
       "Back up PostgreSQL, media and the stable signing key together"
     ],
@@ -5663,7 +5663,7 @@
       "arm64"
     ],
     "resource_summary": "2 services with an existing database, or 3 with bundled PostgreSQL; one application worker",
-    "verification": "AMD64/ARM64 registry manifests checked; native AMD64 and ARM64 named-cluster startup, administrator login, media and database persistence, existing-database reattachment and PostgreSQL TLS acceptance passed in CI run 37184398017. Public ingress, backup restoration and production multi-node RWX remain unverified; see the blueprint acceptance record.",
+    "verification": "Earlier AMD64 and ARM64 acceptance verified Mathesar startup, login, media persistence and PostgreSQL TLS with an explicit shared-storage fixture. Automatic local storage acceptance is pending; see the blueprint record.",
     "providers": [],
     "configuration": "template",
     "site_url_required": true,
@@ -5780,15 +5780,37 @@
         ]
       },
       {
+        "name": "media-storage-mode",
+        "label": "Media storage",
+        "description": "Automatic storage keeps the backend and proxy on one node. Use an existing shared filesystem to allow them on different nodes.",
+        "default": "local",
+        "required": true,
+        "options": [
+          {
+            "value": "local",
+            "label": "Automatic local storage"
+          },
+          {
+            "value": "shared",
+            "label": "Existing shared storage"
+          }
+        ]
+      },
+      {
         "name": "media-storage-class",
-        "label": "Shared media storage class",
-        "description": "Existing ReadWriteMany-capable storage class. Backend and proxy mount the same media claim; ordinary local-path or block storage is not sufficient.",
+        "label": "Shared storage class",
+        "description": "Name of an existing ReadWriteMany storage class, such as NFS or EFS. Local-path and ordinary block storage cannot be used in this mode.",
         "default": "",
-        "required": true
+        "required": true,
+        "when": {
+          "field": "media-storage-mode",
+          "value": "shared"
+        }
       }
     ],
     "notes": [
       "Only the HTTP proxy is public. It serves media from a read-only shared mount and forwards the verified HTTPS origin to the private backend.",
+      "Automatic media storage uses the installation default storage class and keeps the backend and proxy together. With local disk, node or disk loss requires restoring a backup; the volume is not replicated.",
       "The backend uses upstream migrations and WhiteNoise static serving, one worker and a stable scoped signing key. All services run as non-root users.",
       "Media files follow upstream public URL behavior. Possession of an uploaded media URL permits downloading that object; use an appropriate storage policy for sensitive files.",
       "Choose bundled PostgreSQL 17 or an existing database. The existing database is not provisioned, upgraded or deleted by Hakopod; startup applies Mathesar migrations to the database you supply."
