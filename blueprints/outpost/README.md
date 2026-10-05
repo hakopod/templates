@@ -3,8 +3,9 @@
 Outpost v1.6.0 provides an API for tenant-scoped webhook delivery and an embeddable
 customer portal. This preset follows the upstream Kubernetes deployment's separate
 API, delivery and log roles. PostgreSQL, Redis and RabbitMQ can each be bundled or
-supplied independently. Source and image metadata have been inspected; runtime
-acceptance is still pending.
+supplied independently. All eight dependency combinations passed isolated
+Kubernetes runtime acceptance on native AMD64 and ARM64. The tested scope and
+remaining validation limits are recorded below.
 
 ## Before deployment
 
@@ -143,12 +144,36 @@ The three reused dependency digests were independently checked for both native
 architectures. Exact manifest/configuration digests and source-file hashes are
 recorded in [provenance.json](provenance.json).
 
-Source inspection confirmed the explicit migration requirement, distinct service
-roles, Redis TLS options, RabbitMQ URL configuration and health routes. It does
-not prove successful deployment. Migration execution, authenticated API calls,
-tenant and delivery persistence, external dependency combinations, webhook
-delivery, public TLS, portal integration, scaling and restoration remain
-unverified until their acceptance evidence is recorded here.
+On 2026-10-05, [runtime acceptance run 37259478804](https://github.com/hakopod/hakopod/actions/runs/37259478804)
+passed all 16 cases: every bundled/external PostgreSQL, Redis and RabbitMQ
+combination on native AMD64 and ARM64. It tested Hakopod source
+`708e0b1e75b5e69513a856322786519ddc4bc812` with catalog
+`d6467a12881798a379ba6a71e8951fd88ed38049`.
+
+Each case verified completed migrations before server startup, API-key and
+tenant-JWT authorization, delivery to a private HTTP receiver, persisted events
+and attempts, and successful operation after actual service and dependency pod
+replacement. Tenants, existing JWTs and destination signing secrets survived
+the restart; all three dependency PVC identities stayed unchanged. Redis
+connections selected database 0 when bundled and database 2 in external fixtures.
+The test also checked worker health, workload security settings, API-only ingress
+configuration, and cleanup of its owned namespace, secrets and storage.
+
+External dependencies in this matrix are real services with separate names in
+the same isolated namespace. They exercise the external configuration fields
+over private connections with TLS disabled. The receiver checks the delivered
+JSON marker; it does not validate webhook signatures. Stable signing-secret
+retrieval after restart checks credential persistence, without inspecting stored
+ciphertext. These results do not qualify arbitrary providers, public TLS or
+Internet delivery, portal integration, scaling, high availability, backup/restore,
+existing-install upgrades, a production Outpost deployment, or hosted shared Cloud.
+The harness uses Hakopod's planner and Kubernetes deployment client directly;
+dashboard and CLI deployment workflows require their own acceptance.
+
+Per-case job links and log hashes are recorded separately from registry inspection
+in [provenance.json](provenance.json). The engine's
+[runtime acceptance record](https://github.com/hakopod/hakopod/blob/main/docs/outpost-template-runtime.md)
+describes the matrix and checks in more detail.
 
 Sources:
 
