@@ -5830,7 +5830,7 @@
     "providers": [],
     "configuration": "template",
     "site_url_required": false,
-    "site_url_supported": true,
+    "site_url_supported": false,
     "database_config": false,
     "secret_fields": [
       {

@@ -26,7 +26,8 @@ acceptance is still pending.
 5. Connect your application to the API using its bearer key, create tenants and
    destinations, and publish events through the upstream API. If you expose the
    API through a custom domain, verify the domain and finish HTTPS routing before
-   transmitting credentials. A custom site URL is optional in this preset.
+   transmitting credentials. Domain routing is configured after deployment;
+   Outpost has no generic site-URL setting in this preset.
 
 Outpost does not create a standalone administrator account. Its API key is a
 server credential. Your application issues tenant-scoped JWTs for the embedded
