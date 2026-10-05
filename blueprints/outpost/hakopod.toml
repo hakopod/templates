@@ -88,7 +88,7 @@ working_dir = "/home/nonroot"
 termination_grace_seconds = 45
 networks = ["default"]
 args = ["migrate", "apply", "--yes"]
-depends_on = ["db", "redis"]
+depends_on = ["db", "redis", "broker"]
 
 [services.migrate.job]
 timeout_seconds = 600
@@ -107,6 +107,13 @@ REDIS_TLS_ENABLED = "false"
 REDIS_TLS_VERIFY = "true"
 REDIS_CLUSTER_ENABLED = "false"
 REDIS_POOL_SIZE = "4"
+RABBITMQ_EXCHANGE = "outpost"
+RABBITMQ_DELIVERY_QUEUE = "outpost-delivery"
+RABBITMQ_LOG_QUEUE = "outpost-log"
+
+# The upstream migration command validates the complete configuration.
+[services.migrate.secrets.AES_ENCRYPTION_SECRET]
+ref = "encryption-secret"
 
 [services.migrate.secrets.REDIS_PASSWORD]
 ref = "redis-password"
@@ -119,6 +126,15 @@ database = "outpost"
 
 [services.migrate.bindings.POSTGRES_URL.password]
 ref = "database-password"
+
+[services.migrate.bindings.RABBITMQ_SERVER_URL]
+service = "broker"
+protocol = "amqp"
+username = "hakopod"
+database = "outpost"
+
+[services.migrate.bindings.RABBITMQ_SERVER_URL.password]
+ref = "broker-password"
 
 [services.main]
 image = "hookdeck/outpost:v1.6.0@sha256:36ed337bb1edf52b6b0130f87e9eef0b9c03187bfb85d946b4eeab5b7b602a28"
