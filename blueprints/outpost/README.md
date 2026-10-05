@@ -19,9 +19,10 @@ acceptance is still pending.
    RabbitMQ, generate `database-password` and `broker-password`. For existing
    services, supply `database-url` and `broker-url` instead. Only secrets used by
    the selected services are required by the generated plan.
-4. Review the rendered TOML and deploy. The `migrate` job runs
-   `outpost migrate apply --yes`, applying SQL migrations followed by Redis
-   migrations. The API, delivery and log services wait for successful completion.
+4. Review the rendered TOML and deploy. The `migrate` job first retries the
+   upstream migration plan while the dependency connections become available,
+   then runs `outpost migrate apply --yes` once, applying SQL migrations followed
+   by Redis migrations. The API, delivery and log services wait for completion.
    A failed migration blocks the release; inspect the job before retrying.
 5. Connect your application to the API using its bearer key, create tenants and
    destinations, and publish events through the upstream API. If you expose the
@@ -53,6 +54,9 @@ All Outpost roles use the same digest-pinned upstream image and run as UID/GID
 no custom image build or Docker login is needed. The migration job receives
 PostgreSQL, Redis, broker and encryption configuration because the upstream CLI
 validates these settings before applying migrations. It does not receive API keys.
+Planning may initialize upstream's migration bookkeeping table, but never applies
+pending migrations. A failed apply is not retried automatically. Bundled PostgreSQL
+uses the private connection without TLS; external URLs retain their explicit TLS policy.
 All server roles expose upstream `/healthz`. The response also reports worker
 state: upstream can return HTTP 200 while a worker is `degraded` and retrying
 within its recovery budget, so monitor the response status as well as HTTP status.

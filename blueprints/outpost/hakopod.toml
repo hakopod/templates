@@ -87,7 +87,19 @@ read_only_root_filesystem = true
 working_dir = "/home/nonroot"
 termination_grace_seconds = 45
 networks = ["default"]
-args = ["migrate", "apply", "--yes"]
+command = ["/bin/sh", "-ec"]
+# Plan connects to both stores before applying migrations. Only plan is retried.
+# The image copies BusyBox as /bin/sh without separate applet links.
+args = ['''
+attempt=1
+until /usr/local/bin/outpost migrate plan; do
+  [ "$attempt" -lt 12 ] || exit 1
+  echo "Migration preflight attempt $attempt failed; retrying dependency checks."
+  attempt=$((attempt + 1))
+  (exec -a busybox /bin/sh sleep 5)
+done
+exec /usr/local/bin/outpost migrate apply --yes
+''']
 depends_on = ["db", "redis", "broker"]
 
 [services.migrate.job]
@@ -95,6 +107,7 @@ timeout_seconds = 600
 retries = 0
 
 [services.migrate.env]
+PGSSLMODE = "disable"
 GOMAXPROCS = "1"
 GOMEMLIMIT = "384MiB"
 LOG_LEVEL = "info"
@@ -154,6 +167,7 @@ args = ["serve"]
 depends_on = ["migrate", "db", "redis", "broker"]
 
 [services.main.env]
+PGSSLMODE = "disable"
 GOMAXPROCS = "1"
 GOMEMLIMIT = "192MiB"
 LOG_LEVEL = "info"
@@ -226,6 +240,7 @@ args = ["serve"]
 depends_on = ["migrate", "db", "redis", "broker"]
 
 [services.delivery.env]
+PGSSLMODE = "disable"
 GOMAXPROCS = "1"
 GOMEMLIMIT = "384MiB"
 LOG_LEVEL = "info"
@@ -298,6 +313,7 @@ args = ["serve"]
 depends_on = ["migrate", "db", "redis", "broker"]
 
 [services.log.env]
+PGSSLMODE = "disable"
 GOMAXPROCS = "1"
 GOMEMLIMIT = "192MiB"
 LOG_LEVEL = "info"
