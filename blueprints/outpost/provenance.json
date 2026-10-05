@@ -3,7 +3,7 @@
   "upstream_release": "v1.6.0",
   "upstream_commit": "27ebb3587ee974e55cf443c643b087db7bf9216e",
   "upstream_license": "Apache-2.0",
-  "method": "Anonymous registry HTTP manifest and configuration inspection; no image layers downloaded or containers run.",
+  "method": "Registry inspection only: anonymous HTTP manifest and configuration inspection, without downloading image layers or running containers. Runtime acceptance is recorded separately in runtime_acceptance.",
   "images": [
     {
       "reference": "hookdeck/outpost:v1.6.0",
@@ -237,7 +237,226 @@
       "url": "https://github.com/hookdeck/outpost/blob/27ebb3587ee974e55cf443c643b087db7bf9216e/images/outpost-logo-white.svg"
     }
   ],
-  "runtime_verified": false,
+  "runtime_verified": true,
+  "runtime_acceptance": {
+    "checked_at": "2026-10-05",
+    "status": "passed",
+    "scope": "Isolated Kubernetes runtime acceptance on native AMD64 and ARM64, covering all eight bundled/external PostgreSQL, Redis and RabbitMQ combinations.",
+    "source_commit": "708e0b1e75b5e69513a856322786519ddc4bc812",
+    "catalog_commit": "d6467a12881798a379ba6a71e8951fd88ed38049",
+    "workflow": ".github/workflows/outpost-runtime.yml",
+    "workflow_run_id": 37259478804,
+    "workflow_run_url": "https://github.com/hakopod/hakopod/actions/runs/37259478804",
+    "run_attempt": 1,
+    "test": "TestLiveOutpostTemplate",
+    "test_source_url": "https://github.com/hakopod/hakopod/blob/708e0b1e75b5e69513a856322786519ddc4bc812/internal/cluster/live_outpost_template_test.go",
+    "cluster_context": "k3d-hakopod-dev",
+    "external_fixture_scope": "Real, separately named PostgreSQL, Redis and RabbitMQ services in the same isolated namespace, reached through external configuration fields. TLS is disabled on these private fixture connections.",
+    "delivery_scope": "A private same-namespace HTTP receiver verifies the JSON marker. API calls use Kubernetes port forwarding; public ingress and TLS are not exercised.",
+    "mode_bit_order": [
+      "postgresql",
+      "redis",
+      "rabbitmq"
+    ],
+    "mode_values": {
+      "0": "bundled",
+      "1": "external development fixture"
+    },
+    "verified": [
+      "Successful migration jobs on revisions 1 and 2 before API, delivery and log services start.",
+      "API-key authentication and tenant-JWT authorization checks.",
+      "Private HTTP delivery before and after restart, persisted event data and identical prior attempt ID.",
+      "Tenant, existing JWT and destination signing secret remain usable after actual service and dependency pod replacement.",
+      "All three dependency PVC identities remain bound and unchanged; a Redis checkpoint value survives restart.",
+      "Initialized API Redis connections select database 0 for bundled Redis and database 2 for external fixtures.",
+      "Expected digest pins, non-root security contexts, read-only root filesystems where configured, and disabled service-account token automount.",
+      "Healthy worker responses and API-only ingress resource routing.",
+      "Owned namespace, scoped secrets, claims and dynamic volumes are reclaimed."
+    ],
+    "not_verified": [
+      "Arbitrary external providers, private-network routing, provider TLS or public HTTPS.",
+      "Internet webhook delivery or webhook signature/HMAC validation.",
+      "Direct at-rest ciphertext inspection or encryption-key rotation.",
+      "Portal integration, throughput, scaling, high availability or failure recovery.",
+      "Backup/restore correctness or upgrade/migration of an existing installation.",
+      "Production Outpost deployment or hosted shared-Cloud compatibility.",
+      "End-to-end dashboard or CLI deployment workflow; the harness uses the planner and Kubernetes deployment client."
+    ],
+    "general_ci": {
+      "run_id": 37259176333,
+      "url": "https://github.com/hakopod/hakopod/actions/runs/37259176333",
+      "source_commit": "708e0b1e75b5e69513a856322786519ddc4bc812",
+      "conclusion": "success",
+      "jobs": [
+        "go",
+        "dashboard",
+        "sdk"
+      ]
+    },
+    "log_digest_method": "SHA-256 of each gh api repos/hakopod/hakopod/actions/jobs/{job_id}/logs response written to stdout. GitHub logs and artifacts remain subject to repository retention.",
+    "cases": [
+      {
+        "mode": "000",
+        "platform": "linux/amd64",
+        "runner": "ubuntu-24.04",
+        "job_id": 111603470469,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470469",
+        "conclusion": "success",
+        "observed_redis_database": 0,
+        "job_log_sha256": "e4f6815907e281dd8ac497c7c18e0ff04f98f45bb22530956136bea5c239e8ed"
+      },
+      {
+        "mode": "001",
+        "platform": "linux/amd64",
+        "runner": "ubuntu-24.04",
+        "job_id": 111603470585,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470585",
+        "conclusion": "success",
+        "observed_redis_database": 0,
+        "job_log_sha256": "f0d4d1324a7b988ce35e2b5ddb5103a2dedfe198d26a85a135c284da66239b6f"
+      },
+      {
+        "mode": "010",
+        "platform": "linux/amd64",
+        "runner": "ubuntu-24.04",
+        "job_id": 111603470639,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470639",
+        "conclusion": "success",
+        "observed_redis_database": 2,
+        "job_log_sha256": "ff7ca6ab2affe4f41575279d6f577d6edc4d0c0b6cba6b3bd072130c9303a508"
+      },
+      {
+        "mode": "011",
+        "platform": "linux/amd64",
+        "runner": "ubuntu-24.04",
+        "job_id": 111603470582,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470582",
+        "conclusion": "success",
+        "observed_redis_database": 2,
+        "job_log_sha256": "1c08de3bf0c04782665eb4a30783ce8f685d9b34ab3fbb6f3f8d4446e88d0420"
+      },
+      {
+        "mode": "100",
+        "platform": "linux/amd64",
+        "runner": "ubuntu-24.04",
+        "job_id": 111603470564,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470564",
+        "conclusion": "success",
+        "observed_redis_database": 0,
+        "job_log_sha256": "81f5135a4bb416185f8189829bdb4c5c8466276cde8f565d3ee34c6819f53526"
+      },
+      {
+        "mode": "101",
+        "platform": "linux/amd64",
+        "runner": "ubuntu-24.04",
+        "job_id": 111603470574,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470574",
+        "conclusion": "success",
+        "observed_redis_database": 0,
+        "job_log_sha256": "fbf67c929271b9dd1d2b00cabe8c1122d7b6039b5d117520ad97cedb390ead27"
+      },
+      {
+        "mode": "110",
+        "platform": "linux/amd64",
+        "runner": "ubuntu-24.04",
+        "job_id": 111603470695,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470695",
+        "conclusion": "success",
+        "observed_redis_database": 2,
+        "job_log_sha256": "7d96f327661213c2339a300bf5df64cf8c7019bbc318f448ec89b6c30ee05db1"
+      },
+      {
+        "mode": "111",
+        "platform": "linux/amd64",
+        "runner": "ubuntu-24.04",
+        "job_id": 111603470642,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470642",
+        "conclusion": "success",
+        "observed_redis_database": 2,
+        "job_log_sha256": "fc15fbc9e86a1070cfc23bb6f5a996e6e84288af38738e711ebab8d9e7ab3a0a"
+      },
+      {
+        "mode": "000",
+        "platform": "linux/arm64",
+        "runner": "ubuntu-24.04-arm",
+        "job_id": 111603470636,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470636",
+        "conclusion": "success",
+        "observed_redis_database": 0,
+        "job_log_sha256": "479379ac7384db64dc63e046746098ef3c8579e015030b83d6f6d0baafcd64db"
+      },
+      {
+        "mode": "001",
+        "platform": "linux/arm64",
+        "runner": "ubuntu-24.04-arm",
+        "job_id": 111603470559,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470559",
+        "conclusion": "success",
+        "observed_redis_database": 0,
+        "job_log_sha256": "0138cc1967944c789f7cdb8570aacefc8f9751db62b8d26de4f219fee4eb870e"
+      },
+      {
+        "mode": "010",
+        "platform": "linux/arm64",
+        "runner": "ubuntu-24.04-arm",
+        "job_id": 111603470570,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470570",
+        "conclusion": "success",
+        "observed_redis_database": 2,
+        "job_log_sha256": "d0ec14b564b0c80ade424fb2d83a3d86ea640a07918744265593e7128166df1a"
+      },
+      {
+        "mode": "011",
+        "platform": "linux/arm64",
+        "runner": "ubuntu-24.04-arm",
+        "job_id": 111603470637,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470637",
+        "conclusion": "success",
+        "observed_redis_database": 2,
+        "job_log_sha256": "3ff5c84427e2a81a2dfbc25ff5aa9374bd568592caa412e1388dddfcedc97677"
+      },
+      {
+        "mode": "100",
+        "platform": "linux/arm64",
+        "runner": "ubuntu-24.04-arm",
+        "job_id": 111603470609,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470609",
+        "conclusion": "success",
+        "observed_redis_database": 0,
+        "job_log_sha256": "9cd3615c211199fb9b81dd339510b878f639bc6b3968c9ac3eb980bee5e0ac09"
+      },
+      {
+        "mode": "101",
+        "platform": "linux/arm64",
+        "runner": "ubuntu-24.04-arm",
+        "job_id": 111603470718,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603470718",
+        "conclusion": "success",
+        "observed_redis_database": 0,
+        "job_log_sha256": "2e0484652d68734a0f82995a21ebe2774c49e4b61edfdce3086f663084f04199"
+      },
+      {
+        "mode": "110",
+        "platform": "linux/arm64",
+        "runner": "ubuntu-24.04-arm",
+        "job_id": 111603471497,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603471497",
+        "conclusion": "success",
+        "observed_redis_database": 2,
+        "job_log_sha256": "589b29fe12c88855b82116bb8244bc2dbd426a07105492214ced52496cc90acc"
+      },
+      {
+        "mode": "111",
+        "platform": "linux/arm64",
+        "runner": "ubuntu-24.04-arm",
+        "job_id": 111603471421,
+        "url": "https://github.com/hakopod/hakopod/actions/runs/37259478804/job/111603471421",
+        "conclusion": "success",
+        "observed_redis_database": 2,
+        "job_log_sha256": "9e83bbc7040f22f8086e98f674023f0c686db7cfb01e14a0ddeb3680d0ebbb81"
+      }
+    ]
+  },
   "dependency_source_files": [
     {
       "path": "postgres.Dockerfile",
