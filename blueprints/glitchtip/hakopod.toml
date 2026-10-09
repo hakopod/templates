@@ -73,6 +73,10 @@ ref = 'database-url'
 [services.main.secrets.SECRET_KEY]
 ref = 'secret-key'
 
+[services.main.database_client_profiles]
+DATABASE_URL = 'libpq-postgres-url-v1'
+VALKEY_URL = 'glitchtip-valkey-v2.1-v1'
+
 # ----------------------------------------------------------------- postgres --
 
 [services.postgres]

@@ -17,6 +17,10 @@ The server applies its own locked database migrations before it starts the HTTP
 listener. The preset allows up to 10 minutes for that startup and keeps the
 upstream migration process intact.
 
+When the managed connection flow replaces `DB_CONNECTION_URI` or `REDIS_URL`,
+Hakopod also loads the managed database CA for this pinned application version.
+Hostname and certificate verification stay enabled.
+
 ## Credentials
 
 - `database-password`: Database password. Use at least 16 characters. Initialization values do not rotate a password in an existing database.
