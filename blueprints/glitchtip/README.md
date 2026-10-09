@@ -19,10 +19,9 @@ The all-in-one process applies migrations before its HTTP listener is ready.
 The preset allows up to 10 minutes for startup without splitting that process
 or changing the volume ownership model.
 
-The managed connection flow supports PostgreSQL with hostname and certificate
-verification. GlitchTip 6.1's pinned Valkey client cannot load Hakopod's private
-CA, so Hakopod rejects a managed Redis replacement. The bundled Valkey remains
-supported.
+The managed connection flow supports PostgreSQL and Redis with hostname and
+certificate verification. For Redis, Hakopod loads the image's system CA bundle
+and the managed database CA together for GlitchTip's pinned Valkey client.
 
 ## Requirements
 
