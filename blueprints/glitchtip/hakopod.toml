@@ -23,6 +23,7 @@ port = 8080
 public = true
 size = 'large'
 replicas = 1
+startup_timeout_seconds = 600
 depends_on = ['postgres', 'valkey']
 networks = ['default']
 

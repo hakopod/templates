@@ -13,6 +13,10 @@ Self-hosted secrets workspace with private PostgreSQL and Redis.
 - This is the Infisical server; Hakopod's optional operator integration is configured separately
 - After deployment, open Custom domains, verify the site URL hostname, and apply routing and TLS before using login or callbacks
 
+The server applies its own locked database migrations before it starts the HTTP
+listener. The preset allows up to 10 minutes for that startup and keeps the
+upstream migration process intact.
+
 ## Credentials
 
 - `database-password`: Database password. Use at least 16 characters. Initialization values do not rotate a password in an existing database.
