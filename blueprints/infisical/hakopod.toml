@@ -64,6 +64,7 @@ size = 'compute'
 replicas = 1
 update_strategy = ''
 healthcheck = '/api/status'
+startup_timeout_seconds = 600
 command = []
 args = []
 depends_on = ['db', 'redis']
