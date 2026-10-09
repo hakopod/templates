@@ -78,6 +78,10 @@ NODE_OPTIONS = '--max-old-space-size=1024'
 SITE_URL = 'https://catalog.example.test'
 TELEMETRY_ENABLED = 'false'
 
+[services.main.database_client_profiles]
+DB_CONNECTION_URI = 'infisical-postgres-v1'
+REDIS_URL = 'node-extra-ca-v1'
+
 [services.main.secrets]
 [services.main.secrets.AUTH_SECRET]
 ref = 'auth-secret'
