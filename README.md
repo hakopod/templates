@@ -4,7 +4,7 @@ Shared catalog for the open-source Hakopod engine and the Hakopod website.
 Both consumers pin this repository as a Git submodule. The server embeds the
 catalog at build time; installations do not execute remote template downloads.
 
-Currently 79 entries: 44 deployment presets and 35 migration guides.
+Currently 80 entries: 44 deployment presets and 36 migration guides.
 Every requested Dokploy blueprint has a migration record. A guide is **not** a
 working deployment: unsupported initialization, host access, static config,
 public UDP, or unresolved image/runtime requirements are listed explicitly.

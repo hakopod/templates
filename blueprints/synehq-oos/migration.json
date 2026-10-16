@@ -1,0 +1,10 @@
+{
+  "status": "blocked",
+  "upstream_source": "https://github.com/SyneHQ/synehq-oos/blob/ed0976531fb244bfab04c532e463858086609889/docs/hakopod-integration.md",
+  "blockers": [
+    "Kelvo query containment needs Linux cgroup v2 delegation and a seccomp profile permitting clone3; upstream reports its restricted Kubernetes pod probe failed, so Kubernetes deployment is unqualified.",
+    "OOS_HAKOPOD_KEY_FILE must be a mode-0600 file readable by user 65532; Hakopod secret references are delivered as environment variables, so the key is not yet usable.",
+    "The /healthz endpoint answers loopback requests only; no orchestrator HTTP probe is configured."
+  ],
+  "runtime_verified": false
+}
