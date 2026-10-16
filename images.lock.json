@@ -1536,5 +1536,16 @@
     "image_config_inspected": true,
     "checked_at": "2026-10-05",
     "source_commit": "27ebb3587ee974e55cf443c643b087db7bf9216e"
+  },
+  {
+    "reference": "ghcr.io/synehq/synehq-oos:sha-ed0976531fb244bfab04c532e463858086609889-hakopod",
+    "digest": "sha256:4770e40aff68d64555ac69bd91854cdb220f4874979d2493c4baf63b76a9a8f6",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": false,
+    "checked_at": "2026-10-16"
   }
 ]

@@ -6054,5 +6054,56 @@
     "image": "hookdeck/outpost:v1.6.0@sha256:36ed337bb1edf52b6b0130f87e9eef0b9c03187bfb85d946b4eeab5b7b602a28",
     "logo": "/template-assets/outpost/logo.svg",
     "logo_background": "dark"
+  },
+  {
+    "id": "synehq-oos",
+    "name": "SyneHQ OOS",
+    "category": "database",
+    "description": "Open-source database explorer for the Hakopod /synehq integration.",
+    "license": "Apache-2.0",
+    "upstream": "https://github.com/SyneHQ/synehq-oos",
+    "required_secrets": [
+      "hakopod-explorer-key"
+    ],
+    "requirements": [
+      "Kelvo query containment needs Linux cgroup v2 delegation and a seccomp profile permitting clone3; upstream reports its restricted Kubernetes pod probe failed, so Kubernetes deployment is unqualified.",
+      "OOS_HAKOPOD_KEY_FILE must be a mode-0600 file readable by user 65532; Hakopod secret references are delivered as environment variables, so the key is not yet usable.",
+      "The /healthz endpoint answers loopback requests only; no orchestrator HTTP probe is configured.",
+      "Use one instance per Hakopod project and environment with fresh metadata; set OOS_HAKOPOD_SCOPE to the exact target scope string."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 bounded service; medium main profile; query workers share the service limits",
+    "verification": "Image digest and amd64/arm64 registry platforms checked; Kubernetes containment and runtime acceptance pending.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": true,
+    "site_url_supported": true,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "hakopod-explorer-key",
+        "description": "Separate 32-byte Hakopod explorer key encoded as 64 lowercase hex characters. Do not reuse session, encryption, TLS or Kelvo keys.",
+        "format": "hex",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/SyneHQ/synehq-oos",
+      "https://github.com/SyneHQ/synehq-oos/blob/ed0976531fb244bfab04c532e463858086609889/docs/hakopod-integration.md"
+    ],
+    "deployable": false,
+    "config_fields": [],
+    "notes": [
+      "Migration guide only: not enabled for deployment.",
+      "Run on a qualified Linux Docker host with deploy/run-container.sh until Kubernetes containment is qualified."
+    ],
+    "docs_url": "https://github.com/SyneHQ/synehq-oos/blob/main/docs/container.md",
+    "image": "ghcr.io/synehq/synehq-oos:sha-ed0976531fb244bfab04c532e463858086609889-hakopod@sha256:4770e40aff68d64555ac69bd91854cdb220f4874979d2493c4baf63b76a9a8f6",
+    "port": 3100,
+    "logo": "/template-assets/synehq-oos/logo.png"
   }
 ]
