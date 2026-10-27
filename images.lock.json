@@ -1681,5 +1681,27 @@
     "source": "OCI registry manifest inspection",
     "image_config_inspected": false,
     "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "hakopod/catalog-it-tools:2024.10.22-hakopod.1",
+    "digest": "sha256:cc60b5da07818aa883aaff4d76fb4948d04be029a44c88cf2edcd6cc4ea4333e",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": false,
+    "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "hakopod/catalog-excalidraw:20260506-hakopod.1",
+    "digest": "sha256:e7441722e0039e5796d55d04f8cd13a755ed8bdeacd0d1be01e308f38541d391",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": false,
+    "checked_at": "2026-10-27"
   }
 ]

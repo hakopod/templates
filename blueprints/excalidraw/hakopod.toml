@@ -1,9 +1,8 @@
-# Candidate: becomes hakopod.toml once CI publishes the wrapper image and the digest replaces PENDING_PUBLISH.
 schema_version = 1
 name = "template"
 
 [services.main]
-image = "ghcr.io/hakopod/catalog-excalidraw:20260506-hakopod.1@sha256:PENDING_PUBLISH"
+image = "ghcr.io/hakopod/catalog-excalidraw:20260506-hakopod.1@sha256:e7441722e0039e5796d55d04f8cd13a755ed8bdeacd0d1be01e308f38541d391"
 port = 8080
 run_as_user = 101
 run_as_group = 101
