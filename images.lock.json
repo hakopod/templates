@@ -1670,5 +1670,16 @@
     "source": "https://hub.docker.com/v2/repositories/directus/directus/tags/12.6.0",
     "image_config_inspected": false,
     "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "apache/kafka:4.4.0",
+    "digest": "sha256:833b867a9585a141da455dc2b57431c65cbccb27f11c91f694444cca9f777e0f",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": false,
+    "checked_at": "2026-10-27"
   }
 ]
