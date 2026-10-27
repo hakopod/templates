@@ -6115,17 +6115,16 @@
     "upstream": "https://github.com/CorentinTh/it-tools",
     "required_secrets": [],
     "requirements": [
-      "The official image runs nginx as root on port 80 and fails as a non-root user, so Hakopod builds a wrapper from images/it-tools/Dockerfile: the upstream static site on nginxinc/nginx-unprivileged (UID 101, port 8080).",
-      "The preset becomes deployable once the wrapper image ghcr.io/hakopod/catalog-it-tools:2024.10.22-hakopod.1 is published and its digest replaces PENDING_PUBLISH in the candidate."
+      "The official image runs nginx as root on port 80 and fails as a non-root user, so Hakopod builds a wrapper from images/it-tools/Dockerfile: the upstream static site on nginxinc/nginx-unprivileged (UID 101, port 8080)."
     ],
     "architectures": [
       "amd64",
       "arm64"
     ],
     "resource_summary": "1 service; small profile; static files served by nginx on port 8080",
-    "verification": "Image digests and amd64/arm64 platforms checked. Official image failed locally as UID 101 (permission denied on /var/cache/nginx). The wrapper is untested: the catalog-images.yml workflow builds both platforms and smoke-tests them (UID 101, no capabilities, read-only root with /tmp tmpfs, / returns 200 with a content marker) in GitHub Actions, and that run has not happened yet.",
+    "verification": "Wrapper image published by the catalog-images workflow in GitHub Actions; its multi-arch index digest and amd64/arm64 platforms checked. That workflow smoke-tests each platform (UID 101, no capabilities, read-only root with /tmp tmpfs, / returns 200 with a content marker). The template smoke workflow in GitHub Actions starts the preset itself; not tested on Kubernetes.",
     "providers": [],
-    "configuration": "guide",
+    "configuration": "template",
     "site_url_required": false,
     "site_url_supported": false,
     "database_config": false,
@@ -6134,12 +6133,12 @@
       "https://github.com/CorentinTh/it-tools#readme",
       "https://github.com/CorentinTh/it-tools/blob/main/Dockerfile"
     ],
-    "deployable": false,
+    "deployable": true,
     "config_fields": [],
-    "notes": [
-      "Candidate until the wrapper image is published by the catalog-images workflow."
-    ],
-    "docs_url": "https://github.com/CorentinTh/it-tools#readme"
+    "notes": [],
+    "docs_url": "https://github.com/CorentinTh/it-tools#readme",
+    "image": "ghcr.io/hakopod/catalog-it-tools:2024.10.22-hakopod.1@sha256:cc60b5da07818aa883aaff4d76fb4948d04be029a44c88cf2edcd6cc4ea4333e",
+    "port": 8080
   },
   {
     "id": "excalidraw",
@@ -6151,7 +6150,6 @@
     "required_secrets": [],
     "requirements": [
       "The official image runs nginx as root on port 80 and fails as a non-root user, so Hakopod builds a wrapper from images/excalidraw/Dockerfile: the upstream static site on nginxinc/nginx-unprivileged (UID 101, port 8080).",
-      "The preset becomes deployable once the wrapper image ghcr.io/hakopod/catalog-excalidraw:20260506-hakopod.1 is published and its digest replaces PENDING_PUBLISH in the candidate.",
       "Upstream publishes only a rolling latest tag; the wrapper is labelled by the Docker Hub push date of the pinned digest (2026-05-06), not a release version. Real-time collaboration needs a separate excalidraw-room service and is not included."
     ],
     "architectures": [
@@ -6159,9 +6157,9 @@
       "arm64"
     ],
     "resource_summary": "1 service; small profile; static files served by nginx on port 8080",
-    "verification": "Image digests and amd64/arm64 platforms checked. Official image failed locally as UID 101 (permission denied on /var/cache/nginx). The wrapper is untested: the catalog-images.yml workflow builds both platforms and smoke-tests them (UID 101, no capabilities, read-only root with /tmp tmpfs, / returns 200 with a content marker) in GitHub Actions, and that run has not happened yet.",
+    "verification": "Wrapper image published by the catalog-images workflow in GitHub Actions; its multi-arch index digest and amd64/arm64 platforms checked. That workflow smoke-tests each platform (UID 101, no capabilities, read-only root with /tmp tmpfs, / returns 200 with a content marker). The template smoke workflow in GitHub Actions starts the preset itself; not tested on Kubernetes.",
     "providers": [],
-    "configuration": "guide",
+    "configuration": "template",
     "site_url_required": false,
     "site_url_supported": false,
     "database_config": false,
@@ -6170,12 +6168,12 @@
       "https://github.com/excalidraw/excalidraw#quick-start",
       "https://github.com/excalidraw/excalidraw/blob/master/Dockerfile"
     ],
-    "deployable": false,
+    "deployable": true,
     "config_fields": [],
-    "notes": [
-      "Candidate until the wrapper image is published by the catalog-images workflow."
-    ],
-    "docs_url": "https://github.com/excalidraw/excalidraw#quick-start"
+    "notes": [],
+    "docs_url": "https://github.com/excalidraw/excalidraw#quick-start",
+    "image": "ghcr.io/hakopod/catalog-excalidraw:20260506-hakopod.1@sha256:e7441722e0039e5796d55d04f8cd13a755ed8bdeacd0d1be01e308f38541d391",
+    "port": 8080
   },
   {
     "id": "freshrss",
