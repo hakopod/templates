@@ -6583,18 +6583,45 @@
       "Internal only: apps in the same Hakopod project and environment connect to main:9092. Hakopod forbids public TCP, so Kafka is not reachable from outside the cluster.",
       "No authentication: PLAINTEXT listener, no SASL and no TLS. This is acceptable only because the service is cluster-internal.",
       "Persistent storage; one broker, so replication factors are 1 and there is no fault tolerance",
-      "JVM heap limited to 256 MiB initial and 512 MiB maximum; no Kafka UI is bundled, because it would need a public route and has no authentication by default"
+      "Memory depends on the Kafka heap option (default 1 GiB, up to 4 GiB). The compute profile limits the container to 4916 MiB and requests 2458 MiB, which covers the 4 GiB heap plus JVM overhead; the node must have that much free memory. Choose 512 MiB or 1 GiB on small hosts only if the node can still schedule the 2458 MiB request. No Kafka UI is bundled, because it would need a public route and has no authentication by default"
     ],
     "architectures": [
       "amd64",
       "arm64"
     ],
-    "resource_summary": "512 MiB requested; 1 GiB limit; JVM heap 256-512 MiB; 5 GiB data volume",
+    "resource_summary": "Compute profile: 2458 MiB requested; 4916 MiB limit. JVM heap is set by the Kafka heap option (512 MiB to 4 GiB, default 1 GiB); 5 GiB data volume",
     "verification": "Image digest and amd64/arm64 platforms checked. Not yet run: the template smoke workflow in GitHub Actions starts it under the pod security options and checks that port 9092 stays open.",
     "providers": [],
     "configuration": "template",
     "site_url_required": false,
     "deployable": true,
+    "config_fields": [
+      {
+        "name": "heap",
+        "label": "Kafka heap",
+        "default": "1g",
+        "required": true,
+        "description": "JVM heap for the broker. Container memory is fixed by the compute profile (4916 MiB limit); pick a size the node can host.",
+        "options": [
+          {
+            "value": "512m",
+            "label": "512 MiB (small hosts)"
+          },
+          {
+            "value": "1g",
+            "label": "1 GiB"
+          },
+          {
+            "value": "2g",
+            "label": "2 GiB"
+          },
+          {
+            "value": "4g",
+            "label": "4 GiB"
+          }
+        ]
+      }
+    ],
     "site_url_supported": false,
     "database_config": false,
     "secret_fields": [],

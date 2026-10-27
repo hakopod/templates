@@ -9,7 +9,7 @@ Kafka is internal only. Apps in the same Hakopod project and environment connect
 ## Requirements
 
 - Persistent storage; one replica; one broker, so every replication factor is 1 and there is no fault tolerance
-- JVM heap limited to 256 MiB initial and 512 MiB maximum; the large size profile suits a 4 GiB host
+- JVM heap is the `Kafka heap` option: 512m, 1g (default), 2g or 4g, applied as both initial and maximum heap. The service size is fixed per preset, so it uses the compute profile (2458 MiB requested, 4916 MiB limit), enough for the 4g heap plus JVM overhead. The node must be able to schedule that request; the heap option does not shrink it.
 - No authentication: the listener is PLAINTEXT with no SASL and no TLS. This is acceptable only because the service is cluster-internal. Do not expose it.
 
 ## Cluster ID
