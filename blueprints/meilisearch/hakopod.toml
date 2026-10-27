@@ -1,0 +1,50 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 10001
+run_as_group = 0
+fs_group = 10001
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/getmeili/meilisearch:v1.56.0@sha256:1f578fa865f8251894b3bf38d6668d6209a3f451f8f65ab953e129d4c1db5ef4'
+port = 7700
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = '/health'
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/meili_data'
+size_gib = 5
+storage_class = ''
+
+[services.main.env]
+MEILI_ENV = 'production'
+MEILI_NO_ANALYTICS = 'true'
+
+[services.main.secrets]
+[services.main.secrets.MEILI_MASTER_KEY]
+ref = 'master-key'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

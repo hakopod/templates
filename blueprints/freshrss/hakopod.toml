@@ -1,0 +1,57 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 1000
+run_as_group = 0
+fs_group = 1000
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+image = 'docker.io/freshrss/freshrss:1.30.4@sha256:af44385229541bee24aa9148d0ff8f3b40e095373c63a2c0f74e09a27d3c59df'
+port = 8080
+public_tcp = []
+ports = []
+public = true
+size = 'small'
+replicas = 1
+update_strategy = ''
+healthcheck = '/i/'
+command = ['sh', '-c', "mkdir -p /tmp/run /tmp/lock /tmp/log && cp -aL /etc/apache2 /tmp/apache2 && sed -i 's/^Listen .*/Listen 8080/' /tmp/apache2/sites-enabled/FreshRSS.Apache.conf && php -f cli/prepare.php >/dev/null; exec apache2 -d /tmp/apache2 -f /tmp/apache2/apache2.conf -D FOREGROUND"]
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/var/www/FreshRSS/data'
+size_gib = 5
+storage_class = ''
+
+[[services.main.temporary_mounts]]
+mount_path = '/tmp'
+size_mib = 128
+memory = false
+
+[services.main.env]
+APACHE_CONFDIR = '/tmp/apache2'
+APACHE_LOCK_DIR = '/tmp/lock'
+APACHE_LOG_DIR = '/tmp/log'
+APACHE_PID_FILE = '/tmp/run/apache2.pid'
+APACHE_RUN_DIR = '/tmp/run'
+APACHE_RUN_GROUP = '#0'
+APACHE_RUN_USER = '#1000'
+TZ = 'UTC'
+
+[services.main.secrets]
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

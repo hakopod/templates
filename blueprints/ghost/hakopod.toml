@@ -1,0 +1,100 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.db]
+architecture = ''
+run_as_user = 999
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/library/mysql:8.4.11@sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a'
+port = 3306
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['--socket=/tmp/mysql.sock', '--pid-file=/tmp/mysql.pid', '--innodb-buffer-pool-size=32M', '--innodb-log-buffer-size=4M', '--max-connections=12', '--performance-schema=OFF', '--key-buffer-size=8M', '--temptable-max-ram=16M', '--mysqlx=0']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.db.volume]
+mount_path = '/var/lib/mysql'
+size_gib = 5
+storage_class = ''
+
+[services.db.env]
+MYSQL_DATABASE = 'ghost'
+MYSQL_USER = 'ghost'
+
+[services.db.secrets]
+[services.db.secrets.MYSQL_PASSWORD]
+ref = 'database-password'
+
+[services.db.secrets.MYSQL_ROOT_PASSWORD]
+ref = 'database-root-password'
+
+
+[services.main]
+architecture = ''
+run_as_user = 1000
+run_as_group = 0
+fs_group = 1000
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/library/ghost:6.72.0@sha256:c0d83a8d45222b3f37a897572000050ab8e6e507d3eee5a35b3ef8345c7293d6'
+port = 2368
+public_tcp = []
+ports = []
+public = true
+size = 'large'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = ['db']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/var/lib/ghost/content'
+size_gib = 5
+storage_class = ''
+
+[services.main.env]
+NODE_ENV = 'production'
+database__client = 'mysql'
+database__connection__database = 'ghost'
+database__connection__host = 'db'
+database__connection__user = 'ghost'
+url = 'https://catalog.example.test'
+
+[services.main.secrets]
+[services.main.secrets.database__connection__password]
+ref = 'database-password'
+
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
