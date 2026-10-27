@@ -22,8 +22,8 @@ size = 'compute'
 replicas = 1
 update_strategy = ''
 healthcheck = ''
-command = []
-args = []
+command = ['sh', '-ec']
+args = ["domain=$(awk '/^search/{for(i=2;i<=NF;i++) if($i ~ /^hp-[^.]+\\.svc\\./){print $i; exit}}' /etc/resolv.conf)\nhost=main${domain:+.$domain}\nexport KAFKA_ADVERTISED_LISTENERS=\"PLAINTEXT://$host:9092\"\nexec /etc/kafka/docker/run"]
 depends_on = []
 networks = ['default']
 restart_nonce = ''
@@ -37,7 +37,6 @@ storage_class = ''
 
 [services.main.env]
 CLUSTER_ID = 'MkU3OEVBNTcwNTJENDM2Qk'
-KAFKA_ADVERTISED_LISTENERS = 'PLAINTEXT://main:9092'
 KAFKA_CONTROLLER_LISTENER_NAMES = 'CONTROLLER'
 KAFKA_CONTROLLER_QUORUM_VOTERS = '1@localhost:9093'
 KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS = '0'
