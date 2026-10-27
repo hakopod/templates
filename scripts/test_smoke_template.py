@@ -25,7 +25,7 @@ class T(unittest.TestCase):
     def test_config_fixture(self):
         row = {"config_fields": [{"name": "admin_email", "required": True}, {"name": "x", "required": True},
                                  {"name": "tz", "default": "UTC", "required": True}]}
-        self.assertEqual(st.config_values(row), {"admin_email": "admin@example.test", "x": "fixture", "tz": "UTC"})
+        self.assertEqual(st.config_values(row), {"admin_email": "admin@example.com", "x": "fixture", "tz": "UTC"})
 
     def test_secrets_shared_per_ref(self):
         row, spec = load("n8n-with-postgres")
@@ -76,8 +76,8 @@ class T(unittest.TestCase):
 
     def test_fixture_matches_field(self):
         f = st.fixture
-        self.assertEqual(f({"name": "admin_email"}), "admin@example.test")
-        self.assertEqual(f({"name": "owner", "description": "Contact email"}), "admin@example.test")
+        self.assertEqual(f({"name": "admin_email"}), "admin@example.com")
+        self.assertEqual(f({"name": "owner", "description": "Contact email"}), "admin@example.com")
         self.assertEqual(f({"name": "api_url"}), "http://example.test")
         self.assertEqual(f({"name": "x", "description": "Public URL of the server"}), "http://example.test")
         self.assertEqual(f({"name": "x"}), "fixture")

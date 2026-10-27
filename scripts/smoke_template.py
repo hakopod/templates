@@ -44,7 +44,7 @@ def fixture(field):
     """Placeholder for a required field with no default, chosen from its metadata."""
     text = " ".join(str(field.get(k, "")) for k in ("name", "label", "description")).lower()
     if "email" in text:
-        return "admin@example.test"
+        return "admin@example.com"
     if re.search(r"\b(url|uri|endpoint)\b|[-_](url|uri)\b", text):
         return "http://example.test"
     return "fixture"
