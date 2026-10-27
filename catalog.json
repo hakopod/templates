@@ -6570,5 +6570,44 @@
     "docs_url": "https://docs.directus.io/",
     "image": "docker.io/directus/directus:12.6.0@sha256:5a475c31cf547da604b3ef1bd85097145825ca6aab8841dc784bb08eaa21681b",
     "port": 8055
+  },
+  {
+    "id": "kafka",
+    "name": "Apache Kafka",
+    "category": "database",
+    "description": "Single-node Kafka broker in KRaft mode with persistent storage, reachable only inside the project environment.",
+    "license": "Apache-2.0",
+    "upstream": "https://kafka.apache.org",
+    "required_secrets": [],
+    "requirements": [
+      "Internal only: apps in the same Hakopod project and environment connect to main:9092. Hakopod forbids public TCP, so Kafka is not reachable from outside the cluster.",
+      "No authentication: PLAINTEXT listener, no SASL and no TLS. This is acceptable only because the service is cluster-internal.",
+      "Persistent storage; one broker, so replication factors are 1 and there is no fault tolerance",
+      "JVM heap limited to 256 MiB initial and 512 MiB maximum; no Kafka UI is bundled, because it would need a public route and has no authentication by default"
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "512 MiB requested; 1 GiB limit; JVM heap 256-512 MiB; 5 GiB data volume",
+    "verification": "Image digest and amd64/arm64 platforms checked. Not yet run: the template smoke workflow in GitHub Actions starts it under the pod security options and checks that port 9092 stays open.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "deployable": true,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [],
+    "sources": [
+      "https://kafka.apache.org/documentation/#docker",
+      "https://github.com/apache/kafka/tree/4.4.0/docker"
+    ],
+    "notes": [
+      "KRaft combined broker and controller; the cluster ID is a fixed, non-secret constant documented in the README.",
+      "Clients use main:9092, the advertised listener. SASL and TLS are not configured."
+    ],
+    "docs_url": "https://kafka.apache.org/documentation/#docker",
+    "port": 9092,
+    "image": "docker.io/apache/kafka:4.4.0@sha256:833b867a9585a141da455dc2b57431c65cbccb27f11c91f694444cca9f777e0f"
   }
 ]

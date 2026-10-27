@@ -1,0 +1,61 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 1000
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/apache/kafka:4.4.0@sha256:833b867a9585a141da455dc2b57431c65cbccb27f11c91f694444cca9f777e0f'
+port = 9092
+public_tcp = []
+ports = []
+public = false
+size = 'large'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/var/lib/kafka/data'
+size_gib = 5
+storage_class = ''
+
+[services.main.env]
+CLUSTER_ID = 'MkU3OEVBNTcwNTJENDM2Qk'
+KAFKA_ADVERTISED_LISTENERS = 'PLAINTEXT://main:9092'
+KAFKA_CONTROLLER_LISTENER_NAMES = 'CONTROLLER'
+KAFKA_CONTROLLER_QUORUM_VOTERS = '1@localhost:9093'
+KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS = '0'
+KAFKA_HEAP_OPTS = '-Xms256m -Xmx512m'
+KAFKA_INTER_BROKER_LISTENER_NAME = 'PLAINTEXT'
+KAFKA_LISTENERS = 'PLAINTEXT://:9092,CONTROLLER://:9093'
+KAFKA_LISTENER_SECURITY_PROTOCOL_MAP = 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT'
+KAFKA_LOG_DIRS = '/var/lib/kafka/data'
+KAFKA_NODE_ID = '1'
+KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR = '1'
+KAFKA_PROCESS_ROLES = 'broker,controller'
+KAFKA_SHARE_COORDINATOR_STATE_TOPIC_MIN_ISR = '1'
+KAFKA_SHARE_COORDINATOR_STATE_TOPIC_REPLICATION_FACTOR = '1'
+KAFKA_TRANSACTION_STATE_LOG_MIN_ISR = '1'
+KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR = '1'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
