@@ -1,0 +1,100 @@
+"""Pure unit tests: no docker, no network. Run: python3 -m unittest scripts/test_smoke_template.py"""
+import io, json, pathlib, sys, tomllib, unittest
+from contextlib import redirect_stdout
+from unittest import mock
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+import smoke_template as st
+
+ROOT = st.ROOT
+
+
+def load(tid):
+    # Blueprints may land before their catalog row; fall back to a minimal row.
+    row = next((r for r in json.loads((ROOT / "catalog.json").read_text()) if r["id"] == tid),
+               {"id": tid, "deployable": True, "config_fields": [], "secret_fields": []})
+    return row, tomllib.loads((ROOT / "blueprints" / tid / "hakopod.toml").read_text())
+
+
+class T(unittest.TestCase):
+    def test_render(self):
+        cfg = {"timezone": "UTC"}
+        self.assertEqual(st.render("tz={{config.timezone}}", cfg, 1), "tz=UTC")
+        self.assertEqual(st.render("{{site_host}}|{{site_hostname}}", cfg, 8080), "127.0.0.1:8080|127.0.0.1")
+        self.assertEqual(st.render("https://catalog.example.test/x", cfg, 9), "http://127.0.0.1:9/x")
+
+    def test_config_fixture(self):
+        row = {"config_fields": [{"name": "admin_email", "required": True}, {"name": "x", "required": True},
+                                 {"name": "tz", "default": "UTC", "required": True}]}
+        self.assertEqual(st.config_values(row), {"admin_email": "admin@example.test", "x": "fixture", "tz": "UTC"})
+
+    def test_secrets_shared_per_ref(self):
+        row, spec = load("n8n-with-postgres")
+        sec = st.make_secrets(row, spec)
+        self.assertEqual(set(sec), {"database-password", "encryption-key"})
+        p = st.plan("n8n-with-postgres", spec, row, sec, 5000)
+        runs = dict(p["run"])
+        pw = "POSTGRES_PASSWORD=" + sec["database-password"]
+        self.assertIn(pw, runs["db"])
+        self.assertIn("DB_POSTGRESDB_PASSWORD=" + sec["database-password"], runs["main"])
+        self.assertEqual(len(sec["database-password"]), 24)
+        self.assertEqual(len(st.gen_secret("hex")), 64)
+
+    def test_n8n_args(self):
+        row, spec = load("n8n-with-postgres")
+        sec = {"database-password": "PW", "encryption-key": "EK"}
+        p = st.plan("n8n-with-postgres", spec, row, sec, 5000)
+        self.assertEqual([n for n, _ in p["run"]], ["db", "main"])
+        main = dict(p["run"])["main"]
+        self.assertEqual(main[:12], ["docker", "run", "-d", "--name", "smoke-n8n-with-postgres-main", "--network",
+                                     "smoke-n8n-with-postgres", "--network-alias", "main", "--user", "1000:0", "--cap-drop"])
+        for part in (["--security-opt", "no-new-privileges"], ["-p", "127.0.0.1:5000:5678"],
+                     ["-e", "N8N_HOST=127.0.0.1:5000"], ["-e", "WEBHOOK_URL=http://127.0.0.1:5000/"],
+                     ["-e", "GENERIC_TIMEZONE=UTC"], ["-v", "smoke-n8n-with-postgres-main-data:/home/node/.n8n"]):
+            self.assertIn(part[0], main)
+            self.assertIn(part[1], main)
+        self.assertTrue(main[-1].startswith("n8nio/n8n:") and "@sha256:" in main[-1])  # image is last, no args
+        db = dict(p["run"])["db"]
+        self.assertEqual(db[-5:], ["postgres", "-c", "shared_buffers=64MB", "-c", "max_connections=50"])
+        self.assertIn("max_connections=50", db)
+        self.assertNotIn("-p", db)
+        self.assertEqual(p["network"], ["docker", "network", "create", "smoke-n8n-with-postgres"])
+        self.assertEqual(len(p["volumes"]), 2)
+        self.assertIn("chown -R 70:0 /v", p["chown"][0][-1])
+
+    def test_freshrss_command_tmpfs_and_directus_mounts(self):
+        row, spec = load("freshrss")
+        run = dict(st.plan("freshrss", spec, row, {}, 7)["run"])["main"]
+        self.assertIn("--tmpfs", run)
+        self.assertIn("/tmp:rw,size=128m", run)
+        self.assertEqual(run[run.index("--entrypoint") + 1], "sh")
+        self.assertIn("--group-add", run)
+        row, spec = load("directus")
+        sec = st.make_secrets(row, spec)
+        p = st.plan("directus", spec, row, sec, 7)
+        self.assertEqual(p["volumes"], ["smoke-directus-database", "smoke-directus-uploads"])
+        self.assertEqual(len(p["chown"]), 2)
+
+    def test_skip_not_deployable(self):
+        row = next(r for r in json.loads((ROOT / "catalog.json").read_text()) if not r["deployable"])
+        buf = io.StringIO()
+        with mock.patch.object(st.subprocess, "run") as run, redirect_stdout(buf):
+            self.assertEqual(st.smoke(row["id"], 1), 0)
+        run.assert_not_called()
+        self.assertIn("SKIP", buf.getvalue())
+
+    def test_failure_cleans_up_and_hides_secrets(self):
+        calls = []
+        def fake(cmd, **kw):
+            calls.append(cmd)
+            if cmd[:3] == ["docker", "run", "-d"]:
+                return mock.Mock(returncode=1, stdout="", stderr="boom " + next(a for a in cmd if a.startswith("POSTGRES_PASSWORD=")))
+            return mock.Mock(returncode=0, stdout="", stderr="")
+        buf = io.StringIO()
+        with mock.patch.object(st.subprocess, "run", fake), mock.patch.object(st.platform, "machine", return_value="x86_64"), redirect_stdout(buf):
+            self.assertEqual(st.smoke("n8n-with-postgres", 1), 1)
+        self.assertNotRegex(buf.getvalue(), r"POSTGRES_PASSWORD=[A-Za-z0-9]{10}")
+        self.assertIn(["docker", "network", "rm", "smoke-n8n-with-postgres"], calls)
+
+
+if __name__ == "__main__":
+    unittest.main()
