@@ -54,6 +54,19 @@ references regardless of the selected database mode.
 
 See [the September completion review](REVIEW-2026-09-24.md) for the new native stacks, compatibility image and exact remaining blockers.
 
+## Runtime smoke tests
+
+`.github/workflows/template-smoke.yml` starts every changed deployable preset in
+GitHub Actions on amd64 and arm64 using `scripts/smoke_template.py <id>`. The
+script renders the preset (config defaults, random secrets, the site origin
+replaced by `http://127.0.0.1:<port>`), runs it with the docker CLI under the
+restricted pod options (non-root user, dropped capabilities, read-only root,
+tmpfs, fsGroup-owned volumes) and waits for the healthcheck path to return 2xx
+or 3xx. It proves the app starts, not that login, HTTPS callbacks or upgrades work.
+Presets using files, jobs, GPUs, bindings or certificate mounts are skipped. Never run it
+on a laptop; unit tests (`python3 -m unittest scripts/test_smoke_template.py`)
+mock docker.
+
 ## Checks and updates
 
 Run `python3 scripts/validate.py` here. In the consumer, run `go test ./internal/spec`
