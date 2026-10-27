@@ -2,12 +2,22 @@ name: Build catalog compatibility images
 on:
   workflow_dispatch:
   push:
-    tags: [catalog-calcom-v5.9.1-hakopod.1]
+    tags:
+      - catalog-calcom-v5.9.1-hakopod.1
+      - catalog-it-tools-v2024.10.22-hakopod.1
+      - catalog-excalidraw-v20260506-hakopod.1
+  # Pull requests build and test the wrappers but never push.
+  pull_request:
+    paths:
+      - images/it-tools/**
+      - images/excalidraw/**
+      - .github/workflows/catalog-images.yml
 permissions:
   contents: read
   packages: write
 jobs:
   calcom:
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref_name, 'catalog-calcom-')
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -34,3 +44,59 @@ jobs:
           printf '%s' "$GHCR_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
           docker push ghcr.io/hakopod/catalog-calcom:v5.9.1-hakopod.1
           docker logout ghcr.io
+  # Non-root nginx wrappers for static apps whose upstream images need root and port 80.
+  static-wrapper:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: it-tools
+            tag: 2024.10.22-hakopod.1
+            marker: IT Tools
+          - id: excalidraw
+            tag: 20260506-hakopod.1
+            marker: Excalidraw
+    env:
+      IMAGE: ghcr.io/hakopod/catalog-${{ matrix.id }}:${{ matrix.tag }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392
+      - uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435
+      - name: Build and smoke-test each platform
+        run: |
+          set -eu
+          for platform in linux/amd64 linux/arm64; do
+            docker buildx build --pull --platform "$platform" --load --tag "$IMAGE" "images/${{ matrix.id }}"
+            name="smoke-${{ matrix.id }}"
+            # Non-root, no capabilities, read-only root; nginx-unprivileged writes only under /tmp.
+            docker run -d --name "$name" --platform "$platform" --user 101 --cap-drop ALL \
+              --security-opt no-new-privileges --read-only --tmpfs /tmp -p 8080:8080 "$IMAGE"
+            ok=
+            for _ in $(seq 1 30); do
+              if curl -fsS -o /tmp/root.html http://127.0.0.1:8080/; then ok=1; break; fi
+              sleep 2
+            done
+            [ -n "$ok" ] || { docker logs "$name"; exit 1; }
+            test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8080/)" = 200
+            grep -q '${{ matrix.marker }}' /tmp/root.html
+            test "$(docker exec "$name" id -u)" = 101
+            docker exec "$name" test -f "/licenses/${{ matrix.id }}-LICENSE"
+            docker rm -f "$name"
+          done
+      - name: Log in to GHCR
+        if: github.event_name == 'push' && startsWith(github.ref_name, format('catalog-{0}-', matrix.id))
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish tested multi-platform image
+        if: github.event_name == 'push' && startsWith(github.ref_name, format('catalog-{0}-', matrix.id))
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
+        with:
+          context: images/${{ matrix.id }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.IMAGE }}
