@@ -74,6 +74,14 @@ class T(unittest.TestCase):
         self.assertEqual(p["volumes"], ["smoke-directus-database", "smoke-directus-uploads"])
         self.assertEqual(len(p["chown"]), 2)
 
+    def test_fixture_matches_field(self):
+        f = st.fixture
+        self.assertEqual(f({"name": "admin_email"}), "admin@example.test")
+        self.assertEqual(f({"name": "owner", "description": "Contact email"}), "admin@example.test")
+        self.assertEqual(f({"name": "api_url"}), "http://example.test")
+        self.assertEqual(f({"name": "x", "description": "Public URL of the server"}), "http://example.test")
+        self.assertEqual(f({"name": "x"}), "fixture")
+
     def test_skip_not_deployable(self):
         row = next(r for r in json.loads((ROOT / "catalog.json").read_text()) if not r["deployable"])
         buf = io.StringIO()

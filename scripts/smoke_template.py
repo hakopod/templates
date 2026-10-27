@@ -40,12 +40,22 @@ def make_secrets(row, spec):
     return {ref: gen_secret(formats.get(ref, "token")) for ref in sorted(refs)}
 
 
+def fixture(field):
+    """Placeholder for a required field with no default, chosen from its metadata."""
+    text = " ".join(str(field.get(k, "")) for k in ("name", "label", "description")).lower()
+    if "email" in text:
+        return "admin@example.test"
+    if re.search(r"\b(url|uri|endpoint)\b|[-_](url|uri)\b", text):
+        return "http://example.test"
+    return "fixture"
+
+
 def config_values(row):
     out = {}
     for f in row.get("config_fields", []):
         value = f.get("default", "")
         if not value and f.get("required"):
-            value = "admin@example.test" if "email" in f["name"] else "fixture"
+            value = fixture(f)
         out[f["name"]] = value
     return out
 
