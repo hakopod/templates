@@ -6578,7 +6578,7 @@
     "upstream": "https://kafka.apache.org",
     "required_secrets": [],
     "requirements": [
-      "Internal only: apps in the same Hakopod project and environment connect to main:9092. Hakopod forbids public TCP, so Kafka is not reachable from outside the cluster.",
+      "Internal only. Clients in the same application use main:9092; clients in other applications must join a shared virtual network segment with the Kafka application and connect to the advertised address main.<application namespace>.svc.cluster.local:9092 (copy it from the network inspector). Hakopod forbids public TCP, so Kafka is not reachable from outside the cluster.",
       "No authentication: PLAINTEXT listener, no SASL and no TLS. This is acceptable only because the service is cluster-internal.",
       "Persistent storage; one broker, so replication factors are 1 and there is no fault tolerance",
       "Memory depends on the Kafka heap option (default 1 GiB, up to 4 GiB). The compute profile limits the container to 4916 MiB and requests 2458 MiB, which covers the 4 GiB heap plus JVM overhead; the node must have that much free memory. Choose 512 MiB or 1 GiB on small hosts only if the node can still schedule the 2458 MiB request. No Kafka UI is bundled, because it would need a public route and has no authentication by default"
@@ -6629,7 +6629,7 @@
     ],
     "notes": [
       "KRaft combined broker and controller; the cluster ID is a fixed, non-secret constant documented in the README.",
-      "Clients use main:9092, the advertised listener. SASL and TLS are not configured."
+      "The broker advertises main.<its own namespace>.svc.cluster.local:9092, read from the pod's DNS search domain at start, so clients in any application on a shared network reach it. Outside Kubernetes it falls back to main. SASL and TLS are not configured."
     ],
     "docs_url": "https://kafka.apache.org/documentation/#docker",
     "port": 9092,

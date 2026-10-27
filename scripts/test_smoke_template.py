@@ -116,6 +116,8 @@ class T(unittest.TestCase):
         self.assertIn("127.0.0.1:9099:9092", run)
         self.assertIn("CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk", run)
         self.assertEqual(run[run.index("--user") + 1], "1000:1000")
+        self.assertEqual(run[run.index("--entrypoint") + 1], "sh")  # computes the advertised listener
+        self.assertNotIn("KAFKA_ADVERTISED_LISTENERS", " ".join(a for a in run if a.startswith("KAFKA_ADV")))
 
     def test_skip_not_deployable(self):
         row = next(r for r in json.loads((ROOT / "catalog.json").read_text()) if not r["deployable"])

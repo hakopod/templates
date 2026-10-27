@@ -4,7 +4,15 @@ Deployment preset. Single-node Apache Kafka 4.4.0 in KRaft mode (no ZooKeeper), 
 
 ## Access
 
-Kafka is internal only. Apps in the same Hakopod project and environment connect to `main:9092`. Hakopod does not allow public TCP, so the broker is not reachable from outside the cluster and cannot be exposed by this preset.
+Kafka is internal only. Hakopod does not allow public TCP, so the broker is not reachable from outside the cluster and this preset cannot expose it.
+
+- Clients in the same application connect to `main:9092` or to the full address below.
+- Clients in other applications must be in a shared virtual network segment that includes the Kafka application, with the Kafka service attached to that segment. Join the segment in each application's TOML (`virtual_network` and `segment` on a network, then list it in the service's `networks`) and connect to `main.<kafka application namespace>.svc.cluster.local:9092`. Copy the exact address from the network inspector. With no `network_access` block, members of the segment may reach port 9092; the controller port 9093 is loopback only.
+- The preset itself cannot name a shared network, because grants belong to the project; add the segment to the Kafka application's configuration after install.
+
+## Why the advertised address is computed
+
+A Kafka client uses the address in broker metadata, not the one it dialled. A bare `main` resolves inside the client's own namespace, so it only works for clients in the Kafka application's namespace. Every application has its own namespace, `hp-` plus a hash of the application ID (`internal/cluster/types.go:379-382`), and a service's cross-application address is `<service>.<namespace>.svc.cluster.local` (`internal/api/virtual_networks.go:187`). Cross-application traffic is allowed only through shared network policies, never by default (`internal/cluster/virtual_networks.go:52-79`; segments are declared at `internal/spec/spec.go:91-92`, validated at `internal/spec/spec.go:227`). Templates have no placeholder for the namespace: only `config.*`, `site_host` and `site_hostname` are substituted (`internal/spec/templates.go:517-525`), and the namespace depends on an application ID that does not exist while the template is rendered. The start command therefore reads the pod's DNS search domain (`hp-<hash>.svc.cluster.local`) from `/etc/resolv.conf` and sets `KAFKA_ADVERTISED_LISTENERS` to `PLAINTEXT://main.<domain>:9092` before running the image's normal start script. Outside Kubernetes (the CI harness) there is no such domain and it falls back to `main`. The command only reads a file and runs as the same non-root user.
 
 ## Requirements
 
