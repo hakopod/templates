@@ -1,0 +1,90 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.db]
+architecture = ''
+run_as_user = 70
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'docker.io/library/postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73'
+port = 5432
+public_tcp = []
+ports = []
+public = false
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = ''
+command = []
+args = ['postgres', '-c', 'shared_buffers=64MB', '-c', 'max_connections=50']
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.db.volume]
+mount_path = '/var/lib/postgresql/data'
+size_gib = 5
+storage_class = ''
+
+[services.db.env]
+PGDATA = '/var/lib/postgresql/data/pgdata'
+POSTGRES_DB = 'app'
+POSTGRES_USER = 'hakopod'
+
+[services.db.secrets]
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = 'database-password'
+
+[services.main]
+architecture = ''
+run_as_user = 1000
+run_as_group = 0
+fs_group = 0
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+temporary_mounts = []
+image = 'ghcr.io/requarks/wiki:2.5.315@sha256:af71a17dc27ccc4c768591b1c504631ed820d9d13d4e8c325be4232c0035638c'
+port = 3000
+public_tcp = []
+ports = []
+public = true
+size = 'medium'
+replicas = 1
+update_strategy = ''
+healthcheck = '/healthz'
+command = []
+args = []
+depends_on = ['db']
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.env]
+DB_HOST = 'db'
+DB_NAME = 'app'
+DB_PORT = '5432'
+DB_TYPE = 'postgres'
+DB_USER = 'hakopod'
+
+[services.main.secrets]
+[services.main.secrets.DB_PASS]
+ref = 'database-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

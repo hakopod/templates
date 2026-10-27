@@ -6105,5 +6105,470 @@
     "image": "ghcr.io/synehq/synehq-oos:sha-ed0976531fb244bfab04c532e463858086609889-hakopod@sha256:4770e40aff68d64555ac69bd91854cdb220f4874979d2493c4baf63b76a9a8f6",
     "port": 3100,
     "logo": "/template-assets/synehq-oos/logo.png"
+  },
+  {
+    "id": "it-tools",
+    "category": "application",
+    "name": "IT Tools",
+    "description": "Browser-based developer utilities, served as a static web app.",
+    "license": "GPL-3.0",
+    "upstream": "https://github.com/CorentinTh/it-tools",
+    "required_secrets": [],
+    "requirements": [
+      "The official image runs nginx as root on port 80 and fails as a non-root user, so Hakopod builds a wrapper from images/it-tools/Dockerfile: the upstream static site on nginxinc/nginx-unprivileged (UID 101, port 8080).",
+      "The preset becomes deployable once the wrapper image ghcr.io/hakopod/catalog-it-tools:2024.10.22-hakopod.1 is published and its digest replaces PENDING_PUBLISH in the candidate."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 service; small profile; static files served by nginx on port 8080",
+    "verification": "Image digests and amd64/arm64 platforms checked. Official image failed locally as UID 101 (permission denied on /var/cache/nginx). The wrapper is untested: the catalog-images.yml workflow builds both platforms and smoke-tests them (UID 101, no capabilities, read-only root with /tmp tmpfs, / returns 200 with a content marker) in GitHub Actions, and that run has not happened yet.",
+    "providers": [],
+    "configuration": "guide",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [],
+    "sources": [
+      "https://github.com/CorentinTh/it-tools#readme",
+      "https://github.com/CorentinTh/it-tools/blob/main/Dockerfile"
+    ],
+    "deployable": false,
+    "config_fields": [],
+    "notes": [
+      "Candidate until the wrapper image is published by the catalog-images workflow."
+    ],
+    "docs_url": "https://github.com/CorentinTh/it-tools#readme"
+  },
+  {
+    "id": "excalidraw",
+    "category": "application",
+    "name": "Excalidraw",
+    "description": "Virtual whiteboard for sketching hand-drawn style diagrams, served as a static web app.",
+    "license": "MIT",
+    "upstream": "https://github.com/excalidraw/excalidraw",
+    "required_secrets": [],
+    "requirements": [
+      "The official image runs nginx as root on port 80 and fails as a non-root user, so Hakopod builds a wrapper from images/excalidraw/Dockerfile: the upstream static site on nginxinc/nginx-unprivileged (UID 101, port 8080).",
+      "The preset becomes deployable once the wrapper image ghcr.io/hakopod/catalog-excalidraw:20260506-hakopod.1 is published and its digest replaces PENDING_PUBLISH in the candidate.",
+      "Upstream publishes only a rolling latest tag; the wrapper is labelled by the Docker Hub push date of the pinned digest (2026-05-06), not a release version. Real-time collaboration needs a separate excalidraw-room service and is not included."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 service; small profile; static files served by nginx on port 8080",
+    "verification": "Image digests and amd64/arm64 platforms checked. Official image failed locally as UID 101 (permission denied on /var/cache/nginx). The wrapper is untested: the catalog-images.yml workflow builds both platforms and smoke-tests them (UID 101, no capabilities, read-only root with /tmp tmpfs, / returns 200 with a content marker) in GitHub Actions, and that run has not happened yet.",
+    "providers": [],
+    "configuration": "guide",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [],
+    "sources": [
+      "https://github.com/excalidraw/excalidraw#quick-start",
+      "https://github.com/excalidraw/excalidraw/blob/master/Dockerfile"
+    ],
+    "deployable": false,
+    "config_fields": [],
+    "notes": [
+      "Candidate until the wrapper image is published by the catalog-images workflow."
+    ],
+    "docs_url": "https://github.com/excalidraw/excalidraw#quick-start"
+  },
+  {
+    "id": "freshrss",
+    "name": "FreshRSS",
+    "category": "application",
+    "description": "Self-hosted RSS feed reader with SQLite on a persistent volume.",
+    "license": "AGPL-3.0",
+    "upstream": "https://github.com/FreshRSS/FreshRSS",
+    "required_secrets": [],
+    "requirements": [
+      "Persistent local or block storage for the SQLite data directory",
+      "Complete the installer at /i/ and choose SQLite before sharing the URL",
+      "Upstream image expects root; this preset runs Apache as UID 1000 on port 8080 with a private configuration copy and does not use the image entrypoint",
+      "Built-in cron (CRON_MIN) needs root and is unavailable; refresh feeds from the web interface, the API or an external scheduler"
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "Small profile; one service; 5 GiB persistent volume; 128 MiB temporary storage",
+    "verification": "Image digest and amd64/arm64 platforms checked; local container started as UID 1000 on arm64 with the preset command and a volume owned by UID 1000, and /i/ and /api/ returned 200 and / returned 302. Installer completion, feed refresh and Kubernetes not verified.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "deployable": true,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [],
+    "sources": [
+      "https://github.com/FreshRSS/FreshRSS/blob/edge/Docker/README.md",
+      "https://github.com/FreshRSS/FreshRSS/blob/edge/Docker/entrypoint.sh"
+    ],
+    "notes": [
+      "Choose SQLite in the installer; no separate database is included.",
+      "The data volume holds users, settings, feed cache and SQLite files. Back it up."
+    ],
+    "docs_url": "https://freshrss.github.io/FreshRSS/",
+    "port": 8080,
+    "image": "docker.io/freshrss/freshrss:1.30.4@sha256:af44385229541bee24aa9148d0ff8f3b40e095373c63a2c0f74e09a27d3c59df"
+  },
+  {
+    "id": "nocodb",
+    "name": "NocoDB",
+    "category": "application",
+    "description": "Airtable-style interface over databases, with SQLite metadata on a persistent volume.",
+    "license": "Sustainable Use License (portions); see upstream LICENSE.md",
+    "upstream": "https://github.com/nocodb/nocodb",
+    "required_secrets": [
+      "jwt-secret"
+    ],
+    "requirements": [
+      "Persistent local or block storage for the SQLite metadata database and attachments",
+      "Complete the first super-admin sign-up before sharing the URL",
+      "SQLite suits small teams; external PostgreSQL is not part of this preset",
+      "Preserve the JWT secret with the data volume backups"
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "Medium profile; one service; 5 GiB persistent volume",
+    "verification": "Image digest and amd64/arm64 platforms checked; local container started as UID 1000 on arm64 with a volume owned by UID 1000, and /api/v1/health and / returned 200 with noco.db created. First sign-up and Kubernetes not verified.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "jwt-secret",
+        "description": "At least 32 characters. Keep stable and include in protected backups.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://nocodb.com/docs/self-hosting/installation/docker",
+      "https://nocodb.com/docs/self-hosting/environment-variables"
+    ],
+    "deployable": true,
+    "notes": [
+      "SQLite metadata and attachments live in /usr/app/data. Telemetry is disabled."
+    ],
+    "docs_url": "https://nocodb.com/docs/self-hosting",
+    "image": "docker.io/nocodb/nocodb:2026.10.0@sha256:e8fee91b205b7c51df6e35a9d890d8b68b216e987ed3feb387c5478dff6df951",
+    "port": 8080
+  },
+  {
+    "id": "stirling-pdf",
+    "name": "Stirling PDF",
+    "category": "application",
+    "description": "Self-hosted PDF tools: merge, split, convert, compress, OCR and sign in the browser.",
+    "license": "MIT (core); enterprise features are separately licensed",
+    "upstream": "https://github.com/Stirling-Tools/Stirling-PDF",
+    "required_secrets": [],
+    "requirements": [
+      "Standard image variant (not the fat or ultra-lite one) with OCR and document conversion; the ultra-lite variant omits LibreOffice and OCR.",
+      "JVM application: plan for about 1 GiB of memory; document conversion and OCR use more during large jobs.",
+      "Runs as the image's own user (UID 1001). The preset overrides the container command to skip the image's start-up step that links diagnostic helpers into /usr/local/bin, which needs root.",
+      "Telemetry is disabled with SYSTEM_ENABLE_ANALYTICS=false, and DISABLE_ADDITIONAL_FEATURES=true keeps the login and enterprise features off. The instance has no login, so protect the URL with Hakopod access controls or a private network."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "Large profile: 615 MiB requested; 1229 MiB limit (JVM); 2 GiB volume at /configs",
+    "verification": "Image digest and amd64/arm64 platforms checked. The image's own user, start-up script and non-root start-up failures were inspected in a local container; a full non-root start with this preset was not completed. Runtime smoke test pending in CI.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "deployable": true,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [],
+    "sources": [
+      "https://github.com/Stirling-Tools/Stirling-PDF",
+      "https://docs.stirlingpdf.com/Installation/Docker%20Install/"
+    ],
+    "config_fields": [],
+    "notes": [
+      "Telemetry is disabled with SYSTEM_ENABLE_ANALYTICS=false.",
+      "User settings, OCR data and configuration persist under /configs."
+    ],
+    "docs_url": "https://docs.stirlingpdf.com/",
+    "port": 8080,
+    "image": "docker.io/stirlingtools/stirling-pdf:3.2.2@sha256:c6872dd056b0046a14c5de1e9970283e7f1e1ff685bb08090c6b37a231127d31"
+  },
+  {
+    "id": "meilisearch",
+    "name": "Meilisearch",
+    "category": "application",
+    "description": "Fast, typo-tolerant search engine with a REST API.",
+    "license": "MIT (Community Edition)",
+    "upstream": "https://github.com/meilisearch/meilisearch",
+    "required_secrets": [
+      "master-key"
+    ],
+    "requirements": [
+      "Persistent storage at /meili_data; back up regularly or use dumps and snapshots.",
+      "The master key protects the API in production mode. Create scoped search and admin keys from it for applications; do not ship the master key to browsers.",
+      "Analytics are disabled with MEILI_NO_ANALYTICS=true."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "Medium profile: 308 MiB requested; 615 MiB limit; 5 GiB volume. Memory use grows with index size, so choose a larger size for big indexes.",
+    "verification": "Image digest and amd64/arm64 platforms checked; local container started as UID 10001 on arm64 with the preset environment and /health returned 200 and {\"status\":\"available\"}, / returned 200. Kubernetes volume ownership via fs_group not tested. Full runtime smoke test pending in CI.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "deployable": true,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "master-key",
+        "description": "Meilisearch master key, at least 16 bytes. Keep it stable and secret.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/meilisearch/meilisearch",
+      "https://www.meilisearch.com/docs/learn/self_hosted/install_meilisearch_locally"
+    ],
+    "config_fields": [],
+    "notes": [
+      "Production mode requires the master key; create scoped API keys for clients."
+    ],
+    "docs_url": "https://www.meilisearch.com/docs",
+    "port": 7700,
+    "image": "docker.io/getmeili/meilisearch:v1.56.0@sha256:1f578fa865f8251894b3bf38d6668d6209a3f451f8f65ab953e129d4c1db5ef4"
+  },
+  {
+    "id": "umami",
+    "category": "application",
+    "name": "Umami",
+    "description": "Privacy-friendly web analytics with PostgreSQL.",
+    "license": "MIT",
+    "upstream": "https://github.com/umami-software/umami",
+    "required_secrets": [
+      "app-secret",
+      "database-password"
+    ],
+    "requirements": [
+      "Change the default login immediately: a new install has the account admin with the password umami. Change it in Settings, Profile before adding websites or sharing the URL.",
+      "Back up the PostgreSQL volume; all analytics data lives there. Keep app-secret and database-password stable."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "2 services; small Umami, medium PostgreSQL with a 5 GiB volume",
+    "verification": "Image digest and amd64/arm64 platforms checked; 3.4.1 tag resolves to the same digest as postgresql-latest; non-root UID 1001 read from the upstream Dockerfile; DATABASE_URL built through a native postgres binding. Runtime smoke test pending in CI; the heartbeat health path is unverified.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "app-secret",
+        "description": "Random signing material, at least 32 characters. Keep stable; rotating it signs everyone out.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "database-password",
+        "description": "At least 16 characters. Keep stable and include in protected backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/umami-software/umami",
+      "https://umami.is/docs/install",
+      "https://github.com/umami-software/umami/blob/v3.4.1/Dockerfile"
+    ],
+    "deployable": true,
+    "config_fields": [],
+    "notes": [
+      "Default login is admin / umami. Change the password on first sign-in, before sharing the URL.",
+      "DATABASE_URL is derived from the database-password secret by a native binding; no password is stored in the preset."
+    ],
+    "docs_url": "https://umami.is/docs"
+  },
+  {
+    "id": "wiki-js",
+    "category": "application",
+    "name": "Wiki.js",
+    "description": "Wiki platform (2.x line) with PostgreSQL.",
+    "license": "AGPL-3.0",
+    "upstream": "https://github.com/requarks/wiki",
+    "required_secrets": [
+      "database-password"
+    ],
+    "requirements": [
+      "Complete the first-run setup page before sharing the URL: whoever opens it first creates the administrator.",
+      "Back up the PostgreSQL volume. Wiki.js has no data volume here, so use database or external storage targets rather than local file storage."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "2 services; medium Wiki.js, medium PostgreSQL with a 5 GiB volume",
+    "verification": "Image digest and amd64/arm64 platforms checked; non-root UID 1000 (USER node) read from the upstream Dockerfile. Runtime smoke test pending in CI; the /healthz path comes from the upstream Dockerfile comment and is unverified.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "database-password",
+        "description": "At least 16 characters. Keep stable and include in protected backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/requarks/wiki",
+      "https://docs.requarks.io/install/docker",
+      "https://github.com/requarks/wiki/blob/v2.5.315/dev/build/Dockerfile"
+    ],
+    "deployable": true,
+    "config_fields": [],
+    "notes": [],
+    "docs_url": "https://docs.requarks.io/"
+  },
+  {
+    "id": "ghost",
+    "name": "Ghost",
+    "category": "application",
+    "description": "Ghost is an open source publishing platform for blogs, newsletters and memberships, bundled here with a private MySQL 8.4 database.",
+    "license": "MIT",
+    "upstream": "https://github.com/TryGhost/Ghost",
+    "required_secrets": [
+      "database-password",
+      "database-root-password"
+    ],
+    "requirements": [
+      "Ghost 5 and later require MySQL 8 in production; this preset bundles a private MySQL 8.4 service with its own volume.",
+      "Mail is not configured by default. Set Ghost mail environment variables before relying on member sign-in links, invitations or newsletters.",
+      "Set the site address to the canonical HTTPS domain before first use; Ghost builds absolute links from it.",
+      "Persistent storage for content and the database; one replica; configure backups."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "2 bounded services; large main profile and medium MySQL profile; 12 database connections; review per-service limits",
+    "verification": "Image digests and amd64/arm64 platforms checked; static validation and Go template rendering checked; runtime smoke test pending in CI.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": true,
+    "site_url_supported": true,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "database-password",
+        "description": "At least 16 characters. Keep stable and include in protected backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "database-root-password",
+        "description": "Separate MySQL root password, at least 16 characters. Do not use the application password.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/TryGhost/Ghost",
+      "https://docs.ghost.org/install/docker",
+      "https://docs.ghost.org/config"
+    ],
+    "deployable": true,
+    "config_fields": [],
+    "notes": [],
+    "docs_url": "https://docs.ghost.org/",
+    "image": "docker.io/library/ghost:6.72.0@sha256:c0d83a8d45222b3f37a897572000050ab8e6e507d3eee5a35b3ef8345c7293d6",
+    "port": 2368
+  },
+  {
+    "id": "directus",
+    "name": "Directus",
+    "category": "application",
+    "description": "Directus is an open source headless CMS and data platform that adds an API and admin app to a database, here using SQLite on a persistent volume.",
+    "license": "BUSL-1.1",
+    "upstream": "https://github.com/directus/directus",
+    "required_secrets": [
+      "admin-password",
+      "secret"
+    ],
+    "requirements": [
+      "Uses SQLite on a persistent volume by default. SQLite suits small sites; move to PostgreSQL before heavy write load or multiple replicas.",
+      "Back up both the database volume and the uploads volume together.",
+      "Set the site address to the canonical HTTPS domain; Directus uses it for links and cookies.",
+      "Mail is not configured by default; password reset and invitations need an email transport."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 bounded service; large main profile; SQLite and uploads volumes; review per-service limits",
+    "verification": "Image digest and amd64/arm64 platforms checked; static validation and Go template rendering checked; runtime smoke test pending in CI.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": true,
+    "site_url_supported": true,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "admin-password",
+        "description": "Initial administrator password, at least 16 characters. Applied on first start only.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "secret",
+        "description": "Random signing material, at least 32 characters. Keep stable and back up securely.",
+        "format": "token",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/directus/directus",
+      "https://docs.directus.io/self-hosted/docker-guide.html",
+      "https://docs.directus.io/configuration/general.html"
+    ],
+    "deployable": true,
+    "config_fields": [
+      {
+        "name": "admin_email",
+        "label": "Administrator email",
+        "default": "",
+        "required": true,
+        "description": "Email address of the first administrator account."
+      }
+    ],
+    "notes": [],
+    "docs_url": "https://docs.directus.io/",
+    "image": "docker.io/directus/directus:12.6.0@sha256:5a475c31cf547da604b3ef1bd85097145825ca6aab8841dc784bb08eaa21681b",
+    "port": 8055
   }
 ]

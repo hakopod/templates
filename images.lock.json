@@ -1547,5 +1547,128 @@
     "source": "OCI registry manifest inspection",
     "image_config_inspected": false,
     "checked_at": "2026-10-16"
+  },
+  {
+    "reference": "corentinth/it-tools:2024.10.22-7ca5933",
+    "digest": "sha256:8b8128748339583ca951af03dfe02a9a4d7363f61a216226fc28030731a5a61f",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "nginxinc/nginx-unprivileged:1.30-alpine",
+    "digest": "sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": false,
+    "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "excalidraw/excalidraw:latest",
+    "digest": "sha256:f7ee194addd607bf831d2af0f0a34463dd4225e426cf35199ef0b12a803398e9",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "freshrss/freshrss:1.30.4",
+    "digest": "sha256:af44385229541bee24aa9148d0ff8f3b40e095373c63a2c0f74e09a27d3c59df",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "nocodb/nocodb:2026.10.0",
+    "digest": "sha256:e8fee91b205b7c51df6e35a9d890d8b68b216e987ed3feb387c5478dff6df951",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "docker.io/stirlingtools/stirling-pdf:3.2.2",
+    "digest": "sha256:c6872dd056b0046a14c5de1e9970283e7f1e1ff685bb08090c6b37a231127d31",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "docker.io/getmeili/meilisearch:v1.56.0",
+    "digest": "sha256:1f578fa865f8251894b3bf38d6668d6209a3f451f8f65ab953e129d4c1db5ef4",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "ghcr.io/umami-software/umami:3.4.1",
+    "digest": "sha256:e69d1a7932e9dab0fc523edc7be1f3a53f3c261f57856fc2167ae74a8fc022e8",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": false,
+    "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "ghcr.io/requarks/wiki:2.5.315",
+    "digest": "sha256:af71a17dc27ccc4c768591b1c504631ed820d9d13d4e8c325be4232c0035638c",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": false,
+    "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "ghost:6.72.0",
+    "digest": "sha256:c0d83a8d45222b3f37a897572000050ab8e6e507d3eee5a35b3ef8345c7293d6",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/library/ghost/tags/6.72.0",
+    "image_config_inspected": false,
+    "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "directus/directus:12.6.0",
+    "digest": "sha256:5a475c31cf547da604b3ef1bd85097145825ca6aab8841dc784bb08eaa21681b",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/directus/directus/tags/12.6.0",
+    "image_config_inspected": false,
+    "checked_at": "2026-10-27"
   }
 ]

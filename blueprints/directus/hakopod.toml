@@ -1,0 +1,76 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 1000
+run_as_group = 0
+fs_group = 1000
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+temporary_mounts = []
+image = 'docker.io/directus/directus:12.6.0@sha256:5a475c31cf547da604b3ef1bd85097145825ca6aab8841dc784bb08eaa21681b'
+port = 8055
+public_tcp = []
+ports = []
+public = true
+size = 'large'
+replicas = 1
+update_strategy = ''
+healthcheck = '/server/ping'
+command = []
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[[services.main.mounts]]
+volume = 'database'
+mount_path = '/directus/database'
+read_only = false
+sub_path = ''
+
+[[services.main.mounts]]
+volume = 'uploads'
+mount_path = '/directus/uploads'
+read_only = false
+sub_path = ''
+
+[services.main.env]
+ADMIN_EMAIL = '{{config.admin_email}}'
+DB_CLIENT = 'sqlite3'
+DB_FILENAME = '/directus/database/data.db'
+NODE_ENV = 'production'
+PUBLIC_URL = 'https://catalog.example.test'
+STORAGE_LOCAL_ROOT = '/directus/uploads'
+
+[services.main.secrets]
+[services.main.secrets.SECRET]
+ref = 'secret'
+
+[services.main.secrets.ADMIN_PASSWORD]
+ref = 'admin-password'
+
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
+
+[volumes]
+
+[volumes.database]
+size_gib = 2
+storage_class = ''
+access_mode = 'ReadWriteOnce'
+
+[volumes.uploads]
+size_gib = 5
+storage_class = ''
+access_mode = 'ReadWriteOnce'

@@ -1,0 +1,51 @@
+schema_version = 1
+name = 'template'
+
+[services]
+[services.main]
+architecture = ''
+run_as_user = 1001
+run_as_group = 0
+fs_group = 1001
+read_only_root_filesystem = false
+working_dir = ''
+termination_grace_seconds = 0
+certificate_mounts = []
+mounts = []
+image = 'docker.io/stirlingtools/stirling-pdf:3.2.2@sha256:c6872dd056b0046a14c5de1e9970283e7f1e1ff685bb08090c6b37a231127d31'
+port = 8080
+public_tcp = []
+ports = []
+public = true
+size = 'large'
+replicas = 1
+update_strategy = ''
+healthcheck = '/'
+command = ['tini', '--', 'bash', '-c', "sed '/^if \\[ -x \\/scripts\\/stirling-diagnostics.sh \\]/,/^fi/d' /scripts/init-without-ocr.sh > /scripts-run/init.sh && exec bash /scripts-run/init.sh"]
+args = []
+depends_on = []
+networks = ['default']
+restart_nonce = ''
+registry_credential = ''
+aws_identity = ''
+
+[services.main.volume]
+mount_path = '/configs'
+size_gib = 2
+storage_class = ''
+
+[[services.main.temporary_mounts]]
+mount_path = '/scripts-run'
+size_mib = 1
+memory = false
+
+[services.main.env]
+DISABLE_ADDITIONAL_FEATURES = 'true'
+SYSTEM_ENABLE_ANALYTICS = 'false'
+
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''
