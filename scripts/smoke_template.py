@@ -60,6 +60,30 @@ def config_values(row):
     return out
 
 
+def security_ids(svc):
+    """Pod user, group and fsGroup exactly as Hakopod computes them.
+
+    internal/cluster/deploy.go:565 starts every pod at RunAsUser=RunAsGroup=10001,
+    RunAsNonRoot=true, seccomp RuntimeDefault; container: AllowPrivilegeEscalation
+    =false, capabilities drop ALL (deploy.go:532).
+    internal/cluster/workloads.go:50-60 then:
+      run_as_user > 0 -> uid = gid = run_as_user; run_as_user 0/unset stays 10001
+        (it is NOT root, and run_as_user 0 never means root);
+      fsGroup = uid (line 54); run_as_group > 0 overrides gid (55); fs_group > 0
+        overrides fsGroup (58) - an fs_group of 0 means "same as the uid";
+      readOnlyRootFilesystem = the service flag (61);
+      FSGroupChangePolicy = OnRootMismatch (65), i.e. kubelet fixes group
+        ownership of a volume once, not on every start.
+    Kubernetes applies fsGroup by setting the volume's GROUP to fsGroup, making it
+    group-writable with setgid, and adds fsGroup as a supplemental group of the
+    container; the owning user stays root. The harness mirrors that (chgrp, not chown).
+    Not modelled: node_profile.go:214 / sidecars.go:132 force root in special profiles.
+    """
+    uid = svc.get("run_as_user", 0) or 10001
+    gid = svc.get("run_as_group", 0) or uid
+    return uid, gid, svc.get("fs_group", 0) or uid
+
+
 def render(value, config, port):
     for name, v in config.items():
         value = value.replace("{{config.%s}}" % name, v)
@@ -98,25 +122,26 @@ def plan(tid, spec, row, secret_values, port, config=None):
     net = f"smoke-{tid}"
     volumes, chown = {}, []
     for name, svc in services.items():
-        user, fsg = svc.get("run_as_user", 0), svc.get("fs_group", 0)
+        fsg = security_ids(svc)[2]
         for vol, _, _ in volume_mounts(tid, name, svc, spec):
             volumes[vol] = None
             chown.append(["docker", "run", "--rm", "-v", f"{vol}:/v", HELPER, "sh", "-c",
-                          f"chown -R {user}:{fsg} /v && chmod -R g+rwX /v && chmod g+s /v"])
+                          f"chgrp -R {fsg} /v && chmod -R g+rwX /v && chmod g+s /v"])
     runs = []
     for name in order(services):
         svc = services[name]
+        uid, gid, fsg = security_ids(svc)
         cmd = ["docker", "run", "-d", "--name", f"smoke-{tid}-{name}", "--network", net,
-               "--network-alias", name, "--user", f"{svc.get('run_as_user', 0)}:{svc.get('run_as_group', 0)}",
+               "--network-alias", name, "--user", f"{uid}:{gid}", "--group-add", str(fsg),
                "--cap-drop", "ALL", "--security-opt", "no-new-privileges"]
-        if svc.get("fs_group"):
-            cmd += ["--group-add", str(svc["fs_group"])]
         if svc.get("read_only_root_filesystem"):
             cmd.append("--read-only")
         for t in svc.get("temporary_mounts", []):
             cmd += ["--tmpfs", f"{t['mount_path']}:rw,size={t.get('size_mib', 64)}m"]
         for vol, path, ro in volume_mounts(tid, name, svc, spec):
-            cmd += ["-v", f"{vol}:{path}" + (":ro" if ro else "")]
+            # nocopy: Docker would otherwise copy the image directory's contents and
+            # root ownership into the empty volume, which Kubernetes never does.
+            cmd += ["-v", f"{vol}:{path}:nocopy" + (",ro" if ro else "")]
         for k, v in sorted(svc.get("env", {}).items()):
             cmd += ["-e", f"{k}={render(v, config, port)}"]
         for k, s in sorted(svc.get("secrets", {}).items()):

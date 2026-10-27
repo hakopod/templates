@@ -46,10 +46,10 @@ class T(unittest.TestCase):
         self.assertEqual([n for n, _ in p["run"]], ["db", "main"])
         main = dict(p["run"])["main"]
         self.assertEqual(main[:12], ["docker", "run", "-d", "--name", "smoke-n8n-with-postgres-main", "--network",
-                                     "smoke-n8n-with-postgres", "--network-alias", "main", "--user", "1000:0", "--cap-drop"])
+                                     "smoke-n8n-with-postgres", "--network-alias", "main", "--user", "1000:1000", "--group-add"])
         for part in (["--security-opt", "no-new-privileges"], ["-p", "127.0.0.1:5000:5678"],
                      ["-e", "N8N_HOST=127.0.0.1:5000"], ["-e", "WEBHOOK_URL=http://127.0.0.1:5000/"],
-                     ["-e", "GENERIC_TIMEZONE=UTC"], ["-v", "smoke-n8n-with-postgres-main-data:/home/node/.n8n"]):
+                     ["-e", "GENERIC_TIMEZONE=UTC"], ["-v", "smoke-n8n-with-postgres-main-data:/home/node/.n8n:nocopy"]):
             self.assertIn(part[0], main)
             self.assertIn(part[1], main)
         self.assertTrue(main[-1].startswith("n8nio/n8n:") and "@sha256:" in main[-1])  # image is last, no args
@@ -59,7 +59,7 @@ class T(unittest.TestCase):
         self.assertNotIn("-p", db)
         self.assertEqual(p["network"], ["docker", "network", "create", "smoke-n8n-with-postgres"])
         self.assertEqual(len(p["volumes"]), 2)
-        self.assertIn("chown -R 70:0 /v", p["chown"][0][-1])
+        self.assertIn("chgrp -R 70 /v", p["chown"][0][-1])
 
     def test_freshrss_command_tmpfs_and_directus_mounts(self):
         row, spec = load("freshrss")
@@ -81,6 +81,15 @@ class T(unittest.TestCase):
         self.assertEqual(f({"name": "api_url"}), "http://example.test")
         self.assertEqual(f({"name": "x", "description": "Public URL of the server"}), "http://example.test")
         self.assertEqual(f({"name": "x"}), "fixture")
+
+    def test_security_ids_follow_hakopod(self):
+        self.assertEqual(st.security_ids({"run_as_user": 0, "fs_group": 0}), (10001, 10001, 10001))
+        self.assertEqual(st.security_ids({}), (10001, 10001, 10001))
+        self.assertEqual(st.security_ids({"run_as_user": 70}), (70, 70, 70))
+        self.assertEqual(st.security_ids({"run_as_user": 1000, "run_as_group": 5, "fs_group": 7}), (1000, 5, 7))
+        row, spec = load("uptime-kuma")
+        main = dict(st.plan("uptime-kuma", spec, row, {}, 3)["run"])["main"]
+        self.assertEqual(main[main.index("--user") + 1], "10001:10001")
 
     def test_skip_not_deployable(self):
         row = next(r for r in json.loads((ROOT / "catalog.json").read_text()) if not r["deployable"])
