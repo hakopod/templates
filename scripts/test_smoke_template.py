@@ -91,6 +91,32 @@ class T(unittest.TestCase):
         main = dict(st.plan("uptime-kuma", spec, row, {}, 3)["run"])["main"]
         self.assertEqual(main[main.index("--user") + 1], "10001:10001")
 
+    def test_probe_http_when_healthcheck_path(self):
+        with mock.patch.object(st, "http_code", return_value=200) as h, mock.patch.object(st, "tcp_open") as t:
+            self.assertEqual(st.probe("/ping", 1, None, 100), (True, None, 200))
+        h.assert_called_once_with(1, "/ping")
+        t.assert_not_called()
+        with mock.patch.object(st, "http_code", return_value=503):
+            self.assertEqual(st.probe("/ping", 1, None, 100), (False, None, 503))
+
+    def test_probe_tcp_needs_steady_connection(self):
+        with mock.patch.object(st, "http_code") as h, mock.patch.object(st, "tcp_open", return_value=True):
+            self.assertEqual(st.probe("", 1, None, 100), (False, 100, None))
+            self.assertEqual(st.probe("", 1, 100, 100 + st.STABLE_SECONDS), (True, 100, None))
+        h.assert_not_called()
+        with mock.patch.object(st, "tcp_open", return_value=False):  # a drop resets the clock
+            self.assertEqual(st.probe("", 1, 100, 200), (False, None, None))
+
+    def test_kafka_is_private_and_published_for_the_harness(self):
+        row, spec = load("kafka")
+        main = spec["services"]["main"]
+        self.assertFalse(main["public"])
+        self.assertEqual(main["healthcheck"], "")
+        run = dict(st.plan("kafka", spec, row, {}, 9099)["run"])["main"]
+        self.assertIn("127.0.0.1:9099:9092", run)
+        self.assertIn("CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk", run)
+        self.assertEqual(run[run.index("--user") + 1], "1000:1000")
+
     def test_skip_not_deployable(self):
         row = next(r for r in json.loads((ROOT / "catalog.json").read_text()) if not r["deployable"])
         buf = io.StringIO()

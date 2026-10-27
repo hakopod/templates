@@ -193,6 +193,41 @@ def http_code(port, path):
         return None
 
 
+def tcp_open(port):
+    """True if something answers on the port and keeps the connection open.
+
+    Docker's published-port proxy accepts connections even when nothing listens in the
+    container and then closes them, so an immediate close does not count as open.
+    """
+    try:
+        with socket.create_connection(("127.0.0.1", port), timeout=5) as c:
+            c.settimeout(1)
+            try:
+                return c.recv(1) != b""
+            except socket.timeout:
+                return True  # open and waiting for the client, as Kafka does
+    except OSError:
+        return False
+
+
+STABLE_SECONDS = 15
+
+
+def probe(path, port, since, now, stable=STABLE_SECONDS):
+    """One readiness check -> (ready, since, http_code).
+
+    A healthcheck path means HTTP 2xx/3xx. An empty path means the service is not
+    necessarily HTTP (Kafka, databases): ready once the port has accepted connections
+    continuously for `stable` seconds; the caller's loop already fails if any container
+    stopped, so that also proves the process stays up.
+    """
+    if path:
+        code = http_code(port, path)
+        return bool(code and 200 <= code < 400), since, code
+    since = (since or now) if tcp_open(port) else None
+    return since is not None and now - since >= stable, since, None
+
+
 def smoke(tid, timeout):
     row = next((r for r in json.loads((ROOT / "catalog.json").read_text()) if r["id"] == tid), None)
     if row is None:
@@ -211,7 +246,7 @@ def smoke(tid, timeout):
     p = plan(tid, spec, row, sec, port)
     names = [f"smoke-{tid}-{n}" for n, _ in p["run"]]
     main = spec["services"]["main"]
-    status, code, start = "failed", None, time.time()
+    status, code, start, since = "failed", None, time.time(), None
     try:
         sh(p["network"], redact)
         for v in p["volumes"]:
@@ -227,8 +262,8 @@ def smoke(tid, timeout):
             if dead:
                 print("container not running:", ", ".join(dead))
                 break
-            code = http_code(port, main.get("healthcheck") or "/")
-            if code and 200 <= code < 400:
+            ready, since, code = probe(main.get("healthcheck", ""), port, since, time.time())
+            if ready:
                 status = "ready"
                 break
             time.sleep(2)
