@@ -9,10 +9,9 @@ run_as_group = 65532
 fs_group = 65532
 read_only_root_filesystem = true
 working_dir = ''
-termination_grace_seconds = 30
+termination_grace_seconds = 90
 certificate_mounts = []
-temporary_mounts = []
-image = 'ghcr.io/synehq/synehq-oos:sha-ed0976531fb244bfab04c532e463858086609889-hakopod@sha256:4770e40aff68d64555ac69bd91854cdb220f4874979d2493c4baf63b76a9a8f6'
+image = 'ghcr.io/synehq/synehq-oos:sha-667a3365773c8211a4d6d9c381e8c2e74de98211-hakopod@sha256:ce38eaca6b11d85ec0da4e931c0f7effafeb35ec94fc1481774fdc1a8c54fb8f'
 port = 3100
 public_tcp = []
 ports = []
@@ -29,22 +28,32 @@ restart_nonce = ''
 registry_credential = ''
 aws_identity = ''
 
+[services.main.resources]
+memory_request = '512Mi'
+memory_limit = '768Mi'
+
 [[services.main.mounts]]
 volume = 'data'
 mount_path = '/data'
 read_only = false
 sub_path = ''
 
+[[services.main.temporary_mounts]]
+mount_path = '/tmp'
+size_mib = 32
+
 [services.main.env]
+OOS_RUNTIME = 'kubernetes'
 OOS_BASE_PATH = '/synehq'
 AUTH_URL = 'https://catalog.example.test'
-OOS_HAKOPOD_SCOPE = '{{config.name}}'
-OOS_HAKOPOD_KEY_FILE = '/data/runtime/keys/hakopod.key'
-OOS_HAKOPOD_AUTHORITY_URL = 'https://catalog.example.test/internal/database-explorer/authorize'
+OOS_HAKOPOD_SCOPE = '{{config.scope}}'
+OOS_HAKOPOD_KEY_FILE = '/etc/synehq/hakopod.key'
+OOS_HAKOPOD_AUTHORITY_URL = '{{config.hakopod-url}}/internal/database-explorer/authorize'
 
-[services.main.secrets]
-[services.main.secrets.OOS_HAKOPOD_KEY]
-ref = 'hakopod-explorer-key'
+[services.main.files.hakopod-key]
+mount_path = '/etc/synehq/hakopod.key'
+secret = { ref = 'hakopod-explorer-key' }
+mode = 256
 
 [networks]
 [networks.default]

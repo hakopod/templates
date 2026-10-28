@@ -10,14 +10,15 @@ apps that insist on https origins (secure cookies, OAuth callbacks) are only
 checked for starting and answering their healthcheck, not for login flows.
 Python 3.11+, standard library only.
 """
-import argparse, base64, http.client, json, pathlib, platform, re, secrets, socket
+import argparse, base64, http.client, json, pathlib, platform, re, secrets, socket, tempfile
 import string, subprocess, sys, time, tomllib
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ORIGIN = "https://catalog.example.test"
+FILES_DIR = pathlib.Path(tempfile.gettempdir()) / "hakopod-smoke-files"
 # busybox 1.37.0 multi-arch index (amd64, arm64, ...), used only to chown volumes.
 HELPER = "docker.io/library/busybox:1.37.0@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e"
-UNSUPPORTED = ("files", "job", "gpu", "bindings", "certificate_mounts", "ports", "database_client_profiles")
+UNSUPPORTED = ("job", "gpu", "bindings", "certificate_mounts", "ports", "database_client_profiles")
 
 
 def gen_secret(fmt):
@@ -37,6 +38,7 @@ def make_secrets(row, spec):
     """One value per secret ref, shared by every service that uses the ref."""
     formats = {f["name"]: f.get("format", "token") for f in row.get("secret_fields", [])}
     refs = {s["ref"] for svc in spec["services"].values() for s in svc.get("secrets", {}).values()}
+    refs |= {f["secret"]["ref"] for svc in spec["services"].values() for f in svc.get("files", {}).values() if f.get("secret")}
     return {ref: gen_secret(formats.get(ref, "token")) for ref in sorted(refs)}
 
 
@@ -46,7 +48,7 @@ def fixture(field):
     if "email" in text:
         return "admin@example.com"
     if re.search(r"\b(url|uri|endpoint)\b|[-_](url|uri)\b", text):
-        return "http://example.test"
+        return "https://example.test" if "https" in text else "http://example.test"
     return "fixture"
 
 
@@ -127,7 +129,7 @@ def plan(tid, spec, row, secret_values, port, config=None):
             volumes[vol] = None
             chown.append(["docker", "run", "--rm", "-v", f"{vol}:/v", HELPER, "sh", "-c",
                           f"chgrp -R {fsg} /v && chmod -R g+rwX /v && chmod g+s /v"])
-    runs = []
+    runs, files = [], []
     for name in order(services):
         svc = services[name]
         uid, gid, fsg = security_ids(svc)
@@ -142,6 +144,12 @@ def plan(tid, spec, row, secret_values, port, config=None):
             # nocopy: Docker would otherwise copy the image directory's contents and
             # root ownership into the empty volume, which Kubernetes never does.
             cmd += ["-v", f"{vol}:{path}:nocopy" + (",ro" if ro else "")]
+        for key, f in sorted(svc.get("files", {}).items()):
+            # Like kubelet with fsGroup: root-owned, group fs_group, group read added.
+            host = str(FILES_DIR / f"{tid}-{name}-{key}")
+            body = f["content"] if "content" in f else secret_values[f["secret"]["ref"]]
+            files.append({"path": host, "body": body, "mode": (f.get("mode") or 0o444) | 0o440, "gid": fsg})
+            cmd += ["-v", f"{host}:{f['mount_path']}:ro"]
         for k, v in sorted(svc.get("env", {}).items()):
             cmd += ["-e", f"{k}={render(v, config, port)}"]
         for k, s in sorted(svc.get("secrets", {}).items()):
@@ -156,7 +164,7 @@ def plan(tid, spec, row, secret_values, port, config=None):
         cmd += [svc["image"]] + command[1:] + svc.get("args", [])
         runs.append((name, cmd))
     return {"network": ["docker", "network", "create", net], "volumes": sorted(volumes),
-            "chown": chown, "run": runs}
+            "chown": chown, "files": files, "run": runs}
 
 
 def skip_reason(row, spec):
@@ -210,7 +218,7 @@ def tcp_open(port):
         return False
 
 
-STABLE_SECONDS = 15
+STABLE_SECONDS = 45  # outlasts startup deadlines such as SyneHQ OOS's 30 s Kelvo check
 
 
 def probe(path, port, since, now, stable=STABLE_SECONDS):
@@ -253,6 +261,11 @@ def smoke(tid, timeout):
             sh(["docker", "volume", "create", v], redact)
         for c in p["chown"]:
             sh(c, redact)
+        FILES_DIR.mkdir(exist_ok=True)
+        for f in p["files"]:
+            pathlib.Path(f["path"]).write_text(f["body"])
+            sh(["sudo", "chown", f"0:{f['gid']}", f["path"]], redact)
+            sh(["sudo", "chmod", format(f["mode"], "o"), f["path"]], redact)
         for _, c in p["run"]:
             sh(c, redact)
         deadline = start + timeout
@@ -281,6 +294,8 @@ def smoke(tid, timeout):
         sh(["docker", "network", "rm", p["network"][-1]], redact, check=False)
         for v in p["volumes"]:
             sh(["docker", "volume", "rm", "-f", v], redact, check=False)
+        for f in p["files"]:
+            sh(["sudo", "rm", "-f", f["path"]], redact, check=False)
     print(f"template={tid} arch={platform.machine()} image={main['image'].split('@')[0]} "
           f"status={status} seconds={time.time() - start:.0f} http={code}")
     return 0 if status == "ready" else 1

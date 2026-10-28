@@ -80,6 +80,7 @@ class T(unittest.TestCase):
         self.assertEqual(f({"name": "owner", "description": "Contact email"}), "admin@example.com")
         self.assertEqual(f({"name": "api_url"}), "http://example.test")
         self.assertEqual(f({"name": "x", "description": "Public URL of the server"}), "http://example.test")
+        self.assertEqual(f({"name": "x", "description": "HTTPS origin URL"}), "https://example.test")
         self.assertEqual(f({"name": "x"}), "fixture")
 
     def test_security_ids_follow_hakopod(self):
@@ -126,6 +127,17 @@ class T(unittest.TestCase):
             self.assertEqual(st.smoke(row["id"], 1), 0)
         run.assert_not_called()
         self.assertIn("SKIP", buf.getvalue())
+
+    def test_secret_files_mount_like_kubelet(self):
+        row, spec = load("synehq-oos")
+        sec = st.make_secrets(row, spec)
+        self.assertIn("hakopod-explorer-key", sec)
+        p = st.plan("synehq-oos", spec, row, sec, 7)
+        [f] = p["files"]
+        self.assertEqual((f["body"], f["mode"], f["gid"]), (sec["hakopod-explorer-key"], 0o440, 65532))
+        run = dict(p["run"])["main"]
+        self.assertIn(f"{f['path']}:/etc/synehq/hakopod.key:ro", run)
+        self.assertFalse(any(a.startswith("OOS_HAKOPOD_KEY=") for a in run))
 
     def test_failure_cleans_up_and_hides_secrets(self):
         calls = []

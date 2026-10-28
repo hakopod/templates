@@ -1538,15 +1538,15 @@
     "source_commit": "27ebb3587ee974e55cf443c643b087db7bf9216e"
   },
   {
-    "reference": "ghcr.io/synehq/synehq-oos:sha-ed0976531fb244bfab04c532e463858086609889-hakopod",
-    "digest": "sha256:4770e40aff68d64555ac69bd91854cdb220f4874979d2493c4baf63b76a9a8f6",
+    "reference": "ghcr.io/synehq/synehq-oos:sha-667a3365773c8211a4d6d9c381e8c2e74de98211-hakopod",
+    "digest": "sha256:ce38eaca6b11d85ec0da4e931c0f7effafeb35ec94fc1481774fdc1a8c54fb8f",
     "platforms": [
       "amd64",
       "arm64"
     ],
-    "source": "OCI registry manifest inspection",
+    "source": "Anonymous GHCR manifest list inspection; built by SyneHQ/synehq-oos Check run 40644991065 from main 667a336 with Kelvo e526b1f.",
     "image_config_inspected": false,
-    "checked_at": "2026-10-16"
+    "checked_at": "2026-10-28"
   },
   {
     "reference": "corentinth/it-tools:2024.10.22-7ca5933",
