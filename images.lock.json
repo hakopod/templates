@@ -1538,13 +1538,13 @@
     "source_commit": "27ebb3587ee974e55cf443c643b087db7bf9216e"
   },
   {
-    "reference": "ghcr.io/synehq/synehq-oos:sha-667a3365773c8211a4d6d9c381e8c2e74de98211-hakopod",
-    "digest": "sha256:ce38eaca6b11d85ec0da4e931c0f7effafeb35ec94fc1481774fdc1a8c54fb8f",
+    "reference": "ghcr.io/synehq/synehq-oos:sha-d280c7cb3181e4342c89986e38edd35da38c45bf-hakopod",
+    "digest": "sha256:291f5417382dc9fe462c7566621226c0d6bbaa5bfcb7c7cd83b3e10bbbd3e6e5",
     "platforms": [
       "amd64",
       "arm64"
     ],
-    "source": "Anonymous GHCR manifest list inspection; built by SyneHQ/synehq-oos Check run 40644991065 from main 667a336 with Kelvo e526b1f.",
+    "source": "Anonymous GHCR manifest list inspection; built by SyneHQ/synehq-oos Check run 40659238836 from main d280c7c with Kelvo 1a7beca.",
     "image_config_inspected": false,
     "checked_at": "2026-10-28"
   },
