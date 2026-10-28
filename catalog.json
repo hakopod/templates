@@ -6066,17 +6066,17 @@
       "hakopod-explorer-key"
     ],
     "requirements": [
-      "Kelvo query containment needs Linux cgroup v2 delegation and a seccomp profile permitting clone3; upstream reports its restricted Kubernetes pod probe failed, so Kubernetes deployment is unqualified.",
-      "OOS_HAKOPOD_KEY_FILE must be a mode-0600 file readable by user 65532; Hakopod secret references are delivered as environment variables, so the key is not yet usable.",
-      "The /healthz endpoint answers loopback requests only; no orchestrator HTTP probe is configured.",
-      "Use one instance per Hakopod project and environment with fresh metadata; set OOS_HAKOPOD_SCOPE to the exact target scope string."
+      "Runs in Kubernetes pod mode (OOS_RUNTIME=kubernetes): Kelvo has no per-query cgroups, so the 768 MiB pod limit is the only memory, CPU and process boundary and one runaway query can restart the explorer. Landlock, the worker seccomp filter, non-root execution and a read-only root filesystem still apply.",
+      "Nodes need Linux with Landlock ABI 3 or later.",
+      "Use one instance per Hakopod project and environment, with fresh metadata. Set the scope to the exact scope string of the matching engine target.",
+      "Hakopod opens the explorer only after an operator adds a target for this scope to HAKOPOD_EXPLORER_TARGETS_FILE, with this app's HTTPS address plus /synehq and a key file holding the same hakopod-explorer-key value."
     ],
     "architectures": [
       "amd64",
       "arm64"
     ],
-    "resource_summary": "1 bounded service; medium main profile; query workers share the service limits",
-    "verification": "Image digest and amd64/arm64 registry platforms checked; Kubernetes containment and runtime acceptance pending.",
+    "resource_summary": "1 bounded service; 512 MiB request and 768 MiB limit shared by OOS, Kelvo and its query workers; 5 GiB data volume",
+    "verification": "Image digest and amd64/arm64 platforms checked; runtime smoke test with Hakopod pod security and the key mounted as a secret file runs in CI.",
     "providers": [],
     "configuration": "template",
     "site_url_required": true,
@@ -6093,16 +6093,30 @@
     ],
     "sources": [
       "https://github.com/SyneHQ/synehq-oos",
-      "https://github.com/SyneHQ/synehq-oos/blob/ed0976531fb244bfab04c532e463858086609889/docs/hakopod-integration.md"
+      "https://github.com/SyneHQ/synehq-oos/blob/main/docs/hakopod-integration.md"
     ],
-    "deployable": false,
-    "config_fields": [],
+    "deployable": true,
+    "config_fields": [
+      {
+        "name": "hakopod-url",
+        "label": "Hakopod URL",
+        "description": "HTTPS origin of this Hakopod installation, without a path, such as https://hakopod.example.com.",
+        "default": "",
+        "required": true
+      },
+      {
+        "name": "scope",
+        "label": "Explorer scope",
+        "description": "Exact scope string of the engine target for this project and environment, such as demo/development.",
+        "default": "",
+        "required": true
+      }
+    ],
     "notes": [
-      "Migration guide only: not enabled for deployment.",
-      "Run on a qualified Linux Docker host with deploy/run-container.sh until Kubernetes containment is qualified."
+      "Pod mode trades per-query isolation for running on Kubernetes; see the OOS Kubernetes pod mode guide before deploying."
     ],
-    "docs_url": "https://github.com/SyneHQ/synehq-oos/blob/main/docs/container.md",
-    "image": "ghcr.io/synehq/synehq-oos:sha-ed0976531fb244bfab04c532e463858086609889-hakopod@sha256:4770e40aff68d64555ac69bd91854cdb220f4874979d2493c4baf63b76a9a8f6",
+    "docs_url": "https://github.com/SyneHQ/synehq-oos/blob/main/docs/hakopod-integration.md#kubernetes-pod-mode",
+    "image": "ghcr.io/synehq/synehq-oos:sha-667a3365773c8211a4d6d9c381e8c2e74de98211-hakopod@sha256:ce38eaca6b11d85ec0da4e931c0f7effafeb35ec94fc1481774fdc1a8c54fb8f",
     "port": 3100,
     "logo": "/template-assets/synehq-oos/logo.png"
   },

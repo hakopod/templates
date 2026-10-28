@@ -1,27 +1,38 @@
 # SyneHQ OOS
 
-**Migration guide: not enabled for deployment.** Native migration candidate; runtime acceptance pending.
+Open-source database explorer for the Hakopod `/synehq` integration.
 
-Open-source database explorer for the Hakopod /synehq integration.
+## Pod mode
+
+This template runs OOS with `OOS_RUNTIME=kubernetes`. A Kubernetes pod cannot be given a delegated cgroup subtree, so Kelvo runs query workers without per-query cgroups. The 768 MiB pod limit is the only memory, CPU and process boundary, and one runaway query can restart the explorer. Landlock, the worker seccomp filter, non-root execution and the read-only root filesystem still apply. Nodes need Linux with Landlock ABI 3 or later.
+
+For per-query cgroups, run OOS on a Linux Docker host with `deploy/run-container.sh` instead.
 
 ## Requirements
 
-- Kelvo query containment needs Linux cgroup v2 delegation and a seccomp profile permitting clone3; upstream reports its restricted Kubernetes pod probe failed, so Kubernetes deployment is unqualified.
-- OOS_HAKOPOD_KEY_FILE must be a mode-0600 file readable by user 65532; Hakopod secret references are delivered as environment variables, so the key is not yet usable.
-- The /healthz endpoint answers loopback requests only; no orchestrator HTTP probe is configured.
-- Use one instance per Hakopod project and environment with fresh metadata; set OOS_HAKOPOD_SCOPE to the exact target scope string.
+- One instance per Hakopod project and environment, with fresh metadata. An existing standalone installation cannot be taken over.
+- **Hakopod URL:** the HTTPS origin of this Hakopod installation. OOS asks `<Hakopod URL>/internal/database-explorer/authorize` to validate every session.
+- **Explorer scope:** the exact scope string of the matching engine target, such as `demo/development`.
+- `hakopod-explorer-key`: a separate 32-byte key encoded as 64 lowercase hex characters. It is mounted as a read-only file at `/etc/synehq/hakopod.key`, never as an environment variable. Do not reuse session, encryption, TLS or Kelvo keys.
 
-## Candidate credential references
+## Connect Hakopod
 
-- `hakopod-explorer-key`: Separate 32-byte Hakopod explorer key encoded as 64 lowercase hex characters. Do not reuse session, encryption, TLS or Kelvo keys.
+After the app is running, add a target to the engine's `HAKOPOD_EXPLORER_TARGETS_FILE`:
 
-## Ordinary configuration
+```toml
+[[targets]]
+scope = "demo/development"
+project = "demo"
+environment = "development"
+url = "https://<this app's domain>/synehq"
+key_file = "/path/to/explorer-demo.key"
+```
 
-Use the catalog options described in the root README. The image is built with `OOS_BASE_PATH=/synehq`; set `AUTH_URL` to the OOS origin without a path and `OOS_HAKOPOD_AUTHORITY_URL` to the engine URL ending in `/internal/database-explorer/authorize`.
+The key file holds the same `hakopod-explorer-key` value and has mode 0600. **Explore databases** appears for users who can query databases in that scope.
 
 ## Sources
 
 - https://github.com/SyneHQ/synehq-oos
-- https://github.com/SyneHQ/synehq-oos/blob/ed0976531fb244bfab04c532e463858086609889/docs/hakopod-integration.md
+- https://github.com/SyneHQ/synehq-oos/blob/main/docs/hakopod-integration.md
 
 Application license: Apache-2.0.
