@@ -6058,7 +6058,7 @@
   {
     "id": "synehq-oos",
     "name": "SyneHQ OOS",
-    "category": "database",
+    "category": "application",
     "description": "Open-source database explorer for the Hakopod /synehq integration.",
     "license": "Apache-2.0",
     "upstream": "https://github.com/SyneHQ/synehq-oos",
