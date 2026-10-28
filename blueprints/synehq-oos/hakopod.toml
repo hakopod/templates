@@ -53,7 +53,7 @@ OOS_HAKOPOD_AUTHORITY_URL = '{{config.hakopod-url}}/internal/database-explorer/a
 [services.main.files.hakopod-key]
 mount_path = '/etc/synehq/hakopod.key'
 secret = { ref = 'hakopod-explorer-key' }
-mode = 256
+mode = 288
 
 [networks]
 [networks.default]
