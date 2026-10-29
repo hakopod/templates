@@ -22,7 +22,7 @@ storage_class = ""
 
 [[services.main.temporary_mounts]]
 mount_path = "/tmp"
-size_mib = 256
+size_mib = 128
 memory = false
 
 [services.main.env]
