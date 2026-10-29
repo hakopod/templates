@@ -1,0 +1,84 @@
+schema_version = 1
+name = "template"
+
+[services.main]
+image = "docker.io/headscale/headscale:0.29.6@sha256:cabe84f0699913dbca9320f0883dca7565dd08df3c5be29edfabbebeff763966"
+args = [ "serve",]
+port = 8080
+run_as_user = 1000
+run_as_group = 1000
+fs_group = 1000
+read_only_root_filesystem = true
+size = "small"
+replicas = 1
+public = true
+healthcheck = "/health"
+termination_grace_seconds = 30
+networks = [ "default",]
+
+[services.main.volume]
+mount_path = "/var/lib/headscale"
+size_gib = 1
+storage_class = ""
+
+[[services.main.temporary_mounts]]
+mount_path = "/run/headscale"
+size_mib = 1
+memory = false
+
+[services.main.env]
+# Clients must reach this exact HTTPS address, so it comes from the site URL.
+HEADSCALE_SERVER_URL = "https://catalog.example.test"
+
+[services.main.files.config]
+mount_path = "/etc/headscale/config.yaml"
+content = '''
+listen_addr: 0.0.0.0:8080
+metrics_listen_addr: 127.0.0.1:9090
+grpc_listen_addr: 127.0.0.1:50443
+grpc_allow_insecure: false
+noise:
+  private_key_path: /var/lib/headscale/noise_private.key
+prefixes:
+  v4: 100.64.0.0/10
+  v6: fd7a:115c:a1e0::/48
+  allocation: sequential
+derp:
+  server:
+    enabled: false
+  urls:
+    - https://controlplane.tailscale.com/derpmap/default
+  paths: []
+  auto_update_enabled: true
+  update_frequency: 3h
+disable_check_updates: true
+database:
+  type: sqlite
+  sqlite:
+    path: /var/lib/headscale/db.sqlite
+    write_ahead_log: true
+log:
+  level: info
+  format: text
+policy:
+  mode: file
+  path: ""
+dns:
+  magic_dns: true
+  base_domain: tailnet.internal
+  override_local_dns: false
+  nameservers:
+    global: []
+    split: {}
+  search_domains: []
+  extra_records: []
+unix_socket: /run/headscale/headscale.sock
+unix_socket_permission: "0770"
+logtail:
+  enabled: false
+taildrop:
+  enabled: true
+'''
+
+[networks.default]
+internal = false
