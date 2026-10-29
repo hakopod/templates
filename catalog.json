@@ -6648,5 +6648,53 @@
     "docs_url": "https://kafka.apache.org/documentation/#docker",
     "port": 9092,
     "image": "docker.io/apache/kafka:4.4.0@sha256:833b867a9585a141da455dc2b57431c65cbccb27f11c91f694444cca9f777e0f"
+  },
+  {
+    "id": "rivet-engine",
+    "category": "application",
+    "name": "Rivet Engine",
+    "description": "Self-hosted Rivet Engine for Rivet Actors: long-running, stateful processes for agents, workflows and realtime apps. Single node with file-system storage.",
+    "license": "Apache-2.0",
+    "upstream": "https://github.com/rivet-dev/rivet",
+    "required_secrets": [
+      "admin-token"
+    ],
+    "requirements": [
+      "Single engine on file-system storage (RocksDB on the volume). It is not highly available; multi-node Rivet needs PostgreSQL and NATS, which this preset does not set up.",
+      "Port 6420 is the engine endpoint for the API, the dashboard and actor traffic. It is private by default; make it public only if runners or clients outside this cluster must reach it.",
+      "Your actor code runs separately, as a RivetKit app that connects out to the engine. Deploy it as a worker service with RIVET_ENDPOINT and RIVET_TOKEN and a 60 second termination grace period (see the README).",
+      "Back up the volume off-node. Keep the admin token stable: runners and the dashboard authenticate with it."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 service; medium profile; 10 GiB volume for engine state",
+    "verification": "Image digest, amd64/arm64 platforms and image config (root user, rivet-engine start entrypoint) checked from the registry. The preset runs it as UID 1000 with a read-only root. The template smoke workflow in GitHub Actions starts it; not tested on Kubernetes, and no actor has been run against it.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "admin-token",
+        "description": "Admin token for the engine API, dashboard and runners. At least 32 characters. Keep it stable.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/rivet-dev/rivet/tree/v2.3.31/self-host/control-plane/docker-compose",
+      "https://github.com/rivet-dev/rivet/blob/v2.3.31/docker/engine/Dockerfile",
+      "https://github.com/rivet-dev/rivet/blob/v2.3.31/engine/artifacts/config-schema.json"
+    ],
+    "deployable": true,
+    "config_fields": [],
+    "notes": [],
+    "docs_url": "https://www.rivet.dev/docs/",
+    "image": "rivetdev/engine:2.3.31@sha256:791b3592c90911af44513848358f568236c73348081eab221ca317119289aeb4",
+    "port": 6420
   }
 ]

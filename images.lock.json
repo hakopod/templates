@@ -1703,5 +1703,16 @@
     "source": "OCI registry manifest inspection",
     "image_config_inspected": false,
     "checked_at": "2026-10-27"
+  },
+  {
+    "reference": "rivetdev/engine:2.3.31",
+    "digest": "sha256:791b3592c90911af44513848358f568236c73348081eab221ca317119289aeb4",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-10-29"
   }
 ]
