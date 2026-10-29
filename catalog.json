@@ -6696,5 +6696,45 @@
     "docs_url": "https://www.rivet.dev/docs/",
     "image": "rivetdev/engine:2.3.31@sha256:791b3592c90911af44513848358f568236c73348081eab221ca317119289aeb4",
     "port": 6420
+  },
+  {
+    "id": "headscale",
+    "category": "application",
+    "name": "Headscale",
+    "description": "Self-hosted control server for Tailscale clients: a private WireGuard network for your own devices and apps. It does not protect the Hakopod dashboard.",
+    "license": "BSD-3-Clause",
+    "upstream": "https://github.com/juanfont/headscale",
+    "required_secrets": [],
+    "requirements": [
+      "This VPN is for your own devices and apps. It does not protect the Hakopod dashboard or API; that is the separate built-in management VPN.",
+      "Needs a stable public HTTPS site URL. Tailscale clients log in to it, and changing it means logging every device in again.",
+      "Devices run the normal Tailscale client. Traffic that cannot go direct is relayed, still encrypted, through Tailscale's public DERP servers; this preset runs no relay of its own.",
+      "No access policy is set, so every device can reach every other device. Add one before sharing the server.",
+      "Manage users and login keys from the service terminal with a JSON command such as [\"headscale\", \"users\", \"list\"]; the image has no shell. Back up the volume off-node."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 service; small profile; 1 GiB volume for the database and server keys",
+    "verification": "Image digest, amd64/arm64 platforms and image config (root user, /ko-app/headscale entrypoint, distroless base) checked from the registry. The preset runs it as UID 1000 with a read-only root. The template smoke workflow in GitHub Actions starts it; not tested on Kubernetes, and no Tailscale client has been logged in to it.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": true,
+    "site_url_supported": true,
+    "database_config": false,
+    "secret_fields": [],
+    "sources": [
+      "https://github.com/juanfont/headscale/blob/v0.29.6/config-example.yaml",
+      "https://github.com/juanfont/headscale/blob/v0.29.6/.goreleaser.yml",
+      "https://github.com/juanfont/headscale/blob/v0.29.6/hscontrol/types/config.go",
+      "https://headscale.net/stable/setup/install/container/"
+    ],
+    "deployable": true,
+    "config_fields": [],
+    "notes": [],
+    "docs_url": "https://headscale.net/stable/",
+    "image": "docker.io/headscale/headscale:0.29.6@sha256:cabe84f0699913dbca9320f0883dca7565dd08df3c5be29edfabbebeff763966",
+    "port": 8080
   }
 ]
