@@ -1,0 +1,36 @@
+schema_version = 1
+name = "template"
+
+[services.main]
+image = "rivetdev/engine:2.3.31@sha256:791b3592c90911af44513848358f568236c73348081eab221ca317119289aeb4"
+port = 6420
+run_as_user = 1000
+run_as_group = 1000
+fs_group = 1000
+read_only_root_filesystem = true
+size = "medium"
+replicas = 1
+public = false
+healthcheck = "/metadata"
+termination_grace_seconds = 30
+networks = [ "default",]
+
+[services.main.volume]
+mount_path = "/var/lib/rivet-engine"
+size_gib = 10
+storage_class = ""
+
+[[services.main.temporary_mounts]]
+mount_path = "/tmp"
+size_mib = 256
+memory = false
+
+[services.main.env]
+HOME = "/tmp"
+RIVET__FILE_SYSTEM__PATH = "/var/lib/rivet-engine"
+
+[services.main.secrets.RIVET__AUTH__ADMIN_TOKEN]
+ref = "admin-token"
+
+[networks.default]
+internal = false
