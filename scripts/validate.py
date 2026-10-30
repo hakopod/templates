@@ -39,7 +39,10 @@ for row in rows:
         assert re.search(r"@sha256:[0-9a-f]{64}$", service["image"]), ident
         assert not re.match(r"(?:localhost|127(?:\.\d+){3}|\[::1\])(?::\d+)?/", service["image"]), ident
         assert service.get("run_as_user", 0) >= 0, ident
-        assert not service.get("public_tcp"), ident
+        # Public TCP needs an administrator-provisioned port; Hakopod offers such a
+        # preset only where the installation supports it. Sources stay explicit.
+        for listener in service.get("public_tcp", []):
+            assert listener.get("source_cidrs") and listener.get("target_port"), ident
         for value in service.get("env", {}).values():
             assert "${" not in value, ident
     assert set(row["architectures"]) <= {"amd64", "arm64"}, ident

@@ -18,7 +18,7 @@ ORIGIN = "https://catalog.example.test"
 FILES_DIR = pathlib.Path(tempfile.gettempdir()) / "hakopod-smoke-files"
 # busybox 1.37.0 multi-arch index (amd64, arm64, ...), used only to chown volumes.
 HELPER = "docker.io/library/busybox:1.37.0@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e"
-UNSUPPORTED = ("job", "gpu", "bindings", "certificate_mounts", "ports", "database_client_profiles")
+UNSUPPORTED = ("job", "gpu", "bindings", "ports", "database_client_profiles")
 
 
 def gen_secret(fmt):
@@ -129,7 +129,7 @@ def plan(tid, spec, row, secret_values, port, config=None):
             volumes[vol] = None
             chown.append(["docker", "run", "--rm", "-v", f"{vol}:/v", HELPER, "sh", "-c",
                           f"chgrp -R {fsg} /v && chmod -R g+rwX /v && chmod g+s /v"])
-    runs, files = [], []
+    runs, files, certs = [], [], []
     for name in order(services):
         svc = services[name]
         uid, gid, fsg = security_ids(svc)
@@ -150,6 +150,12 @@ def plan(tid, spec, row, secret_values, port, config=None):
             body = f["content"] if "content" in f else secret_values[f["secret"]["ref"]]
             files.append({"path": host, "body": body, "mode": (f.get("mode") or 0o444) | 0o440, "gid": fsg})
             cmd += ["-v", f"{host}:{f['mount_path']}:ro"]
+        for i, m in enumerate(svc.get("certificate_mounts", [])):
+            # Stands in for Hakopod's tls.crt/tls.key Secret volume: a throwaway
+            # self-signed pair, root-owned, group fs_group, mode 0440.
+            host = str(FILES_DIR / f"{tid}-{name}-cert-{i}")
+            certs.append({"dir": host, "gid": fsg})
+            cmd += ["-v", f"{host}:{m['mount_path']}:ro"]
         for k, v in sorted(svc.get("env", {}).items()):
             cmd += ["-e", f"{k}={render(v, config, port)}"]
         for k, s in sorted(svc.get("secrets", {}).items()):
@@ -164,7 +170,7 @@ def plan(tid, spec, row, secret_values, port, config=None):
         cmd += [svc["image"]] + command[1:] + svc.get("args", [])
         runs.append((name, cmd))
     return {"network": ["docker", "network", "create", net], "volumes": sorted(volumes),
-            "chown": chown, "files": files, "run": runs}
+            "chown": chown, "files": files, "certs": certs, "run": runs}
 
 
 def skip_reason(row, spec):
@@ -236,7 +242,7 @@ def probe(path, port, since, now, stable=STABLE_SECONDS):
     return since is not None and now - since >= stable, since, None
 
 
-def smoke(tid, timeout):
+def smoke(tid, timeout, overrides=None):
     row = next((r for r in json.loads((ROOT / "catalog.json").read_text()) if r["id"] == tid), None)
     if row is None:
         sys.exit(f"unknown template {tid}")
@@ -251,7 +257,7 @@ def smoke(tid, timeout):
         port = s.getsockname()[1]
     sec = make_secrets(row, spec)
     redact = list(sec.values())
-    p = plan(tid, spec, row, sec, port)
+    p = plan(tid, spec, row, sec, port, {**config_values(row), **(overrides or {})})
     names = [f"smoke-{tid}-{n}" for n, _ in p["run"]]
     main = spec["services"]["main"]
     status, code, start, since = "failed", None, time.time(), None
@@ -266,6 +272,13 @@ def smoke(tid, timeout):
             pathlib.Path(f["path"]).write_text(f["body"])
             sh(["sudo", "chown", f"0:{f['gid']}", f["path"]], redact)
             sh(["sudo", "chmod", format(f["mode"], "o"), f["path"]], redact)
+        for c in p["certs"]:
+            pathlib.Path(c["dir"]).mkdir(exist_ok=True)
+            sh(["openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "1", "-subj", "/CN=smoke.test",
+                "-addext", "subjectAltName=DNS:smoke.test", "-keyout", c["dir"] + "/tls.key", "-out", c["dir"] + "/tls.crt"], redact)
+            sh(["sudo", "chown", "-R", f"0:{c['gid']}", c["dir"]], redact)
+            sh(["sudo", "chmod", "0440", c["dir"] + "/tls.key", c["dir"] + "/tls.crt"], redact)
+            sh(["sudo", "chmod", "0550", c["dir"]], redact)
         for _, c in p["run"]:
             sh(c, redact)
         deadline = start + timeout
@@ -296,6 +309,8 @@ def smoke(tid, timeout):
             sh(["docker", "volume", "rm", "-f", v], redact, check=False)
         for f in p["files"]:
             sh(["sudo", "rm", "-f", f["path"]], redact, check=False)
+        for c in p["certs"]:
+            sh(["sudo", "rm", "-rf", c["dir"]], redact, check=False)
     print(f"template={tid} arch={platform.machine()} image={main['image'].split('@')[0]} "
           f"status={status} seconds={time.time() - start:.0f} http={code}")
     return 0 if status == "ready" else 1
@@ -305,5 +320,6 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("template")
     ap.add_argument("--timeout", type=int, default=600)
+    ap.add_argument("--set", action="append", default=[], metavar="NAME=VALUE", help="override a catalog config field")
     a = ap.parse_args()
-    sys.exit(smoke(a.template, a.timeout))
+    sys.exit(smoke(a.template, a.timeout, dict(item.split("=", 1) for item in a.set)))

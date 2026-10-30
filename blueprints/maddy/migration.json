@@ -1,0 +1,12 @@
+{
+  "status": "native",
+  "source": "https://github.com/foxcpp/maddy/tree/v0.9.6",
+  "upstream_commit": "v0.9.6",
+  "adaptations": [
+    "Send-only: submission on 2587 inside the container, published as public TCP 587; no port 25 listener and no IMAP.",
+    "Configuration is mounted read-only from the preset; credentials, DKIM keys and the queue live in /data.",
+    "TLS uses the certificate Hakopod issues for the service's generated hostname.",
+    "Runs as UID 10001 with a read-only root filesystem and every Linux capability dropped."
+  ],
+  "runtime_verified": false
+}
