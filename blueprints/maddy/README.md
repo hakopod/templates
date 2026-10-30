@@ -27,7 +27,7 @@ or passes it to a relay provider such as Amazon SES, Mailgun or Postmark.
 1. Create a sending account from the service terminal:
 
    ```sh
-   maddy -config /etc/maddy/maddy.conf creds create app@example.com
+   maddy -config "/etc/maddy/$MADDY_DELIVERY.conf" creds create app@example.com
    ```
 
    An account may send only as its own address.

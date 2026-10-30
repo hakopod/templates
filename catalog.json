@@ -6710,7 +6710,7 @@
     "requirements": [
       "Public TCP port 587 provisioned by the installation administrator (installer public_tcp_ports, or modules.py public-tcp afterwards) and open in the cloud and host firewall",
       "The installation's TLS issuer: Hakopod issues and renews the certificate for this service's generated hostname, and apps connect to that hostname on port 587",
-      "Create a sending account from the service terminal with: maddy -config /etc/maddy/maddy.conf creds create app@your-domain",
+      "Create a sending account from the service terminal with: maddy -config \"/etc/maddy/$MADDY_DELIVERY.conf\" creds create app@your-domain",
       "Publish SPF, DMARC and the DKIM record from /data/dkim_keys/*.dns for the sender domain before sending",
       "Direct delivery needs outbound TCP 25 and reverse DNS for the server hostname; many cloud providers block port 25, so use relay delivery there",
       "Send-only: there is no inbound mail on port 25 and no IMAP mailbox"
