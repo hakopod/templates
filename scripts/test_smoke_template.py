@@ -16,6 +16,16 @@ def load(tid):
 
 
 class T(unittest.TestCase):
+    def test_maddy_gets_a_certificate_mount_and_delivery_override(self):
+        row, spec = load("maddy")
+        self.assertIsNone(st.skip_reason(row, spec))
+        p = st.plan("maddy", spec, row, st.make_secrets(row, spec), 2525, {**st.config_values(row), "delivery": "relay"})
+        self.assertEqual([c["gid"] for c in p["certs"]], [10001])
+        run = p["run"][0][1]
+        self.assertIn(f"{p['certs'][0]['dir']}:/certificates/smtp:ro", run)
+        self.assertIn("MADDY_DELIVERY=relay", run)
+        self.assertIn("--read-only", run)
+
     def test_render(self):
         cfg = {"timezone": "UTC"}
         self.assertEqual(st.render("tz={{config.timezone}}", cfg, 1), "tz=UTC")

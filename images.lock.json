@@ -1714,5 +1714,16 @@
     "source": "OCI registry manifest inspection",
     "image_config_inspected": true,
     "checked_at": "2026-10-29"
+  },
+  {
+    "reference": "foxcpp/maddy:0.9.6",
+    "digest": "sha256:e1074e92a452b84d1135ebe8ab831c5f541d33dcbd39e38fab740a53bbf2f97c",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "https://hub.docker.com/v2/repositories/foxcpp/maddy/tags/0.9.6",
+    "image_config_inspected": false,
+    "checked_at": "2026-10-30"
   }
 ]

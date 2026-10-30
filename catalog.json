@@ -6696,5 +6696,100 @@
     "docs_url": "https://www.rivet.dev/docs/",
     "image": "rivetdev/engine:2.3.31@sha256:791b3592c90911af44513848358f568236c73348081eab221ca317119289aeb4",
     "port": 6420
+  },
+  {
+    "id": "maddy",
+    "name": "Maddy SMTP",
+    "category": "application",
+    "description": "Send-only SMTP submission server for your apps, with TLS, DKIM signing and direct or relayed delivery.",
+    "license": "GPL-3.0",
+    "upstream": "https://github.com/foxcpp/maddy",
+    "required_secrets": [
+      "relay-password"
+    ],
+    "requirements": [
+      "Public TCP port 587 provisioned by the installation administrator (installer public_tcp_ports, or modules.py public-tcp afterwards) and open in the cloud and host firewall",
+      "The installation's TLS issuer: Hakopod issues and renews the certificate for this service's generated hostname, and apps connect to that hostname on port 587",
+      "Create a sending account from the service terminal with: maddy -config /etc/maddy/maddy.conf creds create app@your-domain",
+      "Publish SPF, DMARC and the DKIM record from /data/dkim_keys/*.dns for the sender domain before sending",
+      "Direct delivery needs outbound TCP 25 and reverse DNS for the server hostname; many cloud providers block port 25, so use relay delivery there",
+      "Send-only: there is no inbound mail on port 25 and no IMAP mailbox"
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 bounded service; small profile; 2 GiB volume for credentials, DKIM keys and the queue",
+    "verification": "Image digest and amd64/arm64 platforms checked for foxcpp/maddy 0.9.6; container start with a mounted certificate checked by the template smoke test. Delivery and generated-hostname issuance need a real installation.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "relay-password",
+        "description": "Relay password or SMTP API key, such as an Amazon SES SMTP password. With direct delivery it is not used; save any placeholder.",
+        "format": "password",
+        "generate": false,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/foxcpp/maddy",
+      "https://maddy.email/"
+    ],
+    "deployable": true,
+    "config_fields": [
+      {
+        "name": "sender-domain",
+        "label": "Sender domain",
+        "description": "Domain your apps send from, such as example.com. Messages are DKIM-signed for it.",
+        "default": "",
+        "required": true
+      },
+      {
+        "name": "hostname",
+        "label": "Server hostname",
+        "description": "Name this server announces to other mail servers, such as mail.example.com. For direct delivery, set your public IP's reverse DNS to it.",
+        "default": "",
+        "required": true
+      },
+      {
+        "name": "delivery",
+        "label": "Delivery",
+        "description": "Deliver straight to recipients' mail servers, or send through a provider such as Amazon SES, Mailgun or Postmark.",
+        "default": "direct",
+        "required": true,
+        "options": [
+          {
+            "value": "direct",
+            "label": "Direct to recipients"
+          },
+          {
+            "value": "relay",
+            "label": "Through a relay provider"
+          }
+        ]
+      },
+      {
+        "name": "relay",
+        "label": "Relay endpoint",
+        "description": "Relay delivery only. Provider SMTP endpoint with scheme and port: tls://host:465 or tcp://host:587 (STARTTLS is required).",
+        "default": "",
+        "required": false
+      },
+      {
+        "name": "relay-user",
+        "label": "Relay username",
+        "description": "Relay delivery only. Username or SMTP key ID from the provider.",
+        "default": "",
+        "required": false
+      }
+    ],
+    "notes": [],
+    "docs_url": "https://maddy.email/",
+    "image": "foxcpp/maddy:0.9.6@sha256:e1074e92a452b84d1135ebe8ab831c5f541d33dcbd39e38fab740a53bbf2f97c",
+    "port": 2587
   }
 ]
