@@ -1,0 +1,21 @@
+schema_version = 1
+name = 'template'
+
+[services.main]
+image = 'docker.io/victoriametrics/victoria-metrics:v1.155.0@sha256:f60dc268b54ecf87f6e09d740c2b732838aa9193090cc741417c9f6386a130df'
+port = 8428
+public = false
+size = 'medium'
+replicas = 1
+run_as_user = 65534
+healthcheck = '/health'
+networks = ['default']
+args = ['-storageDataPath=/storage', '-retentionPeriod=30d', '-httpListenAddr=:8428']
+
+[services.main.volume]
+mount_path = '/storage'
+size_gib = 5
+storage_class = ''
+
+[networks.default]
+internal = false

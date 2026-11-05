@@ -1758,5 +1758,107 @@
     "source": "OCI registry manifest inspection",
     "image_config_inspected": true,
     "checked_at": "2026-10-29"
+  },
+  {
+    "reference": "docker.io/tomsquest/docker-radicale:3.9.0.0",
+    "digest": "sha256:2f215d0e6a78ff68c280975af6ce580b05976f70c62b51640397e3eb5a7aa0e9",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-11-05"
+  },
+  {
+    "reference": "docker.io/grafana/loki:3.7.9",
+    "digest": "sha256:0db216b630ae1f348a1584c67f3cead8b4c1fc839169a39501db664744158e28",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-11-05"
+  },
+  {
+    "reference": "docker.io/victoriametrics/victoria-metrics:v1.155.0",
+    "digest": "sha256:f60dc268b54ecf87f6e09d740c2b732838aa9193090cc741417c9f6386a130df",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-11-05"
+  },
+  {
+    "reference": "docker.io/henrygd/beszel:0.21.1",
+    "digest": "sha256:8514a69d9bbbcb74f371a3205561ee231fc0289739cea64e8131f341d695b770",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-11-05"
+  },
+  {
+    "reference": "docker.io/dpage/pgadmin4:9.19.0",
+    "digest": "sha256:3591b3d02910dcd817dec6fcaa681c278ba6966945283dd0ea0042731c330c83",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-11-05"
+  },
+  {
+    "reference": "docker.io/listmonk/listmonk:v6.2.0",
+    "digest": "sha256:f535d59e14991337a9f2d570273685378ae86b0d7698c3e00da444e3bc205286",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-11-05"
+  },
+  {
+    "reference": "docker.io/otel/opentelemetry-collector-contrib:0.164.0",
+    "digest": "sha256:340c9ca6a36617084c6661bdc4f0fe92b7cda5a805d61673ec8db375fddc522b",
+    "platforms": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "riscv64",
+      "s390x"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-11-05"
+  },
+  {
+    "reference": "docker.io/prom/alertmanager:v0.34.2",
+    "digest": "sha256:39d8bb3966c694a124428a3a88fbcffd40bd069129ecd47c059f8a3f17c55f3b",
+    "platforms": [
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le",
+      "s390x"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": true,
+    "checked_at": "2026-11-05"
   }
 ]

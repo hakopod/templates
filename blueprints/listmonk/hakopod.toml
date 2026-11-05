@@ -1,0 +1,69 @@
+schema_version = 1
+name = 'template'
+
+# The command is upstream's compose sequence: install into an empty database
+# once, apply migrations, then serve. Configuration comes from LISTMONK_*
+# variables only. The image entrypoint is skipped because it creates users and
+# needs root.
+
+[services.main]
+image = 'docker.io/listmonk/listmonk:v6.2.0@sha256:f535d59e14991337a9f2d570273685378ae86b0d7698c3e00da444e3bc205286'
+port = 9000
+public = true
+size = 'small'
+replicas = 1
+run_as_user = 1000
+healthcheck = '/api/health'
+startup_timeout_seconds = 300
+depends_on = ['db']
+networks = ['default']
+command = ['/bin/sh', '-ec']
+args = ["./listmonk --install --idempotent --yes --config ''\n./listmonk --upgrade --yes --config ''\nexec ./listmonk --config ''"]
+
+[services.main.volume]
+mount_path = '/listmonk/uploads'
+size_gib = 1
+storage_class = ''
+
+[services.main.env]
+LISTMONK_app__address = '0.0.0.0:9000'
+LISTMONK_db__host = 'db'
+LISTMONK_db__port = '5432'
+LISTMONK_db__user = 'hakopod'
+LISTMONK_db__database = 'app'
+LISTMONK_db__ssl_mode = 'disable'
+LISTMONK_ADMIN_USER = '{{config.admin-user}}'
+TZ = 'Etc/UTC'
+
+[services.main.secrets]
+[services.main.secrets.LISTMONK_db__password]
+ref = 'database-password'
+[services.main.secrets.LISTMONK_ADMIN_PASSWORD]
+ref = 'admin-password'
+
+[services.db]
+image = 'docker.io/library/postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73'
+port = 5432
+public = false
+size = 'medium'
+replicas = 1
+run_as_user = 70
+args = ['postgres', '-c', 'shared_buffers=64MB', '-c', 'max_connections=50']
+networks = ['default']
+
+[services.db.volume]
+mount_path = '/var/lib/postgresql/data'
+size_gib = 5
+storage_class = ''
+
+[services.db.env]
+PGDATA = '/var/lib/postgresql/data/pgdata'
+POSTGRES_DB = 'app'
+POSTGRES_USER = 'hakopod'
+
+[services.db.secrets]
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = 'database-password'
+
+[networks.default]
+internal = false

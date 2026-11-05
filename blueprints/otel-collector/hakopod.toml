@@ -1,0 +1,52 @@
+schema_version = 1
+name = 'template'
+
+# OTLP over HTTP on 4318, printed by the debug exporter. The collector has no
+# HTTP health path on its receiver port, so readiness is the open port.
+
+[services.main]
+image = 'docker.io/otel/opentelemetry-collector-contrib:0.164.0@sha256:340c9ca6a36617084c6661bdc4f0fe92b7cda5a805d61673ec8db375fddc522b'
+port = 4318
+public = false
+size = 'small'
+replicas = 1
+run_as_user = 10001
+read_only_root_filesystem = true
+networks = ['default']
+args = ['--config=/etc/otelcol-contrib/hakopod.yaml']
+
+[services.main.files.config]
+mount_path = '/etc/otelcol-contrib/hakopod.yaml'
+content = '''
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 80
+    spike_limit_percentage: 25
+  batch: {}
+exporters:
+  debug:
+    verbosity: basic
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+'''
+
+[networks.default]
+internal = false

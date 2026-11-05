@@ -1,0 +1,62 @@
+schema_version = 1
+name = 'template'
+
+# Single-binary Loki on the local filesystem, the layout upstream documents
+# for one node. Seven days of retention are enforced by the compactor.
+
+[services.main]
+image = 'docker.io/grafana/loki:3.7.9@sha256:0db216b630ae1f348a1584c67f3cead8b4c1fc839169a39501db664744158e28'
+port = 3100
+public = false
+size = 'medium'
+replicas = 1
+run_as_user = 10001
+healthcheck = '/ready'
+networks = ['default']
+args = ['-config.file=/etc/loki/hakopod.yaml']
+
+[services.main.volume]
+mount_path = '/loki'
+size_gib = 5
+storage_class = ''
+
+[services.main.files.config]
+mount_path = '/etc/loki/hakopod.yaml'
+content = '''
+auth_enabled: false
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9096
+  log_level: info
+common:
+  instance_addr: 127.0.0.1
+  path_prefix: /loki
+  storage:
+    filesystem:
+      chunks_directory: /loki/chunks
+      rules_directory: /loki/rules
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+schema_config:
+  configs:
+    - from: 2024-01-01
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+limits_config:
+  retention_period: 168h
+compactor:
+  working_directory: /loki/compactor
+  retention_enabled: true
+  delete_request_store: filesystem
+analytics:
+  reporting_enabled: false
+'''
+
+[networks.default]
+internal = false
