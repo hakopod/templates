@@ -7202,7 +7202,7 @@
       "arm64"
     ],
     "resource_summary": "2 services; small listmonk with a 1 GiB uploads volume, medium PostgreSQL with a 5 GiB volume",
-    "verification": "Image digest, amd64/arm64 platforms and image config (root user, docker-entrypoint.sh) checked from the registry; install and upgrade sequence taken from the v6.2.0 compose file. The preset runs it as UID 1000. The template smoke workflow in GitHub Actions starts it on amd64 and arm64; not tested on Kubernetes.",
+    "verification": "Image digest, amd64/arm64 platforms and image config (root user, docker-entrypoint.sh) checked from the registry; install and upgrade sequence taken from the v6.2.0 compose file; /health is the unauthenticated health route (/api/health needs a login in v6). The preset runs it as UID 1000. The template smoke workflow in GitHub Actions starts it on amd64 and arm64; not tested on Kubernetes.",
     "providers": [],
     "configuration": "template",
     "site_url_required": false,
