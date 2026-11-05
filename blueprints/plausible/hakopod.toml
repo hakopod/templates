@@ -1,0 +1,120 @@
+schema_version = 1
+name = 'template'
+
+# Plausible Community Edition with its two databases: PostgreSQL holds users,
+# sites and settings; ClickHouse holds the pageview and event stream.
+
+[services]
+
+# --------------------------------------------------------------------- main --
+
+[services.main]
+image = 'ghcr.io/plausible/community-edition:v3.2.1@sha256:33e60bfb40f2df5da00f8753b76fad04f67dba3abe6d73eb516e440e3fb62985'
+port = 8000
+public = true
+size = 'medium'
+replicas = 1
+run_as_user = 999
+healthcheck = '/api/system/health/ready'
+# The first start creates both databases and runs every migration.
+startup_timeout_seconds = 600
+depends_on = ['db', 'events']
+networks = ['default']
+# Same sequence as upstream's compose command. CLICKHOUSE_DATABASE_URL embeds
+# the ClickHouse password, so it is assembled here from the secret rather than
+# written into the preset. The hex32 format keeps it URL-safe.
+command = ['/bin/sh', '-ec']
+args = ["""export CLICKHOUSE_DATABASE_URL="http://default:$CLICKHOUSE_PASSWORD@events:8123/plausible_events_db"
+unset CLICKHOUSE_PASSWORD
+/entrypoint.sh db createdb
+/entrypoint.sh db migrate
+exec /entrypoint.sh run"""]
+
+[services.main.env]
+# Plausible builds links and the tracking snippet from BASE_URL, so it has to
+# match the hostname visitors and your sites actually use.
+BASE_URL = 'https://{{site_host}}'
+HTTP_PORT = '8000'
+# The image makes /var/lib/plausible writable for any UID. It only holds the
+# downloaded geolocation database and caches, which are fetched again after a
+# restart, so it gets no volume.
+TMPDIR = '/var/lib/plausible/tmp'
+# The first account registers freely; everyone after it needs an invitation.
+DISABLE_REGISTRATION = 'invite_only'
+
+[services.main.secrets]
+[services.main.secrets.SECRET_KEY_BASE]
+ref = 'secret-key-base'
+
+[services.main.secrets.CLICKHOUSE_PASSWORD]
+ref = 'clickhouse-password'
+
+# DATABASE_URL embeds the database password, so Hakopod derives it at deploy
+# time from the same secret that protects the db service.
+[services.main.bindings.DATABASE_URL]
+service = 'db'
+protocol = 'postgres'
+username = 'hakopod'
+database = 'app'
+
+[services.main.bindings.DATABASE_URL.password]
+ref = 'database-password'
+
+# ----------------------------------------------------------------------- db --
+
+[services.db]
+image = 'docker.io/library/postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73'
+port = 5432
+public = false
+size = 'medium'
+replicas = 1
+run_as_user = 70
+args = ['postgres', '-c', 'shared_buffers=64MB', '-c', 'max_connections=50']
+networks = ['default']
+
+[services.db.volume]
+mount_path = '/var/lib/postgresql/data'
+size_gib = 5
+storage_class = ''
+
+[services.db.env]
+PGDATA = '/var/lib/postgresql/data/pgdata'
+POSTGRES_DB = 'app'
+POSTGRES_USER = 'hakopod'
+
+[services.db.secrets]
+[services.db.secrets.POSTGRES_PASSWORD]
+ref = 'database-password'
+
+# ------------------------------------------------------------------- events --
+# ClickHouse 24.12 is the release upstream's compose file pins. The startup
+# script is the same bounded low-memory configuration as the ClickHouse preset:
+# HTTP on 8123 for Plausible, native TCP on loopback only, password from the
+# secret.
+
+[services.events]
+image = 'docker.io/clickhouse/clickhouse-server:24.12.6.70-alpine@sha256:cd450891db46cc6ffe313ca2b0fb7dbfb897a6873ca74a724cbe050a2cf62621'
+port = 8123
+public = false
+size = 'large'
+replicas = 1
+run_as_user = 101
+healthcheck = '/ping'
+networks = ['default']
+command = ['/bin/sh', '-ec']
+args = ["umask 077\npassword_hash=$(printf '%s' \"$CLICKHOUSE_PASSWORD\" | sha256sum | cut -d' ' -f1)\nmkdir -p /data/tmp /data/user_files /data/format_schemas /data/access\ncat > /tmp/hakopod-clickhouse.xml <<EOF_CONFIG\n<clickhouse>\n<logger><level>warning</level><console>1</console></logger>\n<http_port>8123</http_port><listen_host>0.0.0.0</listen_host>\n<protocols><tcp_loopback><type>tcp</type><host>127.0.0.1</host><port>9000</port></tcp_loopback></protocols>\n<path>/data/</path><tmp_path>/data/tmp/</tmp_path><user_files_path>/data/user_files/</user_files_path><format_schema_path>/data/format_schemas/</format_schema_path><access_control_path>/data/access/</access_control_path>\n<max_server_memory_usage>671088640</max_server_memory_usage><mark_cache_size>67108864</mark_cache_size><uncompressed_cache_size>16777216</uncompressed_cache_size>\n<background_pool_size>4</background_pool_size><background_schedule_pool_size>4</background_schedule_pool_size><background_message_broker_schedule_pool_size>2</background_message_broker_schedule_pool_size><background_distributed_schedule_pool_size>2</background_distributed_schedule_pool_size><background_buffer_flush_schedule_pool_size>2</background_buffer_flush_schedule_pool_size><background_move_pool_size>2</background_move_pool_size><background_fetches_pool_size>2</background_fetches_pool_size><background_common_pool_size>2</background_common_pool_size>\n<merge_tree><number_of_free_entries_in_pool_to_lower_max_size_of_merge>0</number_of_free_entries_in_pool_to_lower_max_size_of_merge><number_of_free_entries_in_pool_to_execute_mutation>0</number_of_free_entries_in_pool_to_execute_mutation><number_of_free_entries_in_pool_to_execute_optimize_entire_partition>0</number_of_free_entries_in_pool_to_execute_optimize_entire_partition></merge_tree>\n<profiles><default><max_memory_usage>268435456</max_memory_usage><max_threads>2</max_threads><max_insert_threads>1</max_insert_threads></default></profiles>\n<users><default><password_sha256_hex>$password_hash</password_sha256_hex><networks><ip>::/0</ip></networks><profile>default</profile><quota>default</quota><access_management>1</access_management></default></users>\n<quotas><default><interval><duration>3600</duration><queries>0</queries><errors>0</errors><result_rows>0</result_rows><read_rows>0</read_rows><execution_time>0</execution_time></interval></default></quotas>\n</clickhouse>\nEOF_CONFIG\nunset password_hash CLICKHOUSE_PASSWORD\nexec clickhouse-server --config-file=/tmp/hakopod-clickhouse.xml"]
+
+[services.events.volume]
+mount_path = '/data'
+size_gib = 5
+storage_class = ''
+
+[services.events.secrets]
+[services.events.secrets.CLICKHOUSE_PASSWORD]
+ref = 'clickhouse-password'
+
+[networks]
+[networks.default]
+internal = false
+virtual_network = ''
+segment = ''

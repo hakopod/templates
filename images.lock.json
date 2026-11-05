@@ -1725,5 +1725,27 @@
     "source": "https://hub.docker.com/v2/repositories/foxcpp/maddy/tags/0.9.6",
     "image_config_inspected": false,
     "checked_at": "2026-10-30"
+  },
+  {
+    "reference": "ghcr.io/plausible/community-edition:v3.2.1",
+    "digest": "sha256:33e60bfb40f2df5da00f8753b76fad04f67dba3abe6d73eb516e440e3fb62985",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": false,
+    "checked_at": "2026-11-05"
+  },
+  {
+    "reference": "docker.io/clickhouse/clickhouse-server:24.12.6.70-alpine",
+    "digest": "sha256:cd450891db46cc6ffe313ca2b0fb7dbfb897a6873ca74a724cbe050a2cf62621",
+    "platforms": [
+      "amd64",
+      "arm64"
+    ],
+    "source": "OCI registry manifest inspection",
+    "image_config_inspected": false,
+    "checked_at": "2026-11-05"
   }
 ]
