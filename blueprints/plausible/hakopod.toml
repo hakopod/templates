@@ -20,11 +20,13 @@ healthcheck = '/api/system/health/ready'
 startup_timeout_seconds = 600
 depends_on = ['db', 'events']
 networks = ['default']
-# Same sequence as upstream's compose command. CLICKHOUSE_DATABASE_URL embeds
-# the ClickHouse password, so it is assembled here from the secret rather than
-# written into the preset. The hex32 format keeps it URL-safe.
+# Same sequence as upstream's compose command. With bundled ClickHouse the URL
+# embeds its password, so it is assembled here from the secret rather than
+# written into the preset; the hex32 format keeps it URL-safe. An existing
+# ClickHouse supplies the complete URL instead, and it is kept as given.
 command = ['/bin/sh', '-ec']
-args = ["""export CLICKHOUSE_DATABASE_URL="http://default:$CLICKHOUSE_PASSWORD@events:8123/plausible_events_db"
+args = [""": "${CLICKHOUSE_DATABASE_URL:=http://default:$CLICKHOUSE_PASSWORD@events:8123/plausible_events_db}"
+export CLICKHOUSE_DATABASE_URL
 unset CLICKHOUSE_PASSWORD
 /entrypoint.sh db createdb
 /entrypoint.sh db migrate

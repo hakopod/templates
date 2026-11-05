@@ -1,7 +1,7 @@
 # Plausible Analytics
 
-Lightweight, cookie-free web analytics. Community Edition 3.2.1 with PostgreSQL
-and ClickHouse.
+Lightweight, cookie-free web analytics. Community Edition 3.2.1 with bundled or
+existing PostgreSQL and ClickHouse.
 
 ## Register the first account immediately
 
@@ -11,7 +11,8 @@ deployment is ready, before anyone else finds it. Later users need an invitation
 
 ## Deployment
 
-Native schema-v1 preset for a new installation. Three services:
+Native schema-v1 preset for a new installation. With both databases bundled,
+three services:
 
 - `main`: Plausible, public, port 8000. Its first start creates both databases
   and runs the migrations, the same sequence as upstream's compose command, so
@@ -30,13 +31,32 @@ snippet.
 `CLICKHOUSE_DATABASE_URL` is assembled inside the container from
 `clickhouse-password`; neither password is written into the TOML.
 
+## Bundled or existing databases
+
+PostgreSQL and ClickHouse are chosen independently. **Existing** removes that
+service, its volume and the startup dependency, and takes a complete URL secret
+instead:
+
+- `database-url`: `postgresql://user:password@host:5432/plausible?sslmode=...`.
+  Set `sslmode` explicitly. Plausible's `verify-full` also needs
+  `sslrootcert=/etc/ssl/certs/ca-certificates.crt` (or a mounted private CA).
+- `clickhouse-url`: `https://user:password@host:8443/plausible_events_db`. Use
+  `http` only on a trusted private network.
+
+Percent-encode special characters in credentials. Create the databases first
+and use roles allowed to run Plausible's migrations: the startup still runs
+`createdb` and `migrate`. The host must be reachable from the application
+network; supplying a hostname does not create a network grant. Switching modes
+does not migrate data.
+
 ## Secrets and storage
 
 - `secret-key-base`: Plausible's `SECRET_KEY_BASE`, at least 64 characters.
   Rotating it signs everyone out and invalidates stored two-factor secrets.
-- `database-password`: shared by PostgreSQL and the Plausible connection URL.
-- `clickhouse-password`: exactly 32 hexadecimal characters, so it is safe inside
-  the ClickHouse URL. Generate it rather than typing one.
+- `database-password` (bundled PostgreSQL): shared by PostgreSQL and the
+  Plausible connection URL.
+- `clickhouse-password` (bundled ClickHouse): exactly 32 hexadecimal characters,
+  so it is safe inside the ClickHouse URL. Generate it rather than typing one.
 
 Back up both volumes. Persistent services use one replica; scaling does not
 create a database cluster. An image update is not an automatic database-major

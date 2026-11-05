@@ -6796,7 +6796,7 @@
     "id": "plausible",
     "name": "Plausible Analytics",
     "category": "application",
-    "description": "Lightweight, cookie-free web analytics with PostgreSQL and ClickHouse.",
+    "description": "Lightweight, cookie-free web analytics with bundled or existing PostgreSQL and ClickHouse.",
     "license": "AGPL-3.0",
     "upstream": "https://github.com/plausible/community-edition",
     "required_secrets": [
@@ -6808,13 +6808,14 @@
       "Register the first account as soon as the deployment is ready: it becomes the owner, and later users need an invitation.",
       "A stable HTTPS site host or custom domain; BASE_URL and every tracking snippet use it.",
       "No mailer is configured; add SMTP settings in Edit TOML before relying on invitations or password resets.",
-      "Back up the PostgreSQL and ClickHouse volumes; keep all three secrets stable."
+      "Back up PostgreSQL and ClickHouse, bundled or existing; keep all secrets stable.",
+      "An existing PostgreSQL or ClickHouse must already have its database created and be reachable from the application network; the role must be allowed to run Plausible's migrations."
     ],
     "architectures": [
       "amd64",
       "arm64"
     ],
-    "resource_summary": "3 services; medium Plausible, medium PostgreSQL with 5 GiB, large ClickHouse with 5 GiB; storage applies to each",
+    "resource_summary": "1\u20133 services; medium Plausible, plus bundled medium PostgreSQL and large ClickHouse when selected; storage applies to each",
     "verification": "Image digests and amd64/arm64 platforms checked for Plausible CE 3.2.1 and ClickHouse 24.12.6.70-alpine; UID 999 and the database startup sequence read from upstream's Dockerfile and compose file. Runtime smoke test pending in CI.",
     "providers": [],
     "configuration": "template",
@@ -6824,17 +6825,31 @@
     "secret_fields": [
       {
         "name": "clickhouse-password",
-        "description": "ClickHouse password, exactly 32 hexadecimal characters so it stays URL-safe. Keep stable.",
+        "description": "Password for bundled ClickHouse, exactly 32 hexadecimal characters so it stays URL-safe. Existing ClickHouse uses clickhouse-url instead.",
         "format": "hex32",
         "generate": true,
-        "optional": false
+        "optional": true
+      },
+      {
+        "name": "clickhouse-url",
+        "description": "HTTP URL for an existing ClickHouse, such as https://user:password@clickhouse.internal:8443/plausible_events_db. Percent-encode credentials; use http only on a trusted private network.",
+        "format": "clickhouse-url",
+        "generate": false,
+        "optional": true
       },
       {
         "name": "database-password",
-        "description": "At least 16 characters. Keep stable and include in protected backups.",
+        "description": "Initial password for bundled PostgreSQL, at least 16 characters. Existing PostgreSQL uses database-url instead.",
         "format": "password",
         "generate": true,
-        "optional": false
+        "optional": true
+      },
+      {
+        "name": "database-url",
+        "description": "Connection URL for an existing PostgreSQL database, including its role and password. Percent-encode credentials and set sslmode explicitly; verify-full also needs sslrootcert=/etc/ssl/certs/ca-certificates.crt.",
+        "format": "postgres-connection-url",
+        "generate": false,
+        "optional": true
       },
       {
         "name": "secret-key-base",
@@ -6850,9 +6865,44 @@
       "https://github.com/plausible/analytics/blob/v3.2.1/Dockerfile"
     ],
     "deployable": true,
-    "config_fields": [],
+    "config_fields": [
+      {
+        "name": "database-mode",
+        "label": "PostgreSQL",
+        "description": "Create a private PostgreSQL service for users, sites and settings, or connect to one you manage.",
+        "default": "bundled",
+        "required": true,
+        "options": [
+          {
+            "value": "bundled",
+            "label": "Bundled PostgreSQL"
+          },
+          {
+            "value": "external",
+            "label": "Existing PostgreSQL"
+          }
+        ]
+      },
+      {
+        "name": "events-mode",
+        "label": "ClickHouse",
+        "description": "Create a private ClickHouse service for pageviews and events, or connect to one already installed.",
+        "default": "bundled",
+        "required": true,
+        "options": [
+          {
+            "value": "bundled",
+            "label": "Bundled ClickHouse"
+          },
+          {
+            "value": "external",
+            "label": "Existing ClickHouse"
+          }
+        ]
+      }
+    ],
     "notes": [
-      "DATABASE_URL comes from a native postgres binding; CLICKHOUSE_DATABASE_URL is assembled in the container from clickhouse-password. No password is stored in the preset."
+      "DATABASE_URL comes from a native postgres binding for bundled PostgreSQL; CLICKHOUSE_DATABASE_URL is assembled in the container from clickhouse-password for bundled ClickHouse. Existing databases take complete URL secrets. No password is stored in the preset."
     ],
     "docs_url": "https://plausible.io/docs/self-hosting",
     "image": "ghcr.io/plausible/community-edition:v3.2.1@sha256:33e60bfb40f2df5da00f8753b76fad04f67dba3abe6d73eb516e440e3fb62985",
