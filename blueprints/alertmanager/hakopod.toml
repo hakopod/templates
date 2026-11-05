@@ -1,0 +1,24 @@
+schema_version = 1
+name = 'template'
+
+# One Alertmanager with the image's example configuration. Clustering is
+# switched off; with one replica there is no peer to gossip with.
+
+[services.main]
+image = 'docker.io/prom/alertmanager:v0.34.2@sha256:39d8bb3966c694a124428a3a88fbcffd40bd069129ecd47c059f8a3f17c55f3b'
+port = 9093
+public = false
+size = 'small'
+replicas = 1
+run_as_user = 65534
+healthcheck = '/-/ready'
+networks = ['default']
+args = ['--config.file=/etc/alertmanager/alertmanager.yml', '--storage.path=/alertmanager', '--cluster.listen-address=']
+
+[services.main.volume]
+mount_path = '/alertmanager'
+size_gib = 1
+storage_class = ''
+
+[networks.default]
+internal = false

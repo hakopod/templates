@@ -6947,5 +6947,371 @@
     "docs_url": "https://headscale.net/stable/",
     "image": "docker.io/headscale/headscale:0.29.6@sha256:cabe84f0699913dbca9320f0883dca7565dd08df3c5be29edfabbebeff763966",
     "port": 8080
+  },
+  {
+    "id": "radicale",
+    "category": "application",
+    "name": "Radicale",
+    "description": "Small CalDAV and CardDAV server for your calendars, contacts and task lists.",
+    "license": "GPL-3.0",
+    "upstream": "https://github.com/Kozea/Radicale",
+    "required_secrets": [
+      "user-password"
+    ],
+    "requirements": [
+      "One login: the configured username with the user-password secret. Calendar and contact apps sign in with it over the public HTTPS address.",
+      "Each user sees only their own collections. Add more users by baking an htpasswd file into a derivative image.",
+      "Back up the /data volume; every calendar and address book lives there."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 service; small profile; 1 GiB volume for collections",
+    "verification": "Image digest, amd64/arm64 platforms and image config (radicale user 2999, docker-entrypoint.sh) checked from the registry. The preset skips the root-only entrypoint and runs Radicale as UID 2999. The template smoke workflow in GitHub Actions starts it on amd64 and arm64; not tested on Kubernetes.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "user-password",
+        "description": "The password calendar and contact apps sign in with. At least 16 characters; rotating it signs every device out.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/tomsquest/docker-radicale/tree/3.9.0.0",
+      "https://radicale.org/v3.html#configuration"
+    ],
+    "deployable": true,
+    "config_fields": [
+      {
+        "name": "username",
+        "label": "Username",
+        "description": "Login name for calendar and contact apps.",
+        "default": "admin",
+        "required": true
+      }
+    ],
+    "notes": [],
+    "docs_url": "https://radicale.org/v3.html",
+    "image": "docker.io/tomsquest/docker-radicale:3.9.0.0@sha256:2f215d0e6a78ff68c280975af6ce580b05976f70c62b51640397e3eb5a7aa0e9",
+    "port": 5232
+  },
+  {
+    "id": "loki",
+    "category": "application",
+    "name": "Grafana Loki",
+    "description": "Log storage and query engine from Grafana Labs, queried with LogQL from Grafana.",
+    "license": "AGPL-3.0",
+    "upstream": "https://github.com/grafana/loki",
+    "required_secrets": [],
+    "requirements": [
+      "Private endpoint without authentication. Add it to Grafana as a Loki data source at http://<service>:3100, and push logs from agents on the same virtual network.",
+      "Single-binary mode on the local filesystem with seven days of retention; use object storage and a scalable deployment for larger volumes.",
+      "Back up the /loki volume if logs must outlive the node."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 service; medium profile; 5 GiB volume for chunks and index",
+    "verification": "Image digest, amd64/arm64 platforms and image config (UID 10001, /usr/bin/loki entrypoint) checked from the registry. The template smoke workflow in GitHub Actions starts it on amd64 and arm64; not tested on Kubernetes.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [],
+    "sources": [
+      "https://grafana.com/docs/loki/latest/configure/examples/configuration-examples/",
+      "https://github.com/grafana/loki/blob/v3.7.9/cmd/loki/loki-local-config.yaml"
+    ],
+    "deployable": true,
+    "config_fields": [],
+    "notes": [],
+    "docs_url": "https://grafana.com/docs/loki/latest/",
+    "image": "docker.io/grafana/loki:3.7.9@sha256:0db216b630ae1f348a1584c67f3cead8b4c1fc839169a39501db664744158e28",
+    "port": 3100
+  },
+  {
+    "id": "victoriametrics",
+    "category": "application",
+    "name": "VictoriaMetrics",
+    "description": "Fast, compact time-series database that accepts Prometheus remote write and answers PromQL.",
+    "license": "Apache-2.0",
+    "upstream": "https://github.com/VictoriaMetrics/VictoriaMetrics",
+    "required_secrets": [],
+    "requirements": [
+      "Private endpoint without authentication. Point Prometheus remote_write or Grafana at http://<service>:8428 from the same virtual network.",
+      "Single-node with 30 days of retention. Nothing is scraped until you send data or bake a -promscrape.config into a derivative image.",
+      "Back up the /storage volume with vmbackup or a volume snapshot."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 service; medium profile; 5 GiB volume for data",
+    "verification": "Image digest, amd64/arm64 platforms and image config (root user, /victoria-metrics-prod entrypoint) checked from the registry. The preset runs it as UID 65534. The template smoke workflow in GitHub Actions starts it on amd64 and arm64; not tested on Kubernetes.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [],
+    "sources": [
+      "https://docs.victoriametrics.com/victoriametrics/single-server-victoriametrics/"
+    ],
+    "deployable": true,
+    "config_fields": [],
+    "notes": [],
+    "docs_url": "https://docs.victoriametrics.com/",
+    "image": "docker.io/victoriametrics/victoria-metrics:v1.155.0@sha256:f60dc268b54ecf87f6e09d740c2b732838aa9193090cc741417c9f6386a130df",
+    "port": 8428
+  },
+  {
+    "id": "beszel",
+    "category": "application",
+    "name": "Beszel",
+    "description": "Lightweight server monitoring hub with history, alerts and Docker stats from small agents.",
+    "license": "MIT",
+    "upstream": "https://github.com/henrygd/beszel",
+    "required_secrets": [
+      "admin-password"
+    ],
+    "requirements": [
+      "This is the hub only. Install the Beszel agent on each machine you want to watch, then add it in the hub with the key the hub shows.",
+      "The first administrator is created from the configured email and the admin-password secret on the first start only.",
+      "Back up the /beszel_data volume; it holds users, systems and history."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 service; small profile; 2 GiB volume for the database",
+    "verification": "Image digest, amd64/arm64 platforms and image config (root user, /beszel entrypoint) checked from the registry; USER_EMAIL, USER_PASSWORD and APP_URL read from the v0.21.1 source. The preset runs it as UID 1000. The template smoke workflow in GitHub Actions starts it on amd64 and arm64; not tested on Kubernetes.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": true,
+    "site_url_supported": true,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "admin-password",
+        "description": "At least 16 characters. Keep stable and include in protected backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/henrygd/beszel/blob/v0.21.1/internal/migrations/initial-settings.go",
+      "https://beszel.dev/guide/hub-installation"
+    ],
+    "deployable": true,
+    "config_fields": [
+      {
+        "name": "admin-email",
+        "label": "Administrator email",
+        "description": "Email address for the first administrator. Used only on the first start.",
+        "default": "",
+        "required": true
+      }
+    ],
+    "notes": [],
+    "docs_url": "https://beszel.dev/guide/what-is-beszel",
+    "image": "docker.io/henrygd/beszel:0.21.1@sha256:8514a69d9bbbcb74f371a3205561ee231fc0289739cea64e8131f341d695b770",
+    "port": 8090
+  },
+  {
+    "id": "pgadmin",
+    "category": "application",
+    "name": "pgAdmin",
+    "description": "Web administration and query tool for PostgreSQL.",
+    "license": "PostgreSQL",
+    "upstream": "https://github.com/pgadmin-org/pgadmin4",
+    "required_secrets": [
+      "admin-password"
+    ],
+    "requirements": [
+      "Sign in with the configured email and the admin-password secret, then add your servers. Databases on Hakopod must share a virtual network with this app.",
+      "Password-reset email is off; Postfix is not started.",
+      "Back up the /var/lib/pgadmin volume; it holds saved servers and stored passwords."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 service; medium profile; 1 GiB volume for settings",
+    "verification": "Image digest, amd64/arm64 platforms and image config (UID 5050, /entrypoint.sh) checked from the registry; the restricted-context fallback to port 8080 read from the REL-9_19 entrypoint. The template smoke workflow in GitHub Actions starts it on amd64 and arm64; not tested on Kubernetes.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "admin-password",
+        "description": "At least 16 characters. Keep stable and include in protected backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/pgadmin-org/pgadmin4/blob/REL-9_19/pkg/docker/entrypoint.sh",
+      "https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html"
+    ],
+    "deployable": true,
+    "config_fields": [
+      {
+        "name": "admin-email",
+        "label": "Administrator email",
+        "description": "Email address you sign in with.",
+        "default": "",
+        "required": true
+      }
+    ],
+    "notes": [],
+    "docs_url": "https://www.pgadmin.org/docs/pgadmin4/latest/",
+    "image": "docker.io/dpage/pgadmin4:9.19.0@sha256:3591b3d02910dcd817dec6fcaa681c278ba6966945283dd0ea0042731c330c83",
+    "port": 8080
+  },
+  {
+    "id": "listmonk",
+    "category": "application",
+    "name": "listmonk",
+    "description": "Self-hosted newsletter and mailing list manager with PostgreSQL.",
+    "license": "AGPL-3.0",
+    "upstream": "https://github.com/knadh/listmonk",
+    "required_secrets": [
+      "admin-password",
+      "database-password"
+    ],
+    "requirements": [
+      "Sign in with the configured admin user and the admin-password secret, then set Root URL and an SMTP server under Settings before sending anything.",
+      "Media uploads go to /listmonk/uploads; set that path under Settings, Media.",
+      "Back up the PostgreSQL volume; subscribers and campaigns live there."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "2 services; small listmonk with a 1 GiB uploads volume, medium PostgreSQL with a 5 GiB volume",
+    "verification": "Image digest, amd64/arm64 platforms and image config (root user, docker-entrypoint.sh) checked from the registry; install and upgrade sequence taken from the v6.2.0 compose file. The preset runs it as UID 1000. The template smoke workflow in GitHub Actions starts it on amd64 and arm64; not tested on Kubernetes.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "admin-password",
+        "description": "At least 16 characters. Keep stable and include in protected backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "database-password",
+        "description": "At least 16 characters. Keep stable and include in protected backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/knadh/listmonk/blob/v6.2.0/docker-compose.yml",
+      "https://listmonk.app/docs/configuration/"
+    ],
+    "deployable": true,
+    "config_fields": [
+      {
+        "name": "admin-user",
+        "label": "Admin username",
+        "description": "Username of the first administrator, created on the first start only.",
+        "default": "admin",
+        "required": true
+      }
+    ],
+    "notes": [],
+    "docs_url": "https://listmonk.app/docs/",
+    "image": "docker.io/listmonk/listmonk:v6.2.0@sha256:f535d59e14991337a9f2d570273685378ae86b0d7698c3e00da444e3bc205286",
+    "port": 9000
+  },
+  {
+    "id": "otel-collector",
+    "category": "application",
+    "name": "OpenTelemetry Collector",
+    "description": "Vendor-neutral pipeline that receives, processes and forwards traces, metrics and logs.",
+    "license": "Apache-2.0",
+    "upstream": "https://github.com/open-telemetry/opentelemetry-collector-contrib",
+    "required_secrets": [],
+    "requirements": [
+      "Private OTLP/HTTP endpoint on port 4318 for apps on the same virtual network. gRPC on 4317 is not exposed.",
+      "The bundled pipeline only prints what it receives to the service logs. Bake exporters for your backend into a derivative image with your own config.",
+      "Stateless; nothing to back up."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 service; small profile; no volume",
+    "verification": "Image digest, amd64/arm64 platforms and image config (UID 10001, /otelcol-contrib entrypoint) checked from the registry. The template smoke workflow in GitHub Actions starts it on amd64 and arm64; not tested on Kubernetes.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [],
+    "sources": [
+      "https://opentelemetry.io/docs/collector/installation/",
+      "https://opentelemetry.io/docs/collector/configuration/"
+    ],
+    "deployable": true,
+    "config_fields": [],
+    "notes": [],
+    "docs_url": "https://opentelemetry.io/docs/collector/",
+    "image": "docker.io/otel/opentelemetry-collector-contrib:0.164.0@sha256:340c9ca6a36617084c6661bdc4f0fe92b7cda5a805d61673ec8db375fddc522b",
+    "port": 4318
+  },
+  {
+    "id": "alertmanager",
+    "category": "application",
+    "name": "Alertmanager",
+    "description": "Prometheus Alertmanager: deduplicates, groups and routes alerts to email, chat and paging services.",
+    "license": "Apache-2.0",
+    "upstream": "https://github.com/prometheus/alertmanager",
+    "required_secrets": [],
+    "requirements": [
+      "Private endpoint without authentication. Point Prometheus at http://<service>:9093 from the same virtual network.",
+      "Runs the image's example configuration, which delivers to nowhere. Bake your receivers and routes into a derivative image.",
+      "Single instance; clustering is off. The /alertmanager volume keeps silences and notification state."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "1 service; small profile; 1 GiB volume for silences",
+    "verification": "Image digest, amd64/arm64 platforms and image config (nobody user, /bin/alertmanager entrypoint) checked from the registry. The template smoke workflow in GitHub Actions starts it on amd64 and arm64; not tested on Kubernetes.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": false,
+    "site_url_supported": false,
+    "database_config": false,
+    "secret_fields": [],
+    "sources": [
+      "https://prometheus.io/docs/alerting/latest/configuration/"
+    ],
+    "deployable": true,
+    "config_fields": [],
+    "notes": [],
+    "docs_url": "https://prometheus.io/docs/alerting/latest/alertmanager/",
+    "image": "docker.io/prom/alertmanager:v0.34.2@sha256:39d8bb3966c694a124428a3a88fbcffd40bd069129ecd47c059f8a3f17c55f3b",
+    "port": 9093
   }
 ]

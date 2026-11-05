@@ -1,0 +1,60 @@
+schema_version = 1
+name = 'template'
+
+# The image's entrypoint only switches users when started as root, so the
+# preset runs Radicale directly as the image's radicale user. The login file
+# is written to a memory-backed mount at start and never reaches the volume.
+
+[services.main]
+image = 'docker.io/tomsquest/docker-radicale:3.9.0.0@sha256:2f215d0e6a78ff68c280975af6ce580b05976f70c62b51640397e3eb5a7aa0e9'
+port = 5232
+public = true
+size = 'small'
+replicas = 1
+run_as_user = 2999
+healthcheck = '/.web/'
+networks = ['default']
+command = ['/bin/sh', '-ec']
+args = ["umask 077\nprintf '%s:%s\\n' \"$RADICALE_USER\" \"$RADICALE_PASSWORD\" > /run/radicale/users\nunset RADICALE_PASSWORD\nexec /venv/bin/radicale --config /etc/radicale/config"]
+
+[services.main.volume]
+mount_path = '/data'
+size_gib = 1
+storage_class = ''
+
+[[services.main.temporary_mounts]]
+mount_path = '/run/radicale'
+size_mib = 1
+memory = true
+
+[services.main.env]
+RADICALE_USER = '{{config.username}}'
+
+[services.main.secrets]
+[services.main.secrets.RADICALE_PASSWORD]
+ref = 'user-password'
+
+[services.main.files.config]
+mount_path = '/etc/radicale/config'
+content = '''
+[server]
+hosts = 0.0.0.0:5232
+
+[auth]
+type = htpasswd
+htpasswd_filename = /run/radicale/users
+htpasswd_encryption = plain
+delay = 1
+
+[rights]
+type = owner_only
+
+[storage]
+filesystem_folder = /data/collections
+
+[web]
+type = internal
+'''
+
+[networks.default]
+internal = false

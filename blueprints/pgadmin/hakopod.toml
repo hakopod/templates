@@ -1,0 +1,33 @@
+schema_version = 1
+name = 'template'
+
+# The entrypoint sees the dropped capabilities, falls back to the plain
+# Python and listens on 8080. Postfix is disabled because starting it needs
+# sudo, which the no-new-privileges flag blocks.
+
+[services.main]
+image = 'docker.io/dpage/pgadmin4:9.19.0@sha256:3591b3d02910dcd817dec6fcaa681c278ba6966945283dd0ea0042731c330c83'
+port = 8080
+public = true
+size = 'medium'
+replicas = 1
+run_as_user = 5050
+healthcheck = '/misc/ping'
+networks = ['default']
+
+[services.main.volume]
+mount_path = '/var/lib/pgadmin'
+size_gib = 1
+storage_class = ''
+
+[services.main.env]
+PGADMIN_DEFAULT_EMAIL = '{{config.admin-email}}'
+PGADMIN_LISTEN_PORT = '8080'
+PGADMIN_DISABLE_POSTFIX = 'true'
+
+[services.main.secrets]
+[services.main.secrets.PGADMIN_DEFAULT_PASSWORD]
+ref = 'admin-password'
+
+[networks.default]
+internal = false

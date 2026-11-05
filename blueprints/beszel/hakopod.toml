@@ -1,0 +1,32 @@
+schema_version = 1
+name = 'template'
+
+# The Beszel hub. Agents run on the machines being monitored, outside this
+# preset. The first administrator comes from USER_EMAIL and USER_PASSWORD,
+# which the hub reads only while it has no users.
+
+[services.main]
+image = 'docker.io/henrygd/beszel:0.21.1@sha256:8514a69d9bbbcb74f371a3205561ee231fc0289739cea64e8131f341d695b770'
+port = 8090
+public = true
+size = 'small'
+replicas = 1
+run_as_user = 1000
+healthcheck = '/api/health'
+networks = ['default']
+
+[services.main.volume]
+mount_path = '/beszel_data'
+size_gib = 2
+storage_class = ''
+
+[services.main.env]
+APP_URL = 'https://{{site_host}}'
+USER_EMAIL = '{{config.admin-email}}'
+
+[services.main.secrets]
+[services.main.secrets.USER_PASSWORD]
+ref = 'admin-password'
+
+[networks.default]
+internal = false
