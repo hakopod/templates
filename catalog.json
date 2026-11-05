@@ -6791,5 +6791,71 @@
     "docs_url": "https://maddy.email/",
     "image": "foxcpp/maddy:0.9.6@sha256:e1074e92a452b84d1135ebe8ab831c5f541d33dcbd39e38fab740a53bbf2f97c",
     "port": 2587
+  },
+  {
+    "id": "plausible",
+    "name": "Plausible Analytics",
+    "category": "application",
+    "description": "Lightweight, cookie-free web analytics with PostgreSQL and ClickHouse.",
+    "license": "AGPL-3.0",
+    "upstream": "https://github.com/plausible/community-edition",
+    "required_secrets": [
+      "clickhouse-password",
+      "database-password",
+      "secret-key-base"
+    ],
+    "requirements": [
+      "Register the first account as soon as the deployment is ready: it becomes the owner, and later users need an invitation.",
+      "A stable HTTPS site host or custom domain; BASE_URL and every tracking snippet use it.",
+      "No mailer is configured; add SMTP settings in Edit TOML before relying on invitations or password resets.",
+      "Back up the PostgreSQL and ClickHouse volumes; keep all three secrets stable."
+    ],
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "resource_summary": "3 services; medium Plausible, medium PostgreSQL with 5 GiB, large ClickHouse with 5 GiB; storage applies to each",
+    "verification": "Image digests and amd64/arm64 platforms checked for Plausible CE 3.2.1 and ClickHouse 24.12.6.70-alpine; UID 999 and the database startup sequence read from upstream's Dockerfile and compose file. Runtime smoke test pending in CI.",
+    "providers": [],
+    "configuration": "template",
+    "site_url_required": true,
+    "site_url_supported": true,
+    "database_config": false,
+    "secret_fields": [
+      {
+        "name": "clickhouse-password",
+        "description": "ClickHouse password, exactly 32 hexadecimal characters so it stays URL-safe. Keep stable.",
+        "format": "hex32",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "database-password",
+        "description": "At least 16 characters. Keep stable and include in protected backups.",
+        "format": "password",
+        "generate": true,
+        "optional": false
+      },
+      {
+        "name": "secret-key-base",
+        "description": "Plausible SECRET_KEY_BASE, at least 64 characters. Rotating it signs everyone out.",
+        "format": "token64",
+        "generate": true,
+        "optional": false
+      }
+    ],
+    "sources": [
+      "https://github.com/plausible/community-edition/tree/v3.2.1",
+      "https://github.com/plausible/community-edition/wiki/configuration",
+      "https://github.com/plausible/analytics/blob/v3.2.1/Dockerfile"
+    ],
+    "deployable": true,
+    "config_fields": [],
+    "notes": [
+      "DATABASE_URL comes from a native postgres binding; CLICKHOUSE_DATABASE_URL is assembled in the container from clickhouse-password. No password is stored in the preset."
+    ],
+    "docs_url": "https://plausible.io/docs/self-hosting",
+    "image": "ghcr.io/plausible/community-edition:v3.2.1@sha256:33e60bfb40f2df5da00f8753b76fad04f67dba3abe6d73eb516e440e3fb62985",
+    "port": 8000
   }
 ]
